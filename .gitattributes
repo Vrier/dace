@@ -1,0 +1,7 @@
+# One line-ending convention everywhere, so a Windows build and the Linux CI build
+# produce byte-identical site/ files (npm test compares them).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary

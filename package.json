@@ -1,0 +1,22 @@
+{
+  "name": "dace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DACE — Dictionary of Alternations in Clause Embedding. Static site served at https://dace.tstephen.com.",
+  "author": "Thomas Stephen",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/check.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.23.0",
+    "marked": "18.0.14",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

@@ -1,0 +1,17 @@
+# build tools — `npm ci` installs them
+node_modules/
+
+# copyrighted source material: keep on disk for reference, never commit
+# (e.g. the AHG paper text from the Karttunen Festschrift, KarttunenFS.md)
+uploads/
+
+# Cowork push credential (repo-unique write deploy key) — NEVER commit
+.deploy-key
+.deploy-key.pub
+
+# misc
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+HANDOFF.md
