@@ -46,6 +46,12 @@ const QUEUE = (() => {
 // per-judge order: a Fisher–Yates shuffle of the queue indices driven by a small
 // seeded PRNG (mulberry32) keyed on the account id — random, but the same on every
 // device and visit, so "next unjudged" and ‹ › always mean the same thing.
+// Queue order is a per-account preference kept in this browser (it isn't data):
+// "random" (default) or "csv" — straight through predicates.csv, feature by feature.
+function orderPrefKey(userId) { return "dace_judge_order_" + userId; }
+function loadOrderPref(userId) { try { return localStorage.getItem(orderPrefKey(userId)) === "csv" ? "csv" : "random"; } catch (e) { return "random"; } }
+function saveOrderPref(userId, mode) { try { localStorage.setItem(orderPrefKey(userId), mode); } catch (e) { /* ignore */ } }
+
 function judgeOrder(seedText) {
   let h = 2166136261;
   for (let i = 0; i < seedText.length; i++) { h ^= seedText.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -368,7 +374,8 @@ function SaveStatus({ st }) {
 // ---------------------------------------------------------------------------
 function Judge({ user, onSignOut }) {
   const narrow = useNarrow();
-  const ORDER = useMemo(() => judgeOrder(user.id), [user.id]);
+  const [orderMode, setOrderMode] = useState(() => loadOrderPref(user.id));
+  const ORDER = useMemo(() => orderMode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id), [user.id, orderMode]);
   const POS_OF = useMemo(() => { const m = new Array(ORDER.length); ORDER.forEach((qi, pos) => { m[qi] = pos; }); return m; }, [ORDER]);
 
   const [state, setState] = useState(() => flatten(SYNC.all()));
@@ -383,6 +390,16 @@ function Judge({ user, onSignOut }) {
   const [showOverview, setShowOverview] = useState(false);
   const [showJudges, setShowJudges] = useState(false);
   const [saveSt, setSaveSt] = useState(SYNC.status());
+
+  // switch order without losing the current item
+  function switchOrder(mode) {
+    if (mode === orderMode) return;
+    const qi = ORDER[pos];
+    const nextOrder = mode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id);
+    saveOrderPref(user.id, mode);
+    setOrderMode(mode);
+    setPos(nextOrder.indexOf(qi));
+  }
   useEffect(() => SYNC.onStatus(setSaveSt), []);
 
   const item = QUEUE[ORDER[pos]];
@@ -457,8 +474,14 @@ function Judge({ user, onSignOut }) {
     { label: "My derived nominals (.json)", fn: () => exportOwnAnnotations("nominals", nominals) },
   ];
 
+  const orderItems = [
+    { label: (orderMode === "random" ? "● " : "○ ") + "Random (your own shuffle)", fn: () => switchOrder("random") },
+    { label: (orderMode === "csv" ? "● " : "○ ") + "In order (as in predicates.csv)", fn: () => switchOrder("csv") },
+  ];
   const menuItems = [
     { label: "Coverage map", fn: () => setShowOverview(true) },
+    { heading: "Queue order" },
+    ...orderItems,
     ...(user.admin ? [{ label: "Judges", fn: () => setShowJudges(true) }] : []),
     { heading: "Export" },
     ...exportItems,
@@ -482,6 +505,7 @@ function Judge({ user, onSignOut }) {
             ? <Menu label="Menu" items={menuItems} />
             : <>
               <button className="ta" onClick={() => setShowOverview(true)}>Coverage map</button>
+              <Menu label={orderMode === "random" ? "Random order" : "CSV order"} items={orderItems} />
               <Menu label="Export" items={exportItems} />
               {user.admin && <button className="ta" onClick={() => setShowJudges(true)}>Judges</button>}
               <Menu label={user.email} items={[{ label: "Sign out", fn: signOut }]} />
@@ -492,7 +516,7 @@ function Judge({ user, onSignOut }) {
       <div className="stage">
         <button className="nav" onClick={() => go(-1)} disabled={pos === 0} title="Previous in your queue (←)">‹</button>
         <div className="stage-mid">
-          <div className="pos">Item {pos + 1} of {ORDER.length.toLocaleString()} in your queue</div>
+          <div className="pos">Item {pos + 1} of {ORDER.length.toLocaleString()} · {orderMode === "random" ? "your random order" : "CSV order"}</div>
           {item && <Card item={item}
             judgement={judgements[jkey(item.verb, item.feature)]}
             flagged={!!flags[jkey(item.verb, item.feature)]}

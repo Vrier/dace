@@ -1,4 +1,4 @@
-// ahg.js — genuine Anand, Hacquard & Grimshaw (2017) classification.
+// ahg.js — genuine Anand, Grimshaw & Hacquard (2017) classification.
 // Distinct from the project's own 9-way `semantic_class` scheme (now surfaced as "Semantic").
 // Source: "Sentence Embedding Predicates, Factivity and Subjects", Karttunen FestSchrift, Appendix.
 const AHG_VC = "docs/verb_classes.html";

@@ -218,6 +218,22 @@ const QUEUE = (() => {
   }
   return q;
 })();
+function orderPrefKey(userId) {
+  return "dace_judge_order_" + userId;
+}
+function loadOrderPref(userId) {
+  try {
+    return localStorage.getItem(orderPrefKey(userId)) === "csv" ? "csv" : "random";
+  } catch (e) {
+    return "random";
+  }
+}
+function saveOrderPref(userId, mode) {
+  try {
+    localStorage.setItem(orderPrefKey(userId), mode);
+  } catch (e) {
+  }
+}
 function judgeOrder(seedText) {
   let h = 2166136261;
   for (let i = 0; i < seedText.length; i++) {
@@ -410,7 +426,8 @@ function SaveStatus({ st }) {
 }
 function Judge({ user, onSignOut }) {
   const narrow = useNarrow();
-  const ORDER = useMemo(() => judgeOrder(user.id), [user.id]);
+  const [orderMode, setOrderMode] = useState(() => loadOrderPref(user.id));
+  const ORDER = useMemo(() => orderMode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id), [user.id, orderMode]);
   const POS_OF = useMemo(() => {
     const m = new Array(ORDER.length);
     ORDER.forEach((qi, pos2) => {
@@ -429,6 +446,14 @@ function Judge({ user, onSignOut }) {
   const [showOverview, setShowOverview] = useState(false);
   const [showJudges, setShowJudges] = useState(false);
   const [saveSt, setSaveSt] = useState(SYNC.status());
+  function switchOrder(mode) {
+    if (mode === orderMode) return;
+    const qi = ORDER[pos];
+    const nextOrder = mode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id);
+    saveOrderPref(user.id, mode);
+    setOrderMode(mode);
+    setPos(nextOrder.indexOf(qi));
+  }
   useEffect(() => SYNC.onStatus(setSaveSt), []);
   const item = QUEUE[ORDER[pos]];
   const judgedCount = Object.keys(judgements).length;
@@ -505,15 +530,21 @@ function Judge({ user, onSignOut }) {
     { label: "My example sentences (.json)", fn: () => exportOwnAnnotations("sentences", sentences) },
     { label: "My derived nominals (.json)", fn: () => exportOwnAnnotations("nominals", nominals) }
   ];
+  const orderItems = [
+    { label: (orderMode === "random" ? "\u25CF " : "\u25CB ") + "Random (your own shuffle)", fn: () => switchOrder("random") },
+    { label: (orderMode === "csv" ? "\u25CF " : "\u25CB ") + "In order (as in predicates.csv)", fn: () => switchOrder("csv") }
+  ];
   const menuItems = [
     { label: "Coverage map", fn: () => setShowOverview(true) },
+    { heading: "Queue order" },
+    ...orderItems,
     ...user.admin ? [{ label: "Judges", fn: () => setShowJudges(true) }] : [],
     { heading: "Export" },
     ...exportItems,
     { heading: user.email },
     { label: "Sign out", fn: signOut }
   ];
-  return /* @__PURE__ */ React.createElement("div", { className: "app" + (narrow ? " narrow" : "") }, /* @__PURE__ */ React.createElement("header", { className: "top" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement("span", { className: "brand-mark" }, "DACE"), !narrow && /* @__PURE__ */ React.createElement("span", { className: "brand-sub" }, "Judgement Tool")), /* @__PURE__ */ React.createElement("div", { className: "prog" }, /* @__PURE__ */ React.createElement("div", { className: "prog-bar" }, /* @__PURE__ */ React.createElement("div", { className: "prog-fill", style: { width: pct + "%" } })), /* @__PURE__ */ React.createElement("span", { className: "prog-label" }, narrow ? /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " \xB7 ", /* @__PURE__ */ React.createElement("b", null, remaining.toLocaleString()), " left") : /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " judged \xB7 ", remaining.toLocaleString(), " remaining (", pct, "%)"))), /* @__PURE__ */ React.createElement("div", { className: "top-actions" }, /* @__PURE__ */ React.createElement(SaveStatus, { st: saveSt }), narrow ? /* @__PURE__ */ React.createElement(Menu, { label: "Menu", items: menuItems }) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowOverview(true) }, "Coverage map"), /* @__PURE__ */ React.createElement(Menu, { label: "Export", items: exportItems }), user.admin && /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowJudges(true) }, "Judges"), /* @__PURE__ */ React.createElement(Menu, { label: user.email, items: [{ label: "Sign out", fn: signOut }] })))), /* @__PURE__ */ React.createElement("div", { className: "stage" }, /* @__PURE__ */ React.createElement("button", { className: "nav", onClick: () => go(-1), disabled: pos === 0, title: "Previous in your queue (\u2190)" }, "\u2039"), /* @__PURE__ */ React.createElement("div", { className: "stage-mid" }, /* @__PURE__ */ React.createElement("div", { className: "pos" }, "Item ", pos + 1, " of ", ORDER.length.toLocaleString(), " in your queue"), item && /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { className: "app" + (narrow ? " narrow" : "") }, /* @__PURE__ */ React.createElement("header", { className: "top" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement("span", { className: "brand-mark" }, "DACE"), !narrow && /* @__PURE__ */ React.createElement("span", { className: "brand-sub" }, "Judgement Tool")), /* @__PURE__ */ React.createElement("div", { className: "prog" }, /* @__PURE__ */ React.createElement("div", { className: "prog-bar" }, /* @__PURE__ */ React.createElement("div", { className: "prog-fill", style: { width: pct + "%" } })), /* @__PURE__ */ React.createElement("span", { className: "prog-label" }, narrow ? /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " \xB7 ", /* @__PURE__ */ React.createElement("b", null, remaining.toLocaleString()), " left") : /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " judged \xB7 ", remaining.toLocaleString(), " remaining (", pct, "%)"))), /* @__PURE__ */ React.createElement("div", { className: "top-actions" }, /* @__PURE__ */ React.createElement(SaveStatus, { st: saveSt }), narrow ? /* @__PURE__ */ React.createElement(Menu, { label: "Menu", items: menuItems }) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowOverview(true) }, "Coverage map"), /* @__PURE__ */ React.createElement(Menu, { label: orderMode === "random" ? "Random order" : "CSV order", items: orderItems }), /* @__PURE__ */ React.createElement(Menu, { label: "Export", items: exportItems }), user.admin && /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowJudges(true) }, "Judges"), /* @__PURE__ */ React.createElement(Menu, { label: user.email, items: [{ label: "Sign out", fn: signOut }] })))), /* @__PURE__ */ React.createElement("div", { className: "stage" }, /* @__PURE__ */ React.createElement("button", { className: "nav", onClick: () => go(-1), disabled: pos === 0, title: "Previous in your queue (\u2190)" }, "\u2039"), /* @__PURE__ */ React.createElement("div", { className: "stage-mid" }, /* @__PURE__ */ React.createElement("div", { className: "pos" }, "Item ", pos + 1, " of ", ORDER.length.toLocaleString(), " \xB7 ", orderMode === "random" ? "your random order" : "CSV order"), item && /* @__PURE__ */ React.createElement(
     Card,
     {
       item,

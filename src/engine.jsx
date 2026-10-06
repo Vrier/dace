@@ -171,7 +171,7 @@ function AhgChip({ p, withRofi = true, small = false }) {
           <div className="ftip-test">{p.ahg_rofi ? "√ licenses an agentive R-of-I subject" : "# excludes R-of-I subjects"}{p.ahg_factive ? " · AHG-factive" : ""}</div>
           {alt && <div className="ftip-eg">also listed as: {alt.split(";").map((x) => DACE_AHG_CLASSES[x] ? DACE_AHG_CLASSES[x].label : x).join(", ")} sense</div>}
           {isEstimated(p) && <div className="ftip-eg est">⚠ added from the paper — feature values are best-guess estimates</div>}
-          <div className="ftip-link">↗ Anand, Hacquard &amp; Grimshaw (2017)</div>
+          <div className="ftip-link">↗ Anand, Grimshaw &amp; Hacquard (2017)</div>
         </div>)}
       onMouseLeave={() => t && t.hide()}>
       <span className="cls-dot" style={{ background: color }} />

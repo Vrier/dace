@@ -216,7 +216,7 @@ function ClassBar({ f, setF }) {
             <button key={c} className={"clspill" + (on ? " on" : "")}
               style={on ? { background: col, borderColor: col, color: "#fff" } : { borderColor: col }}
               onClick={() => toggleAHG(c)}
-              onMouseEnter={(e) => t && t.show(e, <div className="ftip"><div className="ftip-head"><span className="ftip-name">{ac.label}</span><span className="ftip-sec">{ac.paper}</span></div><div className="ftip-def">{ac.def}</div><div className="ftip-link">↗ Anand, Hacquard &amp; Grimshaw (2017)</div></div>)}
+              onMouseEnter={(e) => t && t.show(e, <div className="ftip"><div className="ftip-head"><span className="ftip-name">{ac.label}</span><span className="ftip-sec">{ac.paper}</span></div><div className="ftip-def">{ac.def}</div><div className="ftip-link">↗ Anand, Grimshaw &amp; Hacquard (2017)</div></div>)}
               onMouseLeave={() => t && t.hide()}>
               <span className="clspill-dot" style={{ background: on ? "#fff" : col }} />
               {ac.label}

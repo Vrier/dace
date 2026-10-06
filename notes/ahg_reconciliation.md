@@ -1,4 +1,4 @@
-# AHG Reconciliation — Anand, Hacquard & Grimshaw (2017) vs. DACE
+# AHG Reconciliation — Anand, Grimshaw & Hacquard (2017) vs. DACE
 
 _Source: "Sentence Embedding Predicates, Factivity and Subjects" (Lauri Karttunen FestSchrift). Appendix transcribed and OCR-corrected._
 

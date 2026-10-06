@@ -15,7 +15,6 @@ Production build of the Claude Design handoff (30 Sept 2026): Explorer + Judge, 
 
 - 245 predicates still have estimated features (·est): 6,370 cells to judge in the Judge.
 - `obsess` is listed as a Say verb (4.1) in `docs-src/verb_classes.md` and `src/levin_classes.js` — probably a slip.
-- Author order: the Festschrift lists **Anand, Grimshaw & Hacquard**; the interface says "Anand, Hacquard & Grimshaw (2017)" (`src/engine.jsx`, `src/app.jsx`, `src/ahg.js`). Decide whether "AHG" stays as the label.
 - Coverage tab (methodology Step 5): `data/sources.js` and `data/concordance.csv` are staged but not built.
 - MegaAcceptability v2's full verb list and the MegaNegRaising data are still needed for the concordance (`notes/coverage_report.md`); `provenance/` is now gitignored, so they stay local.
 - Audit leftovers (`notes/audit_2026-08-17.md`): C4 — registry/concordance mismatches. (C2, the MegaV scale question, is moot since the scores were removed.)

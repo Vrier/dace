@@ -78,7 +78,7 @@ function TableView({ rows, accent, sort, onSort, onOpen }) {
         <thead>
           <tr>
             <SortHead label="Predicate" k="verb" sort={sort} onSort={onSort} className="col-verb" />
-            <SortHead label="AHG class" k="ahg_class" sort={sort} onSort={onSort} className="col-cls" title="Anand, Hacquard & Grimshaw (2017) classification" />
+            <SortHead label="AHG class" k="ahg_class" sort={sort} onSort={onSort} className="col-cls" title="Anand, Grimshaw & Hacquard (2017) classification" />
             <SortHead label="Semantic" k="semantic_class" sort={sort} onSort={onSort} className="col-cls" title="DACE 9-way semantic class (verb_classes.md)" />
             <SortHead label="Levin class" k="levin_class" sort={sort} onSort={onSort} className="col-cls" />
             <SortHead label="Factivity" k="factivity" sort={sort} onSort={onSort} className="col-cat" />
@@ -196,7 +196,7 @@ function AhgOpenPanel({ keyCls, items, onBack, onOpen }) {
               <h2>{c.label}</h2>
               <span className="class-open-n">{items.length}</span>
             </div>
-            <div className="class-open-subtitle">Anand, Hacquard &amp; Grimshaw (2017) · {c.paper}</div>
+            <div className="class-open-subtitle">Anand, Grimshaw &amp; Hacquard (2017) · {c.paper}</div>
           </div>
         </div>
         <p className="class-open-def">{c.def}</p>
