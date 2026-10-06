@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DACE — Complement-Embedding Alternations</title>
+<meta name="description" content="The complement-type, matrix-structural and inferential alternations used to classify English clause-embedding predicates in DACE.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#1f7a63;--accent-tint:rgba(31,122,99,.07);--ink:#23201a;--ink-soft:#6d6453;--ink-faint:#a39c8f;--bg:#f4efe3;--panel:#fffdf7;--line:#e3dac6;--serif:'Newsreader',Georgia,serif;--ui:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.6}
+.page{max-width:800px;margin:0 auto;padding:40px 24px 80px}
+h1{font-family:var(--serif);font-size:36px;font-weight:600;color:var(--ink);border-bottom:2px solid var(--accent);padding-bottom:12px;margin-top:48px}
+h2{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);margin-top:44px;border-bottom:1px solid var(--line);padding-bottom:8px}
+h3{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);margin-top:32px}
+h4{font-family:var(--serif);font-size:17px;font-weight:600;font-style:italic;color:var(--ink-soft);margin-top:20px}
+p{margin:10px 0;text-wrap:pretty}
+em{font-style:italic}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:13px;background:rgba(0,0,0,.07);padding:1px 5px;border-radius:4px}
+pre{background:#2b2820;color:#e8e4da;padding:18px 20px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.55}
+pre code{background:none;padding:0;font-size:inherit}
+blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--accent);background:var(--accent-tint);border-radius:0 8px 8px 0}
+blockquote p{margin:4px 0;font-family:var(--serif);font-style:italic;font-size:15px}
+ul{padding-left:22px;margin:10px 0}
+li{margin:4px 0}
+hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:13.5px}
+th{background:var(--panel);border:1px solid var(--line);padding:8px 12px;text-align:left;font-weight:600}
+td{border:1px solid var(--line);padding:7px 12px}
+tr:nth-child(even) td{background:rgba(0,0,0,.025)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.back-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);padding:8px 16px;border-radius:20px;font-size:13px;text-decoration:none;margin-bottom:32px}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="page">
+<a class="back-btn" href="../">← Back to DACE Explorer</a>
+<h1 id="dace-complement-embedding-alternations">DACE — Complement-Embedding Alternations</h1>
+<p><em>Dictionary of Alternations in Clause Embedding</em></p>
+<p>This document describes the syntactic alternations, semantic properties, and morphosyntactic features used to classify English clause-embedding predicates in <code>predicates.csv</code>. Every column in the database has a corresponding section here describing its empirical tests, what the property reveals about predicate class, and the relevant literature. Sections are organised into five Parts:</p>
+<ul>
+<li><strong>Part A</strong> (§§1–12): Complement-type selection</li>
+<li><strong>Part B</strong> (§§13–18): Matrix structural alternations</li>
+<li><strong>Part C</strong> (§§19–20): Complement–matrix interface phenomena</li>
+<li><strong>Part D</strong> (§§21–24): Semantic and inferential properties</li>
+<li><strong>Part E</strong> (§§25–27): Morpholexical classification</li>
+</ul>
+<p>Within each Part, sections follow the column order in <code>predicates.csv</code> so that the database and documentation are directly cross-referenceable. Alternation sections follow the organisation of Levin (1993), with each alternation characterised by the syntactic frames a participating predicate may appear in, illustrated with numbered examples.</p>
+<hr>
+<h1 id="part-a-complement-type-selection">Part A — Complement-type selection</h1>
+<p><em>What morphosyntactic form can the complement take? These sections cover C-selection properties — the syntactic category and form of the embedded clause — including finite types (declarative, interrogative, mandative subjunctive, wh-exclamative), non-finite and reduced types (infinitival, for-to, bare infinitive, gerund, poss-ing/acc-ing, small clause), nominal complements, and quotative/direct-speech frames.</em></p>
+<hr>
+<h2 id="1-the-declarative-that-clause-complement">1. The Declarative (That-Clause) Complement</h2>
+<p>All predicates in this inventory take a finite declarative complement introduced
+by the complementiser <em>that</em>. Because this property defines the collection, it
+does not constitute an alternation in the usual sense; it is rather the baseline
+construction against which the other alternations are defined.</p>
+<p>The complementiser may be optionally omitted with the majority of these
+predicates:</p>
+<blockquote>
+<p>(1)  a.  She believed [that he was innocent].<br>b.  She believed he was innocent.</p>
+<p>(2)  a.  He said (that) the proposal had been rejected.<br>b.  She knew (that) it was hopeless.<br>c.  He regretted (that) she had left.<br>d.  It surprised me (that) she had called.</p>
+</blockquote>
+<p>A small number of predicates disfavour or resist deletion, particularly in formal
+registers or when the embedded proposition is contrastively focused:</p>
+<blockquote>
+<p>(3)  a.  The court ruled that the evidence was inadmissible.<br>b.  ??The court ruled the evidence was inadmissible.</p>
+</blockquote>
+<p>The that-clause complement is presupposed to be true by factive predicates
+(<em>know</em>, <em>regret</em>, <em>discover</em>) but is asserted without presupposition by
+non-factive predicates (<em>believe</em>, <em>think</em>, <em>say</em>). This distinction in factivity
+is orthogonal to the syntactic alternations described in subsequent sections.</p>
+<p><strong>Participating classes:</strong> all classes in this inventory.</p>
+<hr>
+<h2 id="2-the-infinitival-complement-alternation">2. The Infinitival Complement Alternation</h2>
+<p>A substantial subclass of clause-embedding predicates allows alternation between a
+finite that-clause and an infinitival (to-VP) complement. The alternation takes
+two main forms depending on whether the infinitival complement is controlled by
+the matrix subject (subject-control) or requires an overt NP argument (ECM,
+raising-to-object, or object-control):</p>
+<blockquote>
+<p>(4)  a.  She wanted [that she would leave].  <em>(finite)</em><br>b.  She wanted [to leave].  <em>(subject-control infinitive)</em></p>
+<p>(5)  a.  She believed [that he was innocent].  <em>(finite)</em><br>b.  She believed [him to be innocent].  <em>(ECM infinitive)</em></p>
+<p>(6)  a.  She persuaded him [that he should leave].  <em>(finite)</em><br>b.  She persuaded him [to leave].  <em>(object-control infinitive)</em></p>
+</blockquote>
+<p>The ECM infinitive (5b), in which the matrix object is the surface subject of the
+embedded predicate, is characteristic of cognitive and communicative predicates
+that take an object NP argument (<em>believe</em>, <em>consider</em>, <em>show</em>, <em>tell</em>). The
+object-control infinitive (6b) is characteristic of directive and communicative
+predicates that transfer a directive to a recipient (<em>persuade</em>, <em>warn</em>, <em>order</em>,
+<em>urge</em>). Subject-control infinitives (4b) are characteristic of desiderative
+predicates (<em>want</em>, <em>wish</em>, <em>hope</em>, <em>intend</em>, <em>decide</em>).</p>
+<p>The infinitival complement does not alternate with the that-clause complement in
+psych-causative predicates (<em>surprise</em>, <em>annoy</em>, <em>amuse</em>) or in raising-evidential
+predicates (<em>seem</em>, <em>appear</em>), which take an expletive <em>it</em> subject in their
+finite construction and a raised NP subject in their infinitival construction
+(see §13 below).</p>
+<p><strong>Participating classes:</strong> desiderative (§5.1), directive (§6.1), report-to
+(§4.2), assertive report (§4.1, partial), conjecture (§1.3, marginal ECM),
+comprehend (§1.1, ECM subset).</p>
+<hr>
+<h2 id="3-the-interrogative-complement-alternation">3. The Interrogative Complement Alternation</h2>
+<p>A subclass of clause-embedding predicates, termed <em>responsive</em> predicates, alternates
+between a declarative that-clause and an indirect interrogative complement
+introduced by a wh-word or by <em>whether</em>:</p>
+<blockquote>
+<p>(7)  a.  She knew [that he was there].  <em>(declarative)</em><br>b.  She knew [whether he was there].  <em>(polar interrogative)</em><br>c.  She knew [where he was].  <em>(constituent interrogative)</em></p>
+<p>(8)  a.  She discovered [that the keys were missing].  <em>(declarative)</em><br>b.  She discovered [who had taken the keys].  <em>(constituent interrogative)</em></p>
+</blockquote>
+<p>Predicates that lack the interrogative alternation are termed <em>anti-responsive</em>.
+These predicates embed only declarative complements:</p>
+<blockquote>
+<p>(9)  a.  She believed [that he was innocent].<br>b.  *She believed [whether he was innocent].<br>c.  *She believed [who was innocent].</p>
+</blockquote>
+<p>The responsive/anti-responsive distinction is strongly correlated with factivity
+and semantic class. Factive and semi-factive cognitive predicates (<em>know</em>,
+<em>discover</em>, <em>realise</em>, <em>notice</em>) are typically responsive. Non-factive doxastic
+predicates (<em>believe</em>, <em>think</em>, <em>suppose</em>, <em>reckon</em>) are uniformly anti-responsive.
+Among communicative predicates, responsiveness is restricted to informational
+predicates (<em>show</em>, <em>explain</em>, <em>tell</em>, <em>demonstrate</em>) as opposed to pure assertion
+predicates (<em>say</em>, <em>claim</em>, <em>assert</em>), which are anti-responsive.</p>
+<p>The interrogative complement does not occur with psych-causative predicates
+(<em>surprise</em>, <em>annoy</em>), emotive predicates (<em>regret</em>, <em>love</em>), desiderative
+predicates (<em>want</em>, <em>wish</em>), or directive predicates (<em>order</em>, <em>demand</em>).</p>
+<p><strong>Participating classes:</strong> comprehend (§1.1, responsive), discover (§1.2,
+responsive), perception (§8.1), communicative responsive subsets of report-to
+(§4.2) and assertive report (§4.1).</p>
+<hr>
+<h2 id="4-the-gerund-complement-alternation">4. The Gerund Complement Alternation</h2>
+<p>Several classes of clause-embedding predicates allow alternation between a finite
+that-clause and a gerund (V-<em>ing</em>) complement:</p>
+<blockquote>
+<p>(10) a.  She regretted [that she had lied].  <em>(finite)</em><br>b.  She regretted [lying].  <em>(gerund)</em></p>
+<p>(11) a.  He admitted [that he had taken the money].  <em>(finite)</em><br>b.  He admitted [taking the money].  <em>(gerund)</em></p>
+<p>(12) a.  She suggested [that they should leave].  <em>(finite)</em><br>b.  She suggested [leaving].  <em>(gerund)</em></p>
+</blockquote>
+<p>The gerund complement is semantically similar to the finite complement but tends
+to presuppose the eventuality it describes, making it more natural with factive
+and semi-factive predicates. The finite complement allows embedded tense and
+polarity marking, which the gerund does not freely permit:</p>
+<blockquote>
+<p>(13) a.  She regretted [that she had <strong>not</strong> lied].  <em>(negation in finite)</em><br>b.  She regretted [<strong>not</strong> lying].  <em>(gerund with negation, marked but possible)</em><br>c.  She regretted [not <strong>having</strong> lied].  <em>(perfect gerund)</em></p>
+</blockquote>
+<p>The gerund alternation is characteristic of factive-emotive predicates (<em>regret</em>,
+<em>resent</em>, <em>hate</em>, <em>enjoy</em>, <em>love</em>, <em>lament</em>), concessive communicative predicates
+(<em>admit</em>, <em>acknowledge</em>, <em>confess</em>), and non-directive communicative predicates
+(<em>suggest</em>, <em>recommend</em>, <em>propose</em>). It is absent with doxastic predicates
+(<em>believe</em>, <em>think</em>), psych-causative predicates (<em>surprise</em>, <em>annoy</em>), directive
+predicates (<em>order</em>, <em>demand</em>), and raising-evidential predicates (<em>seem</em>, <em>appear</em>).</p>
+<p><strong>Participating classes:</strong> factive emotive (§2.1), concessive (§4.3), assertive
+report (§4.1, partial).</p>
+<hr>
+<h2 id="5-the-small-clause-complement">5. The Small Clause Complement</h2>
+<p>A restricted set of predicates allows a small clause — a predicative phrase
+without an overt finite verb — as their complement:</p>
+<blockquote>
+<p>(14) a.  She considered [him a fool].  <em>(NP small clause)</em><br>b.  She found [the proposal unacceptable].  <em>(AP small clause)</em><br>c.  She wanted [him out of the house].  <em>(PP small clause)</em></p>
+</blockquote>
+<p>The small clause complement is most productive with cognitive predicates of
+evaluation (<em>consider</em>, <em>find</em>, <em>deem</em>, <em>judge</em>), where it alternates with a
+finite that-clause containing a copula:</p>
+<blockquote>
+<p>(15) a.  She considered [that he was a fool].<br>b.  She considered [him a fool].</p>
+</blockquote>
+<p>The small clause complement is also found with perception predicates in their
+eventive reading (<em>see</em>, <em>hear</em>, <em>watch</em>, <em>feel</em>):</p>
+<blockquote>
+<p>(16) a.  She saw [him cross the road] / [him crossing the road].<br>b.  She heard [the door slam].</p>
+</blockquote>
+<p>The small clause complement is absent from communicative predicates (other than
+the show/demonstrate subtype), psych-causative predicates, emotive predicates,
+desiderative predicates, and raising-evidential predicates.</p>
+<p><strong>Participating classes:</strong> conjecture subset (§1.3: <em>consider</em>, <em>deem</em>, <em>judge</em>),
+perception (§8.1), report-to subset (§4.2: <em>show</em>, <em>demonstrate</em>).</p>
+<hr>
+<h2 id="6-the-np-complement-alternation">6. The NP Complement Alternation</h2>
+<p>Several classes of clause-embedding predicates allow alternation between a finite
+that-clause and a propositional NP complement:</p>
+<blockquote>
+<p>(17) a.  She claimed [that he had lied].  <em>(finite)</em><br>b.  She denied [the accusation].  <em>(propositional NP)</em></p>
+<p>(18) a.  He admitted [that he had been there].  <em>(finite)</em><br>b.  He admitted [the error].  <em>(nominal)</em></p>
+<p>(19) a.  She promised [that she would return].  <em>(finite)</em><br>b.  She promised [her return].  <em>(nominal)</em></p>
+</blockquote>
+<p>The propositional NP alternant is not fully synonymous with the finite clause:
+the NP nominalization tends to be less specific and does not carry embedded tense
+or polarity marking. Both constructions, however, encode a propositional attitude
+of the matrix subject toward an embedded content. The alternation is available with
+communicative predicates (<em>claim</em>, <em>deny</em>, <em>report</em>, <em>announce</em>, <em>admit</em>,
+<em>promise</em>) and cognitive predicates (<em>know</em>, <em>believe</em>, <em>doubt</em>, <em>suspect</em>,
+<em>expect</em>, <em>remember</em>).</p>
+<p>It is absent from psych-causative predicates and raising-evidential predicates,
+which require a full clausal complement.</p>
+<p><strong>Participating classes:</strong> assertive report (§4.1, partial), tell verbs (§4.2,
+partial), concessive (§4.3, partial), comprehend (§1.1, partial), conjecture
+(§1.3, partial).</p>
+<hr>
+<h2 id="7-the-quotative-direct-speech-alternation">7. The Quotative (Direct Speech) Alternation</h2>
+<p>A large subclass of communicative predicates allows alternation between the
+indirect speech construction with a finite that-clause and a quotative
+construction with a directly quoted string:</p>
+<blockquote>
+<p>(33) a.  She said [that he was late].  <em>(indirect speech)</em><br>b.  She said [&#39;He is late.&#39;].  <em>(direct speech / quotative)</em></p>
+<p>(34) a.  He whispered [that she should leave].  <em>(indirect)</em><br>b.  He whispered [&#39;You should leave.&#39;].  <em>(direct)</em></p>
+<p>(35) a.  She admitted [that she had been wrong].  <em>(indirect)</em><br>b.  She admitted [&#39;I was wrong.&#39;].  <em>(direct)</em></p>
+</blockquote>
+<p>The quotative construction is restricted to predicates that can denote an act
+of speaking or vocalization. It is therefore absent from cognitive predicates
+(<em>believe</em>, <em>think</em>, <em>know</em>), emotive predicates (<em>regret</em>, <em>fear</em>, <em>love</em>),
+psych-causative predicates (<em>surprise</em>, <em>amuse</em>), desiderative predicates
+(<em>want</em>, <em>wish</em>), and raising-evidential predicates (<em>seem</em>, <em>appear</em>).</p>
+<p>Among communicative predicates, manner-of-speaking verbs (<em>whisper</em>, <em>mutter</em>,
+<em>shout</em>, <em>growl</em>, <em>bark</em>) take the quotative alternation freely, as do assertion
+verbs (<em>claim</em>, <em>assert</em>, <em>declare</em>, <em>state</em>) and response verbs (<em>reply</em>,
+<em>retort</em>, <em>answer</em>). Stative cognitive predicates such as <em>understand</em> or
+<em>realise</em> do not take the quotative alternation.</p>
+<p><strong>Participating classes:</strong> assertive report (§4.1), tell verbs (§4.2), concessive
+(§4.3, partial).</p>
+<hr>
+<h2 id="8-the-mandative-subjunctive-complement">8. The Mandative Subjunctive Complement</h2>
+<p>A subclass of communicative and directive predicates selects a complement clause
+containing a bare infinitival verbal form in the mandative subjunctive:</p>
+<blockquote>
+<p>(36) a.  She insisted [that he leave].  <em>(mandative subjunctive)</em><br>b.  She insisted [that he was leaving].  <em>(indicative — different reading)</em></p>
+<p>(37) a.  They demanded [that the report be released immediately].  <em>(mandative)</em><br>b.  They demanded [that the report was released immediately].  <em>(indicative — factual)</em></p>
+</blockquote>
+<p>The mandative subjunctive complement encodes a directive content: the subject
+of the embedded clause is directed to bring about the embedded eventuality. This
+contrasts with the indicative, which encodes a factual or epistemic claim. The
+mandative subjunctive is therefore a diagnostic for directive and
+directive-communicative predicates:</p>
+<blockquote>
+<p>(38) a.  She ordered [that he leave at once].  <em>(mandative: directive)</em><br>b.  She reported [that he left at once].  <em>(indicative only: factual)</em></p>
+</blockquote>
+<p>The mandative subjunctive may be replaced by <em>should</em> in informal registers:</p>
+<blockquote>
+<p>(39)  She insisted that he leave / that he should leave.</p>
+</blockquote>
+<p>Purely factual reporting predicates (<em>say</em>, <em>claim</em>, <em>believe</em>, <em>know</em>) do not
+take the mandative subjunctive, nor do emotive or psych-causative predicates.</p>
+<p><strong>Participating classes:</strong> directive (§6.1), partial in assertive report
+(§4.1) and report-to (§4.2) (<em>insist</em>, <em>stipulate</em>, <em>decree</em>, <em>mandate</em>,
+<em>recommend</em>, <em>propose</em>).</p>
+<hr>
+<h2 id="9-the-for-to-infinitival-complement">9. The For-To Infinitival Complement</h2>
+<p>A subset of clause-embedding predicates permits an infinitival complement in
+which an overt NP subject appears inside the complement and is introduced by
+the complementiser <em>for</em>:</p>
+<blockquote>
+<p>(67)  a.  She arranged <strong>for him to attend</strong>.<br>b.  She hoped <strong>for the proposal to be accepted</strong>.<br>c.  She waited <strong>for the package to arrive</strong>.<br>d.  She would prefer <strong>for him to handle it</strong>.</p>
+</blockquote>
+<p>This construction is structurally distinct from ECM (§2), in which no <em>for</em>
+complementiser is present and the embedded subject bears matrix case (<em>She
+believed <strong>him</strong> to be innocent</em>), and from object-control infinitives, in which
+the overt NP is the theta-role-bearing object of the matrix predicate (<em>She
+persuaded <strong>him</strong> to leave</em>). In the for-to construction, the embedded subject
+receives no theta-role from the matrix predicate:</p>
+<blockquote>
+<p>(68)  a.  She believed [him to be innocent].  <em>(ECM: no for; him bears matrix case)</em><br>b.  She persuaded [him to leave].  <em>(object-control: him is matrix object)</em><br>c.  She arranged [for him to attend].  <em>(for-to: him inside for-CP)</em><br>d.  She hoped [for it to rain].  <em>(for-to: expletive it possible — rules out control)</em></p>
+</blockquote>
+<p>The for-to construction is licensed by desiderative predicates (<em>hope</em>, <em>wish</em>,
+<em>long</em>, <em>prefer</em>), arrangement predicates (<em>arrange</em>, <em>plan</em>), and some causatives.
+It is excluded with purely doxastic predicates:</p>
+<blockquote>
+<p>(69)  a.  *She believed for him to be innocent.<br>b.  *She knew for the result to be final.</p>
+</blockquote>
+<p><strong>Tests.</strong> (a) Insert <em>for</em> before the embedded subject; (b) replace the
+embedded subject with the expletive <em>it</em> or <em>there</em> to verify the embedded
+subject is not a matrix theta-role-bearer.</p>
+<p><strong>What it shows.</strong> For-to licensing indicates that the predicate selects a
+complement expressing a non-actual (desiderative, prospective, or
+arrangement) event, where the embedded subject has no theta-role assignment
+from the matrix predicate and no matrix case transfer.</p>
+<p><strong>Literature.</strong> Koster &amp; May (1982) discuss the structural properties of the
+for-complementiser. Pesetsky (1991) distinguishes for-to from ECM in terms
+of case. Wurmbrand &amp; Lohninger (2023, <em>An Implicational Universal in
+Complementation</em>) situate the for-to type within a typology of complement
+clause sizes.</p>
+<hr>
+<h2 id="10-the-bare-infinitive-vs-participial-progressive-complement">10. The Bare Infinitive vs. Participial (Progressive) Complement</h2>
+<p>Perception predicates allow alternation between a bare infinitive complement
+and a progressive (participial) complement, with a systematic aspectual
+difference:</p>
+<blockquote>
+<p>(70)  a.  She saw [him <strong>cross</strong> the road].  <em>(bare infinitive: complete event)</em><br>b.  She saw [him <strong>crossing</strong> the road].  <em>(progressive: event in progress)</em></p>
+<p>(71)  a.  She heard [the door <strong>slam</strong>].  <em>(complete, punctual event)</em><br>b.  She heard [someone <strong>slamming</strong> the door].  <em>(ongoing action)</em></p>
+<p>(72)  a.  She felt [the ground <strong>shake</strong>].  <em>(complete tremor)</em><br>b.  She felt [the ground <strong>shaking</strong>].  <em>(ongoing shaking)</em></p>
+</blockquote>
+<p>The bare infinitive form reports that the perceiver witnessed the event in its
+entirety from initiation to completion. The progressive form reports that the
+perceiver observed the event in progress, without necessarily witnessing its
+completion or onset. For durative events the distinction is semantically
+robust; for punctual events it may collapse.</p>
+<p>The alternation is restricted to direct perception predicates (<em>see</em>, <em>hear</em>,
+<em>watch</em>, <em>feel</em>, <em>notice</em>). It is unavailable with cognitive evaluative
+predicates that take small clauses:</p>
+<blockquote>
+<p>(73)  a.  She considered [him a fool].  <em>(NP small clause)</em><br>b.  *She considered [him being a fool].  <em>(ungrammatical in this sense)</em></p>
+</blockquote>
+<p><strong>Tests.</strong> (a) Can the predicate take both a bare infinitive and a progressive
+complement with a durative verb? (b) Is there an aspectual contrast (complete
+vs. ongoing)? (c) Does the progressive form allow cancellation of event
+completion (<em>I saw him leaving but he turned back</em> ✓ vs <em>*I saw him leave but
+he turned back</em>)?</p>
+<p><strong>What it shows.</strong> The alternation is diagnostic for the direct perception class,
+separating it from cognitive evaluative predicates (NP/AP small clauses) and
+from purely indirect perception predicates (finite complements only).</p>
+<p><strong>Literature.</strong> Higginbotham (1983, <em>Linguistic Inquiry</em> 14) provides an early
+formal analysis. Delfitto (2006) situates the contrast within an aspect-projection
+framework. Huddleston &amp; Pullum (2002, <em>Cambridge Grammar of the English Language</em>,
+Ch. 14) provide a thorough descriptive account of perception verb complementation.</p>
+<hr>
+<h2 id="11-the-embedded-wh-exclamative-complement">11. The Embedded Wh-Exclamative Complement</h2>
+<p>A subclass of clause-embedding predicates admits a wh-exclamative complement —
+a complement introduced by a wh-word and expressing an extreme or notable
+degree — while the majority of predicates reject such complements.</p>
+<blockquote>
+<p>(74)  a.  I know [what a linguist she is]! ✓<br>b.  I realize [how talented he is]! ✓<br>c.  I noticed [what a mess the room was in]. ✓<br>d.  *I believe [what a linguist she is].<br>e.  *I think [how talented he is].<br>f.  *She said [what a mess the room was in].<br>g.  *It surprised me [what a brilliant result she achieved].</p>
+</blockquote>
+<p>The wh-exclamative complement is distinct from the wh-interrogative complement
+(§3). Interrogative complements include polar (<em>whether</em>) and constituent
+(<em>who</em>, <em>what</em>) questions and are admitted by both factive and some non-factive
+predicates. Exclamative complements involve a degree-evaluative reading (<em>what
+a great X</em>; <em>how Adj</em>) and are restricted to factive predicates:</p>
+<blockquote>
+<p>(75)  a.  She knows [what he bought].  <em>(wh-interrogative: responsive)</em><br>b.  She knows [what a brilliant thing he bought]! <em>(wh-exclamative: factive)</em><br>c.  She wonders [what he bought].  <em>(wh-interrogative: wonder is non-factive)</em><br>d.  *She wonders [what a brilliant thing he bought].  <em>(exclamative: unavailable)</em></p>
+</blockquote>
+<p><strong>Tests.</strong> (a) Insert a degree exclamative (<em>what a N</em>, <em>how Adj</em>) as the
+complement; (b) verify the sentence has an expressive, degree-marking reading;
+(c) verify the predicate must be factive for grammaticality.</p>
+<p><strong>What it shows.</strong> Wh-exclamative embedding is a strict diagnostic for factivity
+that goes beyond the standard presupposition tests: it requires both
+presupposition of the complement content and the availability of an evaluative,
+non-at-issue expressive reading. It therefore provides an additional test
+separating factive predicates from semi-factive and non-factive predicates,
+and is particularly useful for borderline cases.</p>
+<p><strong>Participating classes.</strong> Comprehend verbs (<em>know</em>, <em>understand</em>, <em>appreciate</em>),
+discover verbs (<em>realize</em>, <em>notice</em>), factive emotive predicates (<em>regret</em>,
+partially). Not available with non-factive cognitive, communicative,
+psych-causative, or raising predicates.</p>
+<p><strong>Literature.</strong> Zanuttini &amp; Portner (2003, <em>Language</em> 79:1) is the foundational
+formal analysis of exclamative clauses; they argue that exclamatives contain an
+abstract factive morpheme, explaining the restriction to factive predicates.
+Lahiri (2002, <em>Questions and Answers in Embedded Contexts</em>, Kluwer) discusses
+embedding restrictions on exclamative complements. d&#39;Avis (2002, <em>On the
+Interpretation of Wh-Clauses in Exclamative Environments</em>) provides
+cross-linguistic comparison.</p>
+<hr>
+<h2 id="12-the-possessive-vs-accusative-gerund-poss-ing-acc-ing">12. The Possessive vs. Accusative Gerund (Poss-ing / Acc-ing)</h2>
+<p>Section §4 treats the gerund complement as a single type. A further alternation
+exists within gerund complements between the possessive gerund (<em>poss-ing</em>,
+in which the gerund subject bears genitive/possessive case) and the accusative
+gerund (<em>acc-ing</em>, in which the gerund subject bears accusative case):</p>
+<blockquote>
+<p>(76)  a.  She resented [<strong>his</strong> leaving]. <em>(poss-ing: genitive subject)</em><br>b.  She resented [<strong>him</strong> leaving]. <em>(acc-ing: accusative subject)</em></p>
+<p>(77)  a.  She remembered [<strong>his</strong> calling late at night].<br>b.  She remembered [<strong>him</strong> calling late at night].</p>
+<p>(78)  a.  She disapproved of [<strong>his</strong> taking so long].<br>b.  She disapproved of [<strong>him</strong> taking so long].</p>
+</blockquote>
+<p>The poss-ing construction treats the gerund phrase as more nominal: the <em>-ing</em>
+form heads a noun phrase modified by a possessive, and the predicate expresses
+an attitude toward the fact or state of affairs described. The acc-ing
+construction treats the gerund phrase as more clausal: the <em>-ing</em> form heads
+a participial clause with an accusative subject, and the predicate expresses
+an attitude toward the event itself.</p>
+<p>The two constructions are not interchangeable for all predicates. Predicates
+of evaluation and disapproval favour poss-ing; predicates of perception and
+memory allow both but with aspectual differences (see §10). With non-human
+or non-referential subjects, acc-ing is typically required:</p>
+<blockquote>
+<p>(79)  a.  She resented [<strong>the train</strong> arriving late]. <em>(acc-ing: natural)</em><br>b.  ??She resented [<strong>the train&#39;s</strong> arriving late]. <em>(poss-ing with inanimate: marked)</em></p>
+</blockquote>
+<p><strong>Tests.</strong> (a) Does the predicate accept both genitive and accusative case on
+the gerund subject? (b) Is there a meaning difference between the two forms?
+(c) Does replacement by an expletive subject reveal which form is genuinely
+clausal?</p>
+<p><strong>What it shows.</strong> The alternation tracks the degree to which the predicate
+nominalises its complement. Predicates that fully nominalise the complement
+(treating it as an abstract propositional object) favour poss-ing; predicates
+that retain the clausal structure (treating it as an event or process) favour
+acc-ing. The distribution correlates with the verb&#39;s position on the
+nominal–verbal spectrum of its complement selection.</p>
+<p><strong>Literature.</strong> Pullum &amp; Huddleston (2002, <em>Cambridge Grammar of the English
+Language</em>, Ch. 13) provide a detailed descriptive account. Reuland (1983,
+<em>Governing -ing</em>, <em>Linguistic Inquiry</em> 14:1) analyses the structural differences
+in terms of phrase-level category membership. Abney (1987, <em>The English Noun
+Phrase in its Sentential Aspect</em>, MIT dissertation) situates the contrast within
+DP-structure theory.</p>
+<hr>
+<h1 id="part-b-matrix-structural-alternations">Part B — Matrix structural alternations</h1>
+<p><em>Levin-style structural rearrangements at the matrix clause level that clause-embedding predicates participate in. These change the surface form without altering the basic predicate-complement relationship. Weak island effects are semantically conditioned but represent overt syntactic behaviour and are grouped here.</em></p>
+<hr>
+<h2 id="13-the-extraposition-alternation">13. The Extraposition Alternation</h2>
+<p>Many clause-embedding predicates allow alternation between a construction in
+which the embedded clause appears in canonical subject or object position and a
+construction in which the clause is rightward-extraposed and replaced by a
+dummy <em>it</em>:</p>
+<blockquote>
+<p>(20) a.  [That she left] surprised him.  <em>(canonical subject)</em><br>b.  It surprised him [that she left].  <em>(extraposed subject)</em></p>
+<p>(21) a.  He found [that she had been lying] troubling.<br>b.  He found it troubling [that she had been lying].  <em>(with <em>it</em> placeholder)</em></p>
+</blockquote>
+<p>For psych-causative predicates (<em>surprise</em>, <em>annoy</em>, <em>amuse</em>, <em>shock</em>), the
+extraposed construction is the neutral active-voice frame; the pre-verbal clausal
+subject is syntactically possible but stylistically marked:</p>
+<blockquote>
+<p>(22) a.  It annoyed her [that he was late].  <em>(neutral)</em><br>b.  ?[That he was late] annoyed her.  <em>(marked)</em></p>
+</blockquote>
+<p>For raising-evidential predicates (<em>seem</em>, <em>appear</em>, <em>turn_out</em>), the expletive
+<em>it</em> subject is obligatory in the finite construction; these predicates do not
+allow a referential clausal subject:</p>
+<blockquote>
+<p>(23) a.  It seems [that she has resigned].  <em>(grammatical)</em><br>b.  *She seems [that she has resigned].  <em>(ungrammatical)</em></p>
+</blockquote>
+<p>For most non-psych, non-raising predicates, extraposition is optional and
+stylistically determined:</p>
+<blockquote>
+<p>(24) a.  She regretted [that she had left].  <em>(fine)</em><br>b.  ??It regretted her [that she had left].  <em>(generally ungrammatical with experiencer subject)</em></p>
+</blockquote>
+<p>Obligatory or strongly preferred extraposition thus serves as a diagnostic for
+psych-causative and raising-evidential predicates; the alternation is available
+more broadly but is not required.</p>
+<p><strong>Participating classes:</strong> psych causative (§3.1, obligatory in active),
+raising evidential (§7.1, obligatory); marginally available elsewhere.</p>
+<hr>
+<h2 id="14-the-raising-alternation">14. The Raising Alternation</h2>
+<p>The raising-evidential predicates allow alternation between an impersonal
+<em>it</em>-subject construction with a finite complement and a raising construction
+in which the subject of the embedded complement is raised to matrix subject
+position:</p>
+<blockquote>
+<p>(25) a.  It seems [that he is ill].  <em>(expletive subject)</em><br>b.  He seems [to be ill].  <em>(raised subject)</em></p>
+<p>(26) a.  It turned out [that she was wrong].  <em>(expletive subject)</em><br>b.  She turned out [to be wrong].  <em>(raised subject)</em></p>
+</blockquote>
+<p>In the raising construction, the surface matrix subject bears no theta role with
+respect to the matrix predicate; the theta role is discharged by the embedded
+predicate. This is evidenced by the availability of expletive and idiom-chunk
+subjects, which lack independent reference:</p>
+<blockquote>
+<p>(27) a.  It seems that there is a problem.  →  There seems to be a problem.<br>b.  It seems that the cat is out of the bag.  →  The cat seems to be out of the bag.</p>
+</blockquote>
+<p>The raising alternation is not available to any other class in this inventory.
+Cognitive and emotive predicates do not raise:</p>
+<blockquote>
+<p>(28) a.  She knew that he was ill.<br>b.  *He knew to be ill.  <em>(ungrammatical as raising)</em></p>
+<p>(29) a.  She regretted that he was late.<br>b.  *He regretted to be late.  <em>(ungrammatical as raising)</em></p>
+</blockquote>
+<p><strong>Participating classes:</strong> raising evidential (§7.1) exclusively; <em>be_certain</em>
+and <em>be_sure</em> (§1.1) participate marginally (<em>She is certain to win</em>).</p>
+<hr>
+<h2 id="15-the-recipient-ditransitive-alternation">15. The Recipient (Ditransitive) Alternation</h2>
+<p>Many communicative predicates allow an optional or obligatory recipient NP
+argument between the verb and the embedded complement:</p>
+<blockquote>
+<p>(30) a.  The sign warned [that the bridge was unsafe].  <em>(no recipient)</em><br>b.  The sign warned drivers [that the bridge was unsafe].  <em>(with recipient)</em></p>
+<p>(31) a.  She told [that the project was cancelled].  <em>(marginal without recipient)</em><br>b.  She told him [that the project was cancelled].  <em>(with recipient)</em></p>
+</blockquote>
+<p>For some predicates the recipient argument is obligatory:</p>
+<blockquote>
+<p>(32) a.  *She informed that the meeting was postponed.  <em>(recipient required)</em><br>b.  She informed us that the meeting was postponed.</p>
+</blockquote>
+<p>The recipient argument is typically animate and denotes the addressee of the
+communicated information. The ditransitive frame creates an oriented
+communication: the matrix subject communicates the propositional content to the
+recipient.</p>
+<p>The recipient alternation is absent from purely predicational constructions
+(<em>seem</em>, <em>appear</em>), emotive predicates (<em>regret</em>, <em>fear</em>), psych-causative
+predicates (<em>surprise</em>, <em>amuse</em>) in their basic active transitive frame, and
+doxastic predicates (<em>believe</em>, <em>think</em>).</p>
+<p><strong>Participating classes:</strong> report-to (§4.2, defining alternation), partial
+in assertive report (§4.1), concessive (§4.3), and directive (§6.1).</p>
+<hr>
+<h2 id="16-the-factive-passive">16. The Factive Passive</h2>
+<p>Several classes of clause-embedding predicates allow a passive construction in
+which the clausal complement is retained after the passivized verb:</p>
+<blockquote>
+<p>(40) a.  It surprised me [that she had left].  <em>(active, psych-causative)</em><br>b.  I was surprised [that she had left].  <em>(factive passive)</em></p>
+<p>(41) a.  She told him [that the meeting was cancelled].  <em>(active, ditransitive)</em><br>b.  He was told [that the meeting was cancelled].  <em>(passive, recipient promoted)</em></p>
+<p>(42) a.  She informed us [that the bridge was unsafe].  <em>(active)</em><br>b.  We were informed [that the bridge was unsafe].  <em>(passive)</em></p>
+</blockquote>
+<p>For psych-causative predicates (40), the passive promotes the experiencer object
+to subject. For ditransitive communicative predicates (41–42), the passive
+promotes the recipient object to subject. In both cases the complement clause is
+retained in postverbal position.</p>
+<p>The factive passive is not available to cognitive predicates (<em>know</em>, <em>believe</em>,
+<em>comprehend</em>), whose subjects are inherently stative experiencers and which do
+not form regular passives:</p>
+<blockquote>
+<p>(43) a.  She knew that he was guilty.<br>b.  *He was known that he was guilty.  <em>(ungrammatical as experiencer passive)</em></p>
+</blockquote>
+<p>Nor is it available to emotive predicates with a subject experiencer (<em>regret</em>,
+<em>fear</em>, <em>love</em>):</p>
+<blockquote>
+<p>(44) a.  She regretted that she had lied.<br>b.  *She was regretted that she had lied.</p>
+</blockquote>
+<p><strong>Participating classes:</strong> psych causative (§3.1), report-to (§4.2, partial:
+verbs with overt recipient <em>tell</em>, <em>inform</em>, <em>warn</em>, <em>advise</em>, <em>remind</em>, <em>assure</em>).</p>
+<hr>
+<h2 id="17-negative-raising">17. Negative Raising</h2>
+<p>Negative raising (NR) is the phenomenon by which negation placed in the matrix
+clause of a clause-embedding predicate is interpreted as taking scope within the
+embedded clause. A predicate licences NR if the surface parse <em>S neg V that p</em>
+has a prominent reading equivalent to <em>S V that neg p</em>.</p>
+<blockquote>
+<p>(50)  a.  I don&#39;t think he&#39;ll come.  <em>(surface: neg in matrix)</em><br>b.  ≈ I think he won&#39;t come.  <em>(reading: neg in embedded)</em></p>
+<p>(51)  a.  She doesn&#39;t believe it&#39;s raining.<br>b.  ≈ She believes it isn&#39;t raining.</p>
+<p>(52)  a.  He doesn&#39;t want her to leave.<br>b.  ≈ He wants her not to leave.</p>
+</blockquote>
+<p>The NR reading is unavailable with factive predicates, emotive predicates, and
+predicates whose complements are presupposed:</p>
+<blockquote>
+<p>(53)  a.  She doesn&#39;t know that he&#39;s here.  (≠ She knows that he isn&#39;t here)<br>b.  She doesn&#39;t regret that she left.  (≠ She regrets that she didn&#39;t leave)<br>c.  It doesn&#39;t surprise me that she called.  (≠ It surprises me that she didn&#39;t call)</p>
+</blockquote>
+<p><strong>Tests.</strong></p>
+<p><em>(a) The either...or diagnostic</em> (Horn 1978): <em>I don&#39;t think p or q</em> is ambiguous
+for NR predicates — it can mean <em>I think neither p nor q</em> — but unambiguous for
+non-NR predicates.</p>
+<p><em>(b) Contradiction test:</em> <em>I don&#39;t think p, in fact I think p</em> is contradictory
+for NR predicates (the NR reading and the assertion conflict) but not for non-NR
+predicates.</p>
+<p><strong>What it shows.</strong> NR correlates with non-factivity and with the <em>excluded middle</em>
+inference pattern of doxastic predicates: negating the matrix attitude shifts
+the polarity of the embedded proposition rather than denying the attitude
+altogether. Horn (1978) argues that NR predicates are those whose complements
+have exactly two polar alternatives (<em>p</em> or <em>not-p</em>), so negating the attitude
+yields the attitude toward the opposite alternative.</p>
+<p><strong>Participating classes.</strong> Doxastic/conjecture predicates (<em>think</em>, <em>believe</em>,
+<em>suppose</em>, <em>assume</em>, <em>expect</em>, <em>reckon</em>, <em>want</em>, <em>hope</em>); not available with
+factives (<em>know</em>, <em>realize</em>, <em>regret</em>), psych-causatives (<em>surprise</em>, <em>annoy</em>),
+or communicative predicates.</p>
+<p><strong>Literature.</strong> Horn (1978, <em>A Logical Theory of Quantification in Natural
+Language</em>) is the foundational treatment. Collins &amp; Postal (2014, <em>Classical
+NEG Raising</em>, MIT Press) argue for a syntactic movement analysis. Gajewski
+(2007) gives a scalar semantics account; Homer (2015, <em>Neg-Raising and Positive
+Polarity: The View from Modals</em>) connects NR to scalarity; White &amp; Rawlins
+(2016) treat it as a graded property in the MegaAttitude dataset.</p>
+<hr>
+<h2 id="18-weak-island-sensitivity-and-bridge-effects">18. Weak Island Sensitivity and Bridge Effects</h2>
+<p>Clause-embedding predicates divide into bridge verbs, which permit long-distance
+wh-extraction from their complement clause, and non-bridge (weak island)
+predicates, which resist such extraction. The <code>weak_island</code> column codes this:
+1 = the predicate resists extraction (is a weak island); 0 = extraction is
+permitted (acts as a bridge verb).</p>
+<blockquote>
+<p>(63)  a.  What did she say [that he bought ___]? ✓  <em>(say: bridge verb)</em><br>b.  What did she think [that he bought ___]? ✓  <em>(think: bridge verb)</em><br>c.  ?What did she know [that he bought ___]?  <em>(know: degraded, weak island)</em><br>d.  *What did she regret [that he bought ___]?  <em>(regret: strong island)</em></p>
+</blockquote>
+<p><strong>Tests.</strong></p>
+<p><em>(a) Wh-extraction test.</em> Form a wh-question in which the wh-item originates
+inside the embedded clause. Degradation indicates weak island status.</p>
+<p><em>(b) Topicalisation test.</em> Topicalise an element from the embedded clause:
+<em>Beans, she said / *regretted that he likes.</em></p>
+<p><em>(c) Relative clause test.</em> Form a relative clause: <em>the beans that she said /
+*regretted he liked.</em></p>
+<p><strong>What it shows.</strong> Bridge effects are a reliable diagnostic for the at-issue
+status of the complement. The complement of a bridge verb is asserted: its
+internal constituents are accessible to focus-sensitive operations. The
+complement of a weak-island predicate is backgrounded, presupposed, or
+irrealis, and its internal constituents are not accessible. Factivity is a
+strong predictor of weak island status — a presupposed complement is a
+frozen domain for extraction — but the two properties dissociate: some
+non-factive predicates are also islands (<em>wonder</em>, <em>doubt</em>).</p>
+<p><strong>Literature.</strong> Erteschik-Shir (1973, <em>On the Nature of Island Constraints</em>,
+MIT dissertation) is the foundational observation. Ross (1984) provides
+systematic description. Karttunen (1977) connects bridge behaviour to
+informational properties. Huang, Sprouse &amp; Hornstein (2022, <em>Language</em> 98:3)
+provide a large-scale experimental investigation establishing gradient rather
+than categorical judgements and a multivariate set of predictors including
+verb-frame frequency, information structure, and factivity.</p>
+<hr>
+<h1 id="part-c-complement-matrix-interface-phenomena">Part C — Complement-matrix interface phenomena</h1>
+<p><em>Operations at the boundary between the embedded clause and the matrix involving substitution or polarity licensing that crosses the clause boundary, where the trigger originates in the matrix (negation scope, polarity operators).</em></p>
+<hr>
+<h2 id="19-the-pro-complement-sonot-alternation">19. The Pro-Complement (So/Not) Alternation</h2>
+<p>A restricted subclass of clause-embedding predicates allows the proform <em>so</em>
+or the negated proform <em>not</em> to substitute for the finite complement clause:</p>
+<blockquote>
+<p>(45) a.  She believed [that he would return].  →  She believed so.<br>b.  She did not believe [that he would return].  →  She believed not. / She didn&#39;t think so.</p>
+<p>(46) a.  He supposed [that the train was late].  →  He supposed so.<br>b.  I reckon [that she&#39;ll come].  →  I reckon so.</p>
+</blockquote>
+<p>The proform <em>so</em> picks up a propositional antecedent from the preceding discourse.
+The alternation is restricted to non-factive doxastic predicates (<em>believe</em>,
+<em>think</em>, <em>suppose</em>, <em>assume</em>, <em>reckon</em>, <em>guess</em>, <em>suspect</em>, <em>expect</em>), which
+express a degree of epistemic commitment without presupposing the truth of the
+complement:</p>
+<blockquote>
+<p>(47) a.  I think so / I believe so / I suppose so / I expect so / I guess so / I reckon so.<br>b.  *I know so / *I realise so.  <em>(factive: complement presupposed)</em><br>c.  ??I regret so / *I hope so.  <em>(emotive: no pure propositional pro-form reference)</em><br>d.  *It surprised me so.  <em>(psych causative: no pro-complement)</em></p>
+</blockquote>
+<p>The restriction follows from the doxastic predicates&#39; status as pure propositional
+attitude verbs: the embedded proposition has the status of an epistemic object that
+can be replaced by an anaphoric proform, whereas factive predicates presuppose the
+complement and emotive predicates integrate the content into an affective attitude
+that resists simple proform substitution.</p>
+<p><strong>Participating classes:</strong> conjecture / doxastic (§1.3) exclusively; marginal with
+desiderative <em>hope</em>, <em>expect</em> (<em>I hope so</em>) in informal speech.</p>
+<hr>
+<h2 id="20-npi-licensing">20. NPI Licensing</h2>
+<p>Certain clause-embedding predicates license negative polarity items (NPIs) in
+their complement clauses, while others do not. Classic English NPIs include
+<em>any</em>, <em>ever</em>, <em>at all</em>, <em>yet</em>, <em>lift a finger</em>, and <em>budge an inch</em>.</p>
+<blockquote>
+<p>(61)  a.  She doubts [that anyone left]. ✓  <em>(doubt: NPI licenser)</em><br>b.  She denied [that anyone was there]. ✓  <em>(deny: NPI licenser)</em><br>c.  *She believes [that anyone left].  <em>(believe: not a licenser)</em><br>d.  *She said [that anyone had left].  <em>(say: not a licenser)</em><br>e.  *She knows [that anyone left].  <em>(know: not a licenser)</em></p>
+</blockquote>
+<p>Licensing follows from the downward-entailing (DE) semantics of the complement
+position: a predicate creates a DE environment for its complement if replacing
+the complement proposition with a stronger one preserves the truth of the matrix
+clause.</p>
+<p><strong>Tests.</strong> Insert a strong NPI (<em>lift a finger</em>, <em>budge an inch</em>, <em>ever</em>) in the
+complement clause:</p>
+<blockquote>
+<p>(62)  a.  She doubts that he has <strong>ever</strong> been there. ✓<br>b.  *She thinks that he has <strong>ever</strong> been there.<br>c.  She denies having done <strong>anything</strong> wrong. ✓<br>d.  *She claims to have done <strong>anything</strong> wrong.</p>
+</blockquote>
+<p><strong>What it shows.</strong> NPI licensing in the complement indicates that the predicate
+creates a downward-entailing or non-veridical environment for the embedded
+proposition. This correlates with anti-veridical and denial/doubt predicates.
+Factive predicates (which presuppose their complements) and positive assertion
+predicates (which assert them) do not produce DE environments for the
+complement.</p>
+<p><strong>Participating classes.</strong> Denial/doubt predicates (<em>doubt</em>, <em>deny</em>,
+<em>dispute</em>); certain predicates of disbelief; marginal in some desideratives.
+Not available with factive (<em>know</em>, <em>realize</em>), doxastic (<em>think</em>, <em>believe</em>),
+or positive communicative predicates (<em>say</em>, <em>claim</em>).</p>
+<p><strong>Literature.</strong> Giannakidou (1998, <em>Polarity Sensitivity as (Non)veridicality</em>,
+Benjamins) is the foundational treatment. Zwarts (1995) provides the formal
+characterisation. Homer (2015) connects NPI licensing to neg-raising predicates.
+Xiang, Grove &amp; Giannakidou (2021, <em>Journal of Semantics</em> 38:1) provide
+experimental evidence.</p>
+<hr>
+<h1 id="part-d-semantic-and-inferential-properties">Part D — Semantic and inferential properties</h1>
+<p><em>Meaning-level properties that classify predicates by the inferences they license with respect to the truth and type of their complements. These are diagnostics rather than syntactic alternations in the Levin sense.</em></p>
+<hr>
+<h2 id="21-the-stativeachievement-distinction">21. The Stative/Achievement Distinction</h2>
+<p>This is a lexical-aspectual property rather than a syntactic alternation, but it
+divides clause-embedding predicates into two groups with systematic syntactic and
+semantic consequences.</p>
+<p><em>Stative</em> clause-embedding predicates denote a state holding over an interval.
+They are incompatible with the progressive and with telic frame adverbials of the
+form <em>in X time</em>:</p>
+<blockquote>
+<p>(48) a.  *She is knowing that he is guilty.  <em>(progressive ungrammatical)</em><br>b.  *She is believing that he is guilty.  <em>(progressive ungrammatical)</em><br>c.  *She came to know in ten minutes.  <em>(telic frame anomalous)</em></p>
+</blockquote>
+<p><em>Achievement</em> clause-embedding predicates denote a change of state with a telic
+endpoint. They are compatible with the progressive (on the verge of / coming to
+read), with <em>in X time</em> frame adverbials, and with the punctual adverb <em>suddenly</em>:</p>
+<blockquote>
+<p>(49) a.  She is realising that the plan won&#39;t work.  <em>(progressive: imminence reading)</em><br>b.  She realised in an instant that she had been deceived.  <em>(telic frame)</em><br>c.  She suddenly realised that he was lying.  <em>(punctual achievement)</em></p>
+</blockquote>
+<p>The stative/achievement distinction corresponds primarily to the contrast between
+the comprehend class (§1.1, stative factive awareness) and the discover class
+(§1.2, achievement semi-factive). Doxastic predicates (<em>believe</em>, <em>think</em>) are
+stative despite their non-factivity. Psych-causative predicates (<em>surprise</em>,
+<em>amuse</em>) are stative in their experiencer-passive reading (<em>I was surprised that…</em>)
+but may be eventive in active usage (<em>Her announcement surprised him</em> —
+achievement).</p>
+<p><strong>Stative classes:</strong> comprehend (§1.1), conjecture/doxastic (§1.3), factive
+emotive (§2.1), non-factive emotive (§2.2), psych causative (§3.1), assertive
+report (§4.1), concessive (§4.3), report-to (§4.2), desiderative (§5.1),
+raising evidential (§7.1).<br><strong>Achievement classes:</strong> discover (§1.2), perception (§8.1, partial),
+implicative (§9.1).</p>
+<hr>
+<h2 id="22-factivity">22. Factivity</h2>
+<p>A predicate is factive if it presupposes the truth of its complement clause.
+Factivity is not a syntactic alternation but a semantic property that conditions
+a large number of the alternations documented here — including §3
+(responsive/anti-responsive), §16 (factive passive), §18 (bridge effects), and
+§11 (exclamative embedding) — and it is the primary classification axis in the
+database.</p>
+<p><strong>Tests.</strong></p>
+<p><em>(a) Persistence under negation and questioning.</em> The complement of a factive
+predicate projects its truth even when the matrix is negated or questioned:</p>
+<blockquote>
+<p>(54)  a.  She knows that he left. → He left.<br>b.  She doesn&#39;t know that he left. → He left.  <em>(presupposition survives)</em><br>c.  Does she know that he left? → He left.  <em>(presupposed)</em></p>
+</blockquote>
+<p>For non-factive predicates the inference fails under negation:</p>
+<blockquote>
+<p>(55)  a.  She believes that he left. → possibly he left.<br>b.  She doesn&#39;t believe that he left. → (no inference about whether he left)</p>
+</blockquote>
+<p><em>(b) The &quot;the fact that&quot; substitution.</em> Factive predicates accept the
+paraphrase with <em>the fact that</em>:</p>
+<blockquote>
+<p>(56)  a.  She regrets <strong>the fact that</strong> she lied. ✓<br>b.  She knows <strong>the fact that</strong> he is here. ✓<br>c.  ??She believes <strong>the fact that</strong> he is here.<br>d.  ??She said <strong>the fact that</strong> the train was late.</p>
+</blockquote>
+<p><em>(c) Conditional preservation.</em> The embedded clause of a factive retains its
+presuppositional truth even inside <em>if</em>:</p>
+<blockquote>
+<p>(57)  a.  If she discovers that he lied, she will be upset. → He lied (presupposed).<br>b.  If she believes that he lied, she will be upset. → He may or may not have lied.</p>
+</blockquote>
+<p><strong>Values.</strong> The database codes factivity as: <em>factive</em>, <em>semi-factive</em>,
+<em>non-factive</em>. Semi-factive predicates (<em>discover</em>, <em>realize</em>, <em>notice</em>)
+presuppose the truth of the complement only in the present-tense stative
+reading; in the achievement reading the presupposition is at-issue.</p>
+<p><strong>Literature.</strong> Kiparsky &amp; Kiparsky (1970, in <em>Progress in Linguistics</em>, Mouton)
+is the foundational paper and motivates the <em>the-fact-that</em> test. Karttunen
+(1971, <em>Linguistic Inquiry</em>) refines the classification. Simons, Tonhauser,
+Beaver &amp; Roberts (2010, SALT 20) develop <em>at-issueness</em> to explain projection
+variability. Tonhauser et al. (2018, <em>Language</em> 94:2) provide a large-scale
+empirical investigation.</p>
+<hr>
+<h2 id="23-veridicality">23. Veridicality</h2>
+<p>A predicate is veridical if the truth of the matrix clause entails the truth of
+the embedded complement. Veridicality is stronger than factivity: factivity is a
+presuppositional property, veridicality an entailment property.</p>
+<blockquote>
+<p>(58)  a.  She knows that p. → p.  <em>(factive and veridical)</em><br>b.  She doesn&#39;t know that p. → p.  <em>(presupposition persists under negation)</em></p>
+</blockquote>
+<blockquote>
+<p>(59)  a.  She managed to leave. → She left.  <em>(veridical under positive: implicative)</em><br>b.  She didn&#39;t manage to leave. → She didn&#39;t leave.  <em>(veridical under negative too)</em></p>
+</blockquote>
+<p>Anti-veridical predicates are associated with the falsity of the complement:</p>
+<blockquote>
+<p>(60)  a.  She doubts that he will come.  <em>(positive commits to unlikelihood / falsity)</em><br>b.  She denied that he had been there.  <em>(active non-acceptance of the complement)</em></p>
+</blockquote>
+<p>Non-veridical predicates (<em>believe</em>, <em>think</em>, <em>suppose</em>) are compatible with
+both the truth and falsity of the complement.</p>
+<p><strong>Tests.</strong></p>
+<p><em>(a) Entailment under positive.</em> Does <em>S V that p</em> entail <em>p</em>?</p>
+<p><em>(b) Entailment under negative.</em> Does <em>S doesn&#39;t V that p</em> entail <em>p</em> (factive)
+or entail <em>not-p</em> (anti-veridical)?</p>
+<p><em>(c) Contradiction test.</em> For veridical predicates, <em>S V that p, but p is false</em>
+is contradictory.</p>
+<p><strong>Values.</strong> The database codes veridicality as: <em>veridical</em>, <em>non-veridical</em>,
+<em>anti-veridical</em>.</p>
+<p><strong>Literature.</strong> Zwarts (1995, <em>Nonveridical Contexts</em>, in <em>Linguistic Analysis</em>
+25) introduces the formal distinction. Giannakidou (1998, <em>Polarity Sensitivity
+as (Non)veridicality</em>, Benjamins; 1999, <em>Linguistics &amp; Philosophy</em> 22:2)
+develops the comprehensive account. Egré (2008, <em>Journal of Semantics</em> 25:1)
+applies the distinction to question-embedding predicates. White &amp; Rawlins (2016)
+use both factivity and veridicality as primary axes of the MegaAttitude
+classification.</p>
+<hr>
+<h2 id="24-content-noun-compatibility">24. Content Noun Compatibility</h2>
+<p>A predicate is content-noun-compatible if it is grammatical in a construction of
+the form <em>S V the NP that p</em>, where NP is a content noun such as <em>fact</em>, <em>claim</em>,
+<em>idea</em>, <em>report</em>, or <em>news</em>. This tests the predicate&#39;s ability to take a
+propositional NP argument headed by a content noun rather than a bare clausal
+complement.</p>
+<blockquote>
+<p>(64)  a.  She knows <strong>the fact</strong> that he left. ✓<br>b.  She regrets <strong>the fact</strong> that she lied. ✓<br>c.  ??She believes <strong>the fact</strong> that he left.<br>d.  ??She thinks <strong>the claim</strong> that the earth is flat.<br>e.  She heard <strong>the news</strong> that the proposal had been accepted. ✓<br>f.  She denied <strong>the claim</strong> that he had been there. ✓</p>
+</blockquote>
+<p><strong>Tests.</strong> Insert a content noun between the verb and the complement clause:
+<em>She Vs the [fact / claim / report / news] that p</em>. Grammaticality indicates
+content-noun compatibility.</p>
+<p><strong>What it shows.</strong> Content noun compatibility tracks two related properties.
+First, it is sensitive to factivity: <em>fact</em>-NPs require a presupposed true
+proposition, so <em>know / regret / discover the fact that p</em> are grammatical but
+<em>?believe / think the fact that p</em> are not (Kiparsky &amp; Kiparsky 1970). Second,
+it indicates that the predicate can construe its embedded content as a nominal
+propositional object as well as a bare clause — relevant for the NP complement
+alternation (§6).</p>
+<p><strong>Literature.</strong> Kiparsky &amp; Kiparsky (1970) use the <em>the-fact-that</em> test as a
+primary diagnostic for factivity. Vendler (1972, <em>Res Cogitans</em>, Cornell UP)
+investigates the range of content nouns and their semantic constraints. Asher
+(1993, <em>Reference to Abstract Objects in Discourse</em>, Kluwer) provides a formal
+treatment of fact-NPs.</p>
+<hr>
+<h1 id="part-e-morpholexical-classification">Part E — Morpholexical classification</h1>
+<p><em>Properties of the predicate&#39;s own lexical and morphological form, independent of its complement-taking behaviour.</em></p>
+<hr>
+<h2 id="25-derived-nominals">25. Derived Nominals</h2>
+<p>A clause-embedding predicate may have a corresponding derived nominal — a
+deverbal noun formed by affixation (<em>-tion</em>, <em>-ment</em>, <em>-al</em>, <em>-ure</em>, <em>-ance</em>,
+<em>-ing</em>) — that preserves the argument structure of the verb and can take a
+clausal or nominal complement of the same kind.</p>
+<blockquote>
+<p>(65)  a.  She believes that p. → her <strong>belief</strong> that p.<br>b.  She knows that p. → her <strong>knowledge</strong> that p.<br>c.  She claims that p. → her <strong>claim</strong> that p.<br>d.  She regrets that p. → her <strong>regret</strong> that p.<br>e.  She expects that p. → her <strong>expectation</strong> that p.</p>
+</blockquote>
+<p>Not all clause-embedding predicates have productive derived nominals with
+clausal complements:</p>
+<blockquote>
+<p>(66)  a.  It turned out that p. → *her <strong>turn-out</strong> that p.<br>b.  It seemed that p. → ??her <strong>seeming</strong> that p.  <em>(no propositional reading)</em><br>c.  It surprised her that p. → her <strong>surprise</strong> that p. ✓  <em>(stative nominal only)</em></p>
+</blockquote>
+<p><strong>Tests.</strong> (a) Does the predicate have a morphologically derived nominal?
+(b) Does that nominal accept a <em>that</em>-clause complement? (c) Does the nominal
+preserve the argument structure of the verb (including experiencer, agent, or
+recipient)?</p>
+<p><strong>What it shows.</strong> Derived nominals indicate that the predicate encodes a
+propositional attitude that can be reified as a nominal concept. Raising
+predicates and expletive-subject predicates typically lack them, reflecting
+their non-propositional, structural character. The presence of a derived
+nominal correlates with the predicate expressing a genuine attitude toward a
+propositional content.</p>
+<p><strong>Literature.</strong> Grimshaw (1990, <em>Argument Structure</em>, MIT Press) distinguishes
+argument-structure nominals from result and event nominals, showing that only
+argument-structure nominals inherit the argument structure of the base verb.
+Zucchi (1993, <em>The Language of Propositions and Events</em>, Kluwer) analyses
+nominalized propositional complements.</p>
+<hr>
+<h2 id="26-phrasal-verb-status">26. Phrasal Verb Status</h2>
+<p>Some clause-embedding predicates are phrasal verbs — multi-word forms consisting
+of a base verb and a particle or preposition, whose combined meaning is not
+transparently compositional. Examples in the database include <em>find_out</em>,
+<em>turn_out</em>, <em>make_out</em>, <em>rule_out</em>, <em>point_out</em>, <em>come_to</em>.</p>
+<blockquote>
+<p>(80)  a.  She <strong>found out</strong> [that he had left].<br>b.  It <strong>turned out</strong> [that the bridge was unsafe].<br>c.  She <strong>made out</strong> [that everything was fine].<br>d.  He <strong>pointed out</strong> [that the figures were incorrect].</p>
+</blockquote>
+<p><strong>Tests.</strong> (a) Can the particle be separated from the base verb by an intervening
+NP (<em>find it out</em>)? (b) Is the combined meaning non-compositional relative to its
+parts? (c) Does the predicate passivise as a unit?</p>
+<p><strong>What it shows.</strong> Phrasal status is primarily a morphosyntactic annotation
+flagging multi-word lexical entries. In terms of complement-taking behaviour,
+phrasal verbs generally pattern with their non-phrasal near-synonyms: <em>find_out</em>
+(semi-factive, responsive) patterns with <em>discover</em>; <em>turn_out</em> (raising-evidential)
+patterns with <em>emerge</em>; <em>make_out</em> (non-factive communicative) patterns with
+<em>claim</em>. The annotation is therefore useful for identifying multi-word entries
+and for avoiding spurious comparisons of phrasal and simplex forms in corpus
+work.</p>
+<p><strong>Literature.</strong> Jackendoff (2002, <em>Foundations of Language</em>, Oxford UP) discusses
+the lexical status of phrasal verbs and their argument-structure properties.
+Fraser (1976, <em>The Verb-Particle Combination in English</em>, Academic Press) provides
+a systematic description. The <code>phrasal</code> column codes 1 for phrasal verbs,
+0 for simplex verbs.</p>
+<hr>
+<h2 id="27-copular-be-adjectivenoun-constructions">27. Copular (Be + Adjective/Noun) Constructions</h2>
+<p>Several clause-embedding predicates in the database are copular predicates —
+predicative phrases consisting of the copula <em>be</em> and an adjective or nominal:
+<em>be_certain</em>, <em>be_sure</em>, <em>be_aware</em>, <em>be_convinced</em>, <em>be_unaware</em>,
+<em>be_conscious</em>. These are listed as single lexical items (with underscore
+notation) because their complement-taking properties are associated with the
+adjectival head, not with the copula.</p>
+<blockquote>
+<p>(81)  a.  She <strong>is certain</strong> [that he will come].<br>b.  She <strong>is sure</strong> [that the proposal was correct].<br>c.  She <strong>is aware</strong> [that the situation has changed].<br>d.  She <strong>is unaware</strong> [that the meeting was cancelled].</p>
+</blockquote>
+<p><strong>Tests.</strong> (a) Does the predicate consist of copula + adjective/noun? (b) Does it
+take a finite clausal complement in the same way as a comparable verbal predicate?
+(c) Does it participate in the raising alternation (<em>She is certain to come</em> —
+raising; <em>She is certain that she will come</em> — propositional attitude)?</p>
+<p><strong>What it shows.</strong> Several copular predicates in the comprehend class (§1.1 of
+<code>verb_classes.md</code>) participate marginally in the raising alternation (<em>She is
+certain / sure to win</em>), distinguishing them from the corresponding verbal
+predicates. The annotation flags this morphosyntactic difference and signals
+that complement-selection properties are associated with the adjectival
+rather than the verbal component of the predicate.</p>
+<p><strong>Literature.</strong> Noonan (1985, <em>Complementation</em>, in Shopen ed., <em>Language
+Typology and Syntactic Description</em>, Cambridge UP) discusses adjectival and
+nominal predicates as complement-takers. Moltmann (2003, <em>Propositional Attitudes
+without Propositions</em>, <em>Synthese</em> 135:1) analyses attitudinal adjectives.
+The <code>be_copula</code> column codes 1 for copular predicates, 0 for simplex verbals.</p>
+</div>
+</body>
+</html>

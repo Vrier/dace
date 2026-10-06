@@ -1,0 +1,947 @@
+verb,semantic_class,ahg_class,ahg_rofi,ahg_factive,ahg_alt_classes,ahg_subclass,that_omission,comp_inf,ecm,comp_interrog,comp_gerund,comp_small_clause,np_comp_alt,direct_speech,subjunctive_comp,comp_for_to,comp_bare_inf,comp_exclamative,comp_poss_ing,extraposition,raising,ditransitive,factive_passive,neg_raising,weak_island,pro_complement,npi_licenser,stative,factivity,veridicality,content_noun_fact,derived_nominal,phrasal,be_copula,notes
+know,cognitive,doxastic,0,1,,,1,0,1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,1,1,factive,veridical,1,1,0,0,
+realize,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,
+discover,cognitive,doxastic,0,1,,,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,
+find_out,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,
+understand,cognitive,doxastic,0,1,,,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+recognize,cognitive,doxastic,1,1,,assume,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,
+conclude,cognitive,doxastic,1,0,communicative,communicative-sense,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,
+deduce,cognitive,doxastic,0,0,,,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,
+infer,cognitive,doxastic,0,0,,,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,
+learn,cognitive,doxastic,0,1,,,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,0,0,
+believe,cognitive,doxastic,0,0,,,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+think,cognitive,doxastic,0,0,communicative,,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+suppose,cognitive,doxastic,1,0,,assume,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+assume,cognitive,doxastic,1,0,,assume,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+suspect,cognitive,doxastic,0,0,,,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+expect,cognitive,doxastic,0,0,,,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+doubt,cognitive,doxastic,0,0,,,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,non-factive,anti-veridical,0,1,0,0,
+forget,cognitive,doxastic,0,1,,,1,1,0,1,1,0,1,0,0,0,0,1,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,factive with that-clause; negative implicative with infinitive
+remember,cognitive,doxastic,0,1,,,1,1,0,1,1,0,1,0,0,0,0,1,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,factive with that-clause; positive implicative with infinitive
+say,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+claim,communicative,communicative,1,0,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+assert,communicative,communicative,1,0,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+report,communicative,communicative,1,0,,,1,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,1,0,0,
+announce,communicative,communicative,1,0,,,1,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+admit,communicative,communicative,1,1,,,1,1,0,0,1,0,1,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+deny,communicative,communicative,1,0,,,1,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,non-factive,anti-veridical,1,1,0,0,
+acknowledge,communicative,communicative,1,1,doxastic,,1,0,0,0,1,0,1,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+tell,communicative,communicative,0,0,,non-say,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+mention,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,veridical,1,1,0,0,
+insist,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+argue,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+suggest,communicative,communicative,1,0,inferential,,1,0,0,0,1,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+warn,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+predict,communicative,communicative,1,0,doxastic,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+confirm,communicative,communicative,1,0,inferential,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+reveal,communicative,communicative,1,0,inferential,,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+prove,communicative,inferential,1,0,,,1,0,1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+show,communicative,inferential,1,0,,,1,0,1,1,0,0,1,0,0,0,0,1,0,0,0,1,1,0,1,0,0,1,factive,veridical,1,0,0,0,
+explain,communicative,communicative,1,0,,,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+regret,emotive,emotive,0,1,,,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+resent,emotive,emotive,0,1,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+be_glad,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_sorry,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_surprised,emotive,doxastic,0,1,,,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_proud,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_ashamed,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_annoyed,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+lament,emotive,communicative,1,0,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+deplore,emotive,emotive,1,1,communicative,preference,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+mind,emotive,emotive,0,1,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,1,factive,veridical,1,0,0,0,NPI licenser in some analyses
+fear,emotive,emotive,1,0,,preference,1,1,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+hope,desiderative,emotive,1,0,,preference,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+want,desiderative,,,,,,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+wish,desiderative,doxastic,0,0,,,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,1,0,0,counter-factive with finite complement; non-factive with infinitive
+desire,desiderative,emotive,0,0,,,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+intend,desiderative,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+plan,desiderative,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+decide,desiderative,doxastic,0,0,,,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+prefer,desiderative,emotive,0,0,,,1,1,0,0,1,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+see,perception,doxastic,0,1,,,1,0,1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,0,0,factive with that-clause; non-factive with small clause / bare inf
+hear,perception,doxastic,0,1,,,1,0,1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,0,0,
+notice,perception,doxastic,0,1,,,1,0,1,1,0,0,1,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,
+observe,perception,doxastic,0,1,communicative,,1,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,1,0,0,
+watch,perception,,,,,,0,0,1,1,0,1,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,0,0,takes small clause / bare inf only
+feel,perception,doxastic,0,0,,,1,0,1,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,non-factive,non-veridical,1,1,0,0,
+sense,perception,doxastic,0,0,,,1,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,non-factive,non-veridical,1,1,0,0,
+happen,evidential,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,semi-factive,veridical,0,0,0,0,positive implicative (happen to V)
+pretend,imaginative,communicative,0,0,,say-means,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,1,0,0,
+imagine,imaginative,doxastic,0,0,,,1,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,1,0,0,non-factive in some uses (imagine what it would be like)
+dream,imaginative,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,1,0,0,
+fantasize,imaginative,doxastic,0,0,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,0,0,0,takes about+gerund; no finite/inf complement
+order,directive,communicative,0,0,,say-means,0,1,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+ask,directive,communicative,1,0,,,0,1,0,1,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+request,directive,communicative,1,0,,,1,1,0,0,0,0,1,0,1,1,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+command,directive,communicative,1,0,,,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+beg,directive,communicative,1,0,,,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+urge,directive,communicative,1,0,,,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+require,directive,,,,,,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+demand,directive,communicative,1,0,,,1,1,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+permit,directive,,,,,,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+allow,directive,,,,,,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+force,directive,,,,,,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,causative-directive
+accept,cognitive,doxastic,1,0,emotive,assume,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,semi-factive,non-veridical,1,1,0,0,
+add,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+address,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+advertise,communicative,communicative,1,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+advise,communicative,communicative,1,0,,,1,1,0,0,0,1,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+affirm,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+aggravate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+agitate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+agonize,emotive,emotive,0,1,communicative,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+agree,communicative,communicative,1,0,doxastic,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+alarm,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+alert,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+allege,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+amaze,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+amuse,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+anger,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+anguish,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+annoy,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+answer,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+anticipate,desiderative,doxastic,1,0,,forecast,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+apologize,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+appall,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+appreciate,cognitive,doxastic,1,1,emotive,assume,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,
+approve,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+arouse,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+articulate,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+ascertain,cognitive,doxastic,0,1,,,1,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,0,0,0,
+assess,cognitive,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+assure,communicative,communicative,1,0,inferential,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,anti-veridical,0,0,0,0,
+astonish,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+astound,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+attest,communicative,communicative,1,0,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+authorize,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+babble,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+baffle,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+bark,communicative,communicative,1,0,,,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+beam,communicative,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+befuddle,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+bellow,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+bet,communicative,doxastic,0,0,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+bicker,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+bitch,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+blame,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+bless,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+blog,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+boast,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+boggle,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+bother,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,factive,veridical,0,0,0,0,
+brag,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+broadcast,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+bug,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+cackle,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+calculate,cognitive,doxastic,1,0,communicative,communicative-sense,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+care,emotive,emotive,0,1,,,1,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,factive,veridical,0,0,0,0,
+categorize,cognitive,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+celebrate,emotive,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+certify,communicative,communicative,1,0,inferential,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+challenge,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+chant,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+charge,communicative,communicative,1,0,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+charm,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+chastise,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+chatter,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+check,cognitive,,,,,,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,0,0,0,
+cheer,psych,communicative,0,0,,say-means,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+chronicle,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+circulate,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+clarify,communicative,communicative,1,0,,,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+comfort,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+comment,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+communicate,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+complain,emotive,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,1,0,0,
+comprehend,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+compute,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+conceal,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+concede,communicative,communicative,1,0,,,1,1,0,0,1,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,factive,veridical,0,1,0,0,
+conceive,cognitive,doxastic,0,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+concern,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+confess,communicative,communicative,1,0,,,1,1,0,0,1,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+confide,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+congratulate,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+conjecture,cognitive,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+consent,desiderative,,,,,,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+console,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+consult,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+contact,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+contemplate,cognitive,,,,,,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+contend,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+content,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+contest,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+convey,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+convince,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,anti-veridical,0,0,0,0,
+corroborate,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,0,0,0,
+cringe,emotive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+crush,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+cry,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+daydream,cognitive,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,counter-factive,anti-veridical,0,0,0,0,
+daze,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+debate,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+deceive,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,anti-veridical,0,0,0,0,
+declare,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+decree,communicative,communicative,1,0,,,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+delight,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+delude,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,0,0,0,
+demonstrate,communicative,inferential,1,0,,,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+demoralize,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+denounce,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+depict,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+depress,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+derive,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+describe,communicative,,,,,,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+despair,emotive,emotive,1,0,,preference,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+despise,emotive,emotive,0,1,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+detail,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+detect,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,0,0,0,
+determine,cognitive,doxastic,1,0,communicative,communicative-sense,1,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,1,0,0,
+detest,emotive,emotive,0,1,,,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+devastate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+diagnose,cognitive,doxastic,1,0,,reason,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,0,0,0,
+dictate,communicative,communicative,1,0,,,1,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+disagree,communicative,communicative,1,0,doxastic,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+disappoint,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+disapprove,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+disbelieve,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,non-factive,non-veridical,0,0,0,0,
+disclose,communicative,communicative,1,0,,,1,1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+discuss,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+disgrace,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+disgruntle,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+disgust,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+dishearten,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+disillusion,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,non-factive,non-veridical,0,0,0,0,
+dislike,emotive,emotive,0,1,,,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+dismay,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+dismiss,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,non-factive,non-veridical,0,0,0,0,
+dispel,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+display,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+dispute,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+disregard,emotive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+dissatisfy,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+distress,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+disturb,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+divulge,communicative,communicative,1,0,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+document,communicative,communicative,1,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+dread,emotive,emotive,0,0,,,1,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+dupe,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,counter-factive,anti-veridical,0,0,0,0,
+educate,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,veridical,0,0,0,0,
+elaborate,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+elate,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+email,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+embarrass,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+embellish,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+embitter,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+emphasize,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,0,0,0,
+encourage,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,non-factive,non-veridical,0,0,0,0,
+endorse,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+enjoy,emotive,emotive,0,1,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+enrage,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+ensure,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+enthrall,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+enthuse,psych,communicative,0,0,,say-means,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+envision,communicative,doxastic,1,0,,forecast,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+envy,emotive,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+establish,communicative,doxastic,1,0,,reason,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,0,0,0,
+estimate,communicative,doxastic,1,0,,assume,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+evaluate,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+exasperate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+excite,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+exclaim,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+exhibit,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+exhilarate,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+expose,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+express,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+fabricate,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,counter-factive,anti-veridical,0,0,0,0,
+fake,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,counter-factive,anti-veridical,0,0,0,0,
+fascinate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+fax,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+feign,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,counter-factive,anti-veridical,0,0,0,0,
+fess_up,communicative,,,,,,1,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,1,0,
+figure,cognitive,doxastic,1,0,,assume,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+figure_out,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,non-veridical,1,0,1,0,
+find,cognitive,doxastic,0,0,,,1,1,1,1,0,1,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,non-veridical,1,1,0,0,
+flatter,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+flaunt,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+flip_out,emotive,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,1,0,
+floor,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+fluster,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+fool,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,0,0,0,
+forecast,communicative,communicative,1,0,doxastic,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+foresee,cognitive,doxastic,1,0,,forecast,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+foretell,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+forgive,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+freak_out,emotive,emotive,0,1,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,1,0,
+fret,emotive,communicative,1,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+frighten,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,non-factive,non-veridical,0,0,0,0,
+frustrate,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+fuss,emotive,communicative,1,0,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+gab,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+gall,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+gasp,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+gather,cognitive,doxastic,0,0,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+gauge,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+generalize,cognitive,doxastic,1,0,communicative,communicative-sense,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+giggle,communicative,communicative,0,0,,say-means,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+gladden,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+gloat,emotive,communicative,1,0,,,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+gossip,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+gratify,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+grieve,emotive,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+groan,emotive,communicative,0,0,,say-means,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+growl,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+grumble,emotive,communicative,1,0,,,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+grunt,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+guarantee,communicative,communicative,1,0,inferential,non-say,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+guess,cognitive,doxastic,0,0,communicative,,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+gush,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+hallucinate,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+hate,emotive,emotive,0,1,,,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+hearten,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+hint,communicative,communicative,1,0,inferential,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+holler,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+hoot,communicative,,,,,,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+horrify,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+howl,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+humble,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+hurt,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+hush_up,communicative,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,1,0,
+identify,cognitive,,,,,,1,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,0,0,0,
+ignore,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,semi-factive,non-veridical,1,0,0,0,
+implore,communicative,,,,,,1,1,0,0,0,1,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+imply,communicative,inferential,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+impress,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+incense,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+indicate,communicative,communicative,1,0,inferential,,1,1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+indict,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+inform,communicative,communicative,1,0,,,1,1,0,1,0,1,0,0,0,0,0,1,0,0,0,1,1,0,1,0,0,1,factive,veridical,1,0,0,0,
+infuriate,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+insinuate,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+instruct,communicative,communicative,1,0,,,1,1,0,0,0,1,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+insult,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+interest,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+intimidate,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+intrigue,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+investigate,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+invigorate,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+irk,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+irritate,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+jade,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+jar,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+jest,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+joke,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+judge,cognitive,doxastic,1,0,communicative,communicative-sense,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+leak,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+lecture,communicative,,,,,,1,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+lie,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,counter-factive,anti-veridical,0,0,0,0,
+like,emotive,emotive,0,1,,,0,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+loathe,emotive,emotive,0,1,,,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+log,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+love,emotive,emotive,0,1,,,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+madden,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+maintain,communicative,communicative,1,0,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+manufacture,communicative,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,counter-factive,anti-veridical,0,0,0,0,
+mark,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+marvel,emotive,communicative,1,0,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+measure,cognitive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+miff,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+misinform,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,0,0,0,
+mislead,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,0,0,0,
+miss,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,semi-factive,non-veridical,1,0,0,0,
+moan,emotive,communicative,0,0,,say-means,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+mortify,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+mourn,emotive,,,,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+move,psych,communicative,0,0,,,1,1,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+mumble,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+murmur,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+muse,cognitive,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+mutter,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+mystify,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+narrate,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+nonplus,psych,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,non-factive,non-veridical,0,0,0,0,
+note,communicative,doxastic,0,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,1,0,0,
+notify,communicative,communicative,0,0,,say-means,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,factive,veridical,1,0,0,0,
+offend,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+omit,communicative,communicative,1,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+ordain,communicative,,,,,,1,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+outrage,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+overhear,perception,doxastic,0,0,,,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,0,0,0,
+overlook,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+overwhelm,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+pain,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+panic,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+perceive,perception,doxastic,0,0,,,1,1,1,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,non-factive,non-veridical,1,1,0,0,
+perplex,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+persuade,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,anti-veridical,0,0,0,0,
+petrify,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+picture,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+piece_together,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,non-veridical,1,0,1,0,
+pinpoint,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+pity,communicative,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+please,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+point_out,communicative,communicative,1,0,,,1,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,1,0,
+ponder,cognitive,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+posit,cognitive,doxastic,1,0,,assume,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+post,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+pout,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+praise,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+pray,emotive,doxastic,0,0,communicative,,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+preach,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+prejudge,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+presume,cognitive,doxastic,0,0,,,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+presuppose,cognitive,doxastic,1,0,,assume,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+proclaim,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+promise,communicative,communicative,1,0,,,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+prophesy,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+propose,communicative,communicative,1,0,,,1,1,0,0,1,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+publicize,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+publish,communicative,communicative,0,0,,non-say,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+puzzle,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+quarrel,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+question,communicative,communicative,1,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+quip,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+quote,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,anti-veridical,0,0,0,0,
+radio,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+rant,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+rationalize,communicative,communicative,1,0,doxastic,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+rave,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+read,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+reaffirm,communicative,communicative,1,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+reason,cognitive,doxastic,1,0,,reason,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+reason_out,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,1,0,
+reassert,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+reassure,communicative,communicative,1,0,inferential,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,anti-veridical,0,0,0,0,
+recall,communicative,doxastic,0,1,,,1,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+recap,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+reckon,cognitive,doxastic,1,0,,reason,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+recollect,cognitive,doxastic,0,1,,,1,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+reconsider,cognitive,,,,,,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+record,communicative,communicative,0,0,,non-say,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,0,0,0,
+rediscover,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+reiterate,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+relate,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+relieve,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+relish,emotive,emotive,0,1,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+remark,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+remind,communicative,communicative,1,0,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,semi-factive,veridical,0,0,0,0,
+reminisce,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+repeat,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+reply,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+repress,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+resolve,desiderative,doxastic,0,0,,,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+respond,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+restate,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+retort,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+retract,communicative,,,,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,counter-factive,anti-veridical,0,0,0,0,
+revolt,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+rule,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+ruminate,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+sadden,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+satisfy,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+scare,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,non-factive,non-veridical,0,0,0,0,
+scoff,emotive,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+scream,communicative,,,,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+scribble,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+shame,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+share,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+shock,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+shout,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+showcase,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+shriek,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+sicken,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+sigh,emotive,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+signal,communicative,communicative,1,0,inferential,,1,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+signify,communicative,,,,,,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+sing,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+sketch,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+snap,communicative,communicative,0,0,,say-means,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+snitch,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+sob,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+specify,communicative,communicative,1,0,,,1,1,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+spellbind,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+spook,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+spot,perception,,,,,,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,factive,veridical,1,0,0,0,
+spout,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+squeal,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+stammer,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+startle,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+state,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,1,0,0,
+stimulate,psych,,,,,,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+stipulate,communicative,communicative,1,0,,,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+stress,communicative,communicative,1,0,,,1,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+stun,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+stupefy,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+stutter,communicative,communicative,0,0,,say-means,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+submit,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+summarize,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+surmise,cognitive,doxastic,1,0,,assume,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+surprise,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+swear,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+tantalize,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+tease,communicative,communicative,1,0,,,1,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+terrify,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+test,communicative,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+testify,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+theorize,cognitive,communicative,1,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+thrill,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+torture,psych,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+traumatize,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+trick,communicative,,,,,,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,counter-factive,anti-veridical,0,0,0,0,
+trouble,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+trust,cognitive,doxastic,1,0,,assume,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,1,0,0,
+tweet,communicative,communicative,0,0,,say-means,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+type,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+uncover,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+underestimate,communicative,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+underline,communicative,inferential,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,1,0,0,0,
+underscore,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,1,0,0,0,
+unnerve,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+unsettle,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+update,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,semi-factive,non-veridical,0,0,0,0,
+uphold,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+upset,psych,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+utter,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+verify,cognitive,doxastic,1,0,,reason,1,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,1,0,0,
+vex,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+visualize,cognitive,doxastic,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,0,0,0,
+voice,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+volunteer,communicative,,,,,,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+vote,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+vow,communicative,communicative,1,0,,,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+wager,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+warrant,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+weep,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+whimper,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+whine,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,
+whisper,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+will,communicative,,,,,,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+witness,perception,,,,,,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,non-factive,non-veridical,1,0,0,0,
+worry,emotive,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+wow,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+write,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+yell,communicative,communicative,0,0,,say-means,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,
+be_afraid,emotive,emotive,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,1,copular predicate
+be_angry,emotive,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,copular predicate
+be_aware,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_certain,cognitive,doxastic,0,0,,,1,0,0,1,0,0,0,0,0,0,0,1,0,1,1,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_confident,cognitive,doxastic,0,0,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,1,0,1,copular predicate
+be_conscious,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_convinced,cognitive,doxastic,0,0,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_delighted,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_disappointed,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_excited,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_furious,emotive,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,copular predicate
+be_happy,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_horrified,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_hurt,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_irritated,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_jealous,emotive,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,copular predicate
+be_mad,emotive,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,copular predicate
+be_outraged,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_pleased,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_relieved,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_sad,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_satisfied,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_skeptical,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,non-factive,anti-veridical,0,0,0,1,copular predicate
+be_sure,cognitive,doxastic,0,0,,,1,0,0,1,0,0,0,0,0,0,0,1,0,1,1,0,0,0,1,0,0,1,factive,veridical,1,1,0,1,copular predicate
+be_thankful,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_thrilled,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_unaware,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,factive,veridical,1,1,0,1,"copular predicate; NPI-licensing: ""she is unaware that anyone came"""
+be_uncertain,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,1,0,1,copular predicate
+be_upset,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,1,copular predicate
+be_worried,emotive,emotive,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,1,copular predicate
+turn_out,evidential,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,factive,veridical,0,0,1,0,it turns out that S / turned out to be
+seem,evidential,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,1,non-factive,non-veridical,0,0,0,0,it seems that S / seem to be
+appear,evidential,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,1,non-factive,non-veridical,0,0,0,0,it appears that S / appear to be
+aver,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,formal assertion
+avow,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,formal public declaration
+protest,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,assert in self-defence
+profess,communicative,communicative,1,0,,,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+hold,communicative,communicative,1,0,doxastic,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,"maintain as true; ""She held that X"""
+opine,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,
+intimate,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,hint formally
+venture,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,"offer tentatively; ""I venture that X"""
+object,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,"""She objected that this was unfair"""
+grant,communicative,communicative,1,0,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,factive,veridical,0,1,0,0,"concede; ""I grant that X is true"""
+own,communicative,,,,,,1,0,0,0,1,0,1,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,admit (formal/archaic)
+plead,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,legal context
+represent,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,formally assert; legal/formal
+threaten,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,"""She threatened that she would resign"""
+pledge,communicative,communicative,1,0,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,stronger than promise
+caution,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,distinct from warn
+recommend,communicative,communicative,1,0,,,1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,typically subjunctive comp; flag for declarative use
+chide,communicative,,,,,,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,MegaAcc=5.00
+admonish,communicative,communicative,1,0,,,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,MegaAcc=4.80
+declaim,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,formal oratorical assertion
+adjudge,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,veridical,0,1,0,0,legal ruling
+recant,communicative,,,,,,1,0,0,0,1,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,withdraw prior claim
+petition,communicative,,,,,,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,typically directive; MegaAcc=4.50
+consider,cognitive,doxastic,0,0,,,1,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,"""She considered that X was true"""
+deem,cognitive,doxastic,1,0,communicative,communicative-sense,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,1,0,0,formal evaluate
+discern,cognitive,doxastic,1,1,,assume,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,"""She discerned that something was wrong"""
+divine,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,"intuit; ""He divined that she was lying"""
+intuit,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,"""She intuited that X was the case"""
+grasp,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,factive,veridical,1,1,0,0,understand
+fathom,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,factive,veridical,1,1,0,0,understand
+register,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,1,0,0,notice/realize
+credit,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,non-factive,non-veridical,0,1,0,0,"believe; ""She credited that X was true"""
+make_out,cognitive,doxastic,1,1,,assume,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,1,0,claim/perceive; dual sense with counter-factive communicative use
+cotton_on,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,BrE informal
+twig,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,0,0,BrE informal
+rumble,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,0,0,"BrE informal; ""She rumbled that he was lying"""
+rejoice,emotive,emotive,0,1,communicative,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,"""She rejoiced that they had won"""
+exult,emotive,emotive,1,1,communicative,preference,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,"""She exulted that they had won"""
+bemoan,emotive,,,,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,"""She bemoaned that times were hard"""
+bewail,emotive,,,,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,literary
+wail,emotive,communicative,0,0,,say-means,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,"""She wailed that it wasn't fair"""
+abhor,emotive,emotive,0,1,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,"""She abhorred that X happened"""
+welcome,emotive,,,,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,1,0,0,"""She welcomed the fact that X"""
+fume,emotive,communicative,0,0,,say-means,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,MegaAcc=4.70
+disdain,emotive,,,,,,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,1,0,0,"""She disdained that X could be true"""
+savour,emotive,,,,,,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,"BrE spelling; ""She savoured the fact that X"""
+emerge,evidential,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,factive,veridical,0,1,0,0,"it-subject; ""It emerged that X"""
+transpire,evidential,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,factive,veridical,0,1,0,0,"it-subject; ""It transpired that X"""
+follow,evidential,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,factive,veridical,0,0,0,0,"logical; ""It follows that X"""
+mean,evidential,inferential,1,0,communicative,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,non-factive,veridical,0,0,0,0,"inferential; ""This means that X"""
+ween,cognitive,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,archaic believe
+trow,cognitive,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,archaic believe/trust
+wot,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,"archaic know (1sg of ""wit"")"
+work_out,cognitive,doxastic,0,0,,,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,discover by reasoning
+suss_out,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,BrE informal for figure out
+catch_on,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,informal: begin to understand
+pick_up,cognitive,,,,,,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,informal: notice/perceive
+sink_in,cognitive,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,impersonal: become emotionally real
+take_in,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,semi-factive,veridical,1,0,1,0,emotionally process/accept a fact
+let_on,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,1,0,reveal (implies truth of complement)
+let_slip,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,1,0,accidentally reveal
+let_out,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,1,0,inadvertently disclose
+give_away,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,1,0,inadvertently reveal
+own_up,communicative,,,,,,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,1,0,confess; also gerund: own up to doing X
+come_clean,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,1,0,make full confession
+bear_out,communicative,,,,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,1,0,confirm/corroborate (evidence as subject)
+bring_home,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,factive,veridical,1,0,1,0,make vividly real; usually ditransitive
+blurt_out,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,say suddenly and impulsively
+spell_out,communicative,communicative,1,0,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,state explicitly and clearly
+get_across,communicative,,,,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,communicate successfully; also get across to NP
+put_across,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,communicate effectively
+lay_out,communicative,communicative,1,0,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,state formally and systematically
+bring_up,communicative,communicative,1,0,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,mention/introduce into discussion
+get_out,communicative,communicative,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,become known; impersonal/intransitive
+get_around,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,spread (of news/rumour); impersonal
+go_around,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,circulate (of rumour); impersonal
+put_about,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,spread (rumour); BrE; often passive
+get_through,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,succeed in communicating; always ditransitive
+abash,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+affront,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+alienate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+antagonize,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+appease,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+awe,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+bewilder,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+bore,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+calm,psych,emotive,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+captivate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+chagrin,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+chill,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,hints of fear/dread
+confound,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+confuse,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+daunt,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+dazzle,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+deject,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+disarm,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+disconcert,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+discomfit,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,formal
+discourage,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+displease,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+dispirit,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+disquiet,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,formal
+dumbfound,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+electrify,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+embolden,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+enchant,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+enrapture,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+entertain,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,amuse sense only
+entrance,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+faze,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,informal
+flabbergast,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,informal
+galvanize,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+haunt,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+inspire,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+mesmerize,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+nauseate,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+nettle,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,informal
+rankle,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,often impersonal/intransitive
+repel,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+rile,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,informal
+soothe,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+tire,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+torment,psych,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,factive,veridical,0,0,0,0,
+snort,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,manner: contemptuous
+thunder,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,manner: loud and angry
+hiss,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,manner: sibilant
+splutter,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,manner: surprised/indignant
+interject,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,interrupt to add remark
+crow,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,manner: triumphant/boastful
+snarl,communicative,communicative,0,0,,say-means,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,manner: aggressive
+drawl,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,manner: slow/leisurely
+moralize,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,preach about morals
+forewarn,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,warn in advance; ditransitive
+depose,communicative,,,,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,legal: give sworn testimony
+asseverate,communicative,,,,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,formal/archaic: assert earnestly
+tip_off,communicative,,,,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,warn/inform covertly; ditransitive
+choke_out,communicative,,,,,,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,1,0,say with difficulty
+seethe,emotive,communicative,0,0,,say-means,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,seething anger at the fact that S
+rue,emotive,emotive,0,1,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,factive,veridical,1,0,0,0,regret; literary/formal
+bristle,emotive,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,semi-factive,veridical,1,0,0,0,feel indignant
+fancy,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,non-factive,non-veridical,0,0,0,0,BrE informal: believe/suppose
+direct,directive,,,,,,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,issue instructions; subjunctive comp
+enjoin,directive,,,,,,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,formal: order/instruct; subjunctive
+mandate,directive,,,,,,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,officially require; subjunctive comp
+prescribe,directive,,,,,,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,formally specify; subjunctive comp
+exhort,directive,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,urge earnestly; also exhort to V
+be_abashed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+absorb,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_adamant,emotive,emotive,1,0,,preference,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+add_in,communicative,communicative,0,0,,non-say,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+admire,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+adore,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+advocate,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_aggrieved,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_aghast,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_amazed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_amused,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_anguished,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+animadvert,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_anxious,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_apologetic,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_apoplectic,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_appalled,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_appreciative,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_apprehensive,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+apprise,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_astonished,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_astounded,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_awed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+bear,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_befuddled,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_bemused,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+beseech,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+betray,evidential,inferential,1,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_bewildered,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_bitter,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+blurt,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+boom,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+burst_out,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+call,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+call_out,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+carol,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+catch,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+cherish,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+chime_in,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+chirp,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+chortle,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+chuckle,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+cite,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+clear,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+cluck,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_clueless,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_cocksure,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_cognizant,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_concerned,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+concur,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+continue,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+coo,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+correct,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+counter,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+criticize,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+cry_out,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+be_delirious,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+demur,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_depressed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_depressing,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_despairing,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_disgruntled,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_disgusted,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_dismayed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_displeased,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_dissatisfied,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_distraught,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_doubtful,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_dubious,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_ecstatic,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+editorialize,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_elated,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_embarrassed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_emphatic,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_envious,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+envisage,cognitive,doxastic,1,0,,forecast,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_euphoric,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_exhilarated,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_explicit,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+explode,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+expostulate,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_exultant,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+face,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_fearful,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+fib,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_flabbergasted,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_fortunate,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_frantic,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_fretful,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_frightened,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+frown,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+gesticulate,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+gesture,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+get,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_giddy,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+glare,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_gleeful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+glimpse,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_grateful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_gratified,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+grimace,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+grin,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+gripe,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+grouse,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+harrumph,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+hazard,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_heartbroken,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_heartsick,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+highlight,evidential,inferential,1,0,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_hopeful,emotive,emotive,1,0,,preference,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+hypothesize,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_ignorant,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+illustrate,evidential,inferential,1,0,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+impart,communicative,communicative,1,0,,non-say,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_impatient,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+implicate,evidential,inferential,1,0,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_incorrect,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_incredulous,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_indignant,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_insistent,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+internalize,cognitive,doxastic,0,0,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_irate,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+josh,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_joyful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_jubilant,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_keen,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+kvetch,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+laugh,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_leery,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_livid,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_lucky,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_maniacal,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+manifest,evidential,inferential,1,0,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_mindful,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+mystified,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_nervous,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_oblivious,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+obsess,emotive,emotive,1,0,,preference,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_optimistic,emotive,emotive,1,0,,preference,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_overconfident,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+overemphasize,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_overjoyed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_pained,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_paranoid,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_peeved,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_pessimistic,emotive,emotive,1,0,,preference,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_petrified,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+philosophize,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_pissed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_positive,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+postulate,cognitive,doxastic,1,0,,assume,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+prognosticate,cognitive,doxastic,1,0,,forecast,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+project,cognitive,doxastic,1,0,,forecast,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+pronounce,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+put_in,communicative,communicative,0,0,,non-say,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+puzzled,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+rage,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+ramble,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+read_out,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+recite,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+reflect,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_regretful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+relay,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+remonstrate,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_remorseful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_resentful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_resolute,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+respect,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+roar,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_sanguine,emotive,emotive,1,0,,preference,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_scared,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_selfassured,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_selfaware,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_shocked,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+shrug,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+sign,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+smell,cognitive,doxastic,0,1,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+smirk,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+sneer,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+snicker,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+sniff,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+snuffle,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+soliloquize,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_sorrowful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+speculate,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+sputter,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+squall,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+squawk,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+squeak,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+stand,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_steadfast,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_suspicious,emotive,emotive,1,0,,preference,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+teach,evidential,inferential,1,0,,,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+telegraph,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+text,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+throw_in,communicative,communicative,0,0,,non-say,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,1,0,added from AHG (2017) appendix; features estimated
+tolerate,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+tout,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+trill,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+trumpet,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+twitter,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_unabashed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_unanimous,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_unconcerned,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_unconvinced,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_uneasy,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_unfazed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_ungrateful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_unhappy,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_unimpressed,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_uninformed,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_unsure,cognitive,doxastic,0,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_unsurprised,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+unveil,communicative,communicative,1,0,,,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_upbeat,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+be_uptight,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+value,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,0,added from AHG (2017) appendix; features estimated
+be_vehement,communicative,communicative,1,0,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+verbalize,communicative,communicative,0,0,,non-say,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+warble,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_wary,emotive,emotive,0,0,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,non-factive,non-veridical,0,0,0,1,added from AHG (2017) appendix; features estimated
+wave,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_wellaware,cognitive,doxastic,0,1,,,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+wheeze,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+whistle,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+whoop,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+be_wistful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+be_wrathful,emotive,emotive,0,1,,,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,factive,veridical,1,0,0,1,added from AHG (2017) appendix; features estimated
+yammer,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+yap,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+yelp,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+yodel,communicative,communicative,0,0,,say-means,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from AHG (2017) appendix; features estimated
+fail,cognitive,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,anti-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+manage,cognitive,,,,,,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+try,cognitive,,,,,,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+intercept,communicative,,,,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+negotiate,communicative,,,,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+pester,communicative,,,,,,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+phone,communicative,,,,,,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+reject,communicative,,,,,,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+research,communicative,,,,,,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+select,communicative,,,,,,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+simulate,communicative,,,,,,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+videotape,communicative,,,,,,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,non-factive,non-veridical,0,0,0,0,added from verb_classes.md members list; features estimated
+rouse,communicative,,,,,,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,factive,veridical,0,0,0,0,added from verb_classes.md members list; features estimated

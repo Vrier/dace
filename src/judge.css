@@ -1,0 +1,132 @@
+/* judge.css — DACE Judge styles, from the Claude Design handoff ("DACE Judge.html").
+   Inlined into site/judge/index.html by the build. */
+:root{
+  --bg:#f4efe3; --panel:#fffdf7; --panel2:#efe8d8; --ink:#2b2620; --ink-soft:#6d6453; --ink-faint:#9d9482;
+  --line:#e3dac6; --line-strong:#d4c8ad; --accent:#1f7a63; --accent-tint:rgba(31,122,99,.12);
+  --pos:#1f7a52; --neg:#b04a36; --mid:#9a7320;
+  --serif:'Newsreader',Georgia,serif; --ui:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+  --shadow:0 18px 44px -22px rgba(80,64,30,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px solid var(--line-strong);
+  padding:1px 6px;border-radius:4px;color:var(--ink-soft)}
+
+.app{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:20px;padding:12px 24px;background:var(--panel);border-bottom:1px solid var(--line);flex-shrink:0;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand-mark{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.brand-sub{font-size:12.5px;color:var(--ink-soft)}
+.prog{flex:1;display:flex;align-items:center;gap:14px;min-width:220px}
+.prog-bar{flex:1;height:7px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .3s}
+.prog-label{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ta{border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);padding:7px 13px;border-radius:8px;font-size:12.5px;font-weight:500}
+.ta:hover{border-color:var(--accent);color:var(--accent)}
+.ta.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.ta.primary:hover{color:#fff;filter:brightness(1.05)}
+.ta.danger:hover{border-color:var(--neg);color:var(--neg)}
+
+/* stage */
+.stage{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:24px;min-height:0}
+.stage-mid{flex:1;max-width:760px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.pos{font-size:12px;color:var(--ink-faint);font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.nav{border:1px solid var(--line-strong);background:var(--panel);color:var(--ink-soft);width:46px;height:72px;border-radius:12px;font-size:30px;flex-shrink:0}
+.nav:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.nav:disabled{opacity:.3;cursor:default}
+.next-unjudged{border:none;background:none;color:var(--accent);font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+.next-unjudged:hover{text-decoration:underline}
+
+/* card */
+.card{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:30px 34px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:20px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.card-verb{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;margin-bottom:10px}
+.card-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft);background:var(--panel2);padding:4px 10px;border-radius:20px}
+.chip-dot{width:8px;height:8px;border-radius:50%}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.card-feat{font-family:var(--serif);font-size:20px;font-weight:600}
+.card-feat-sec{font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+.card-csv{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:5px;margin-top:4px}
+.card-csv.v1{color:var(--pos);background:color-mix(in srgb,var(--pos) 12%,transparent)}
+.card-csv.v0{color:var(--neg);background:color-mix(in srgb,var(--neg) 12%,transparent)}
+.card-q{font-size:15px;color:var(--ink-soft);line-height:1.5}
+.card-q b{color:var(--ink);font-weight:600}
+
+.ts{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.ts-def{font-size:13px;color:var(--ink-soft);line-height:1.5}
+.ts-def i{font-style:italic}
+.ts-sentence{font-family:var(--serif);font-size:23px;line-height:1.5}
+.ts-sentence .test-line{margin:4px 0}
+.ts-sentence .voice{font-family:var(--ui);font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-left:8px}
+.ts-sentence .marginal{color:var(--mid)}
+.ts-sentence .bad{color:var(--neg);font-weight:700}
+.ts-sentence .nom-candidate{color:var(--mid);border-bottom:1px dashed currentColor}
+
+.judge-btns{display:flex;gap:12px}
+.jb{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px 12px;border:2px solid var(--line-strong);background:var(--bg);border-radius:12px;color:var(--ink-soft);transition:all .12s}
+.jb:hover{transform:translateY(-2px);box-shadow:0 6px 18px -6px rgba(0,0,0,.2)}
+.jb kbd{font-size:15px;font-weight:600;padding:3px 11px;background:var(--panel);margin-bottom:2px}
+.jb-l{font-size:15px;font-weight:600}
+.jb-s{font-size:11px;opacity:.7}
+.jb.v1:hover,.jb.v1.on{border-color:var(--pos);background:color-mix(in srgb,var(--pos) 12%,transparent);color:var(--pos)}
+.jb.v0:hover,.jb.v0.on{border-color:var(--neg);background:color-mix(in srgb,var(--neg) 12%,transparent);color:var(--neg)}
+.jb.v5:hover,.jb.v5.on{border-color:var(--mid);background:color-mix(in srgb,var(--mid) 12%,transparent);color:var(--mid)}
+.jb.on kbd{background:var(--panel)}
+.card-current{font-size:12.5px;color:var(--ink-soft);text-align:center}
+.card-current .v1{color:var(--pos)}.card-current .v0{color:var(--neg)}.card-current .v5{color:var(--mid)}
+
+/* footer */
+.foot{display:flex;align-items:center;justify-content:center;gap:22px;padding:11px 24px;background:var(--panel);border-top:1px solid var(--line);flex-shrink:0;flex-wrap:wrap}
+.kb{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-faint)}
+.foot-note{font-size:11.5px;color:var(--ink-faint);font-style:italic;margin-left:auto}
+
+/* dropdown menus */
+.menu{position:relative}
+.menu-pop{position:absolute;top:calc(100% + 6px);right:0;background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow);padding:5px;z-index:50;min-width:210px;display:flex;flex-direction:column;gap:2px}
+.menu-item{text-align:left;border:none;background:none;color:var(--ink);padding:8px 12px;border-radius:7px;font-size:13px;width:100%}
+.menu-item:hover{background:var(--accent-tint);color:var(--accent)}
+
+/* flag button + annotations */
+.flag-badge{font-size:22px;color:var(--mid);margin-left:12px;vertical-align:middle}
+.jb.vflag:hover,.jb.vflag.on{border-color:var(--mid);background:color-mix(in srgb,var(--mid) 12%,transparent);color:var(--mid)}
+.card-anno{display:flex;flex-direction:column;gap:12px;border-top:1px dashed var(--line-strong);padding-top:16px}
+.anno-field{display:flex;flex-direction:column;gap:5px}
+.anno-label{font-size:12px;color:var(--ink-soft);font-weight:500}
+.anno-label i{font-family:var(--serif);font-style:italic}
+.anno-hint{font-weight:400;color:var(--ink-faint);font-size:11px}
+.anno-input{font-family:var(--serif);font-size:15px;padding:9px 12px;border:1px solid var(--line-strong);border-radius:8px;background:var(--bg);color:var(--ink);outline:none;resize:vertical}
+.anno-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint)}
+.anno-input::placeholder{color:var(--ink-faint);font-style:italic}
+.ov-c{position:relative}
+.ov-c.flagged::after{content:'';position:absolute;top:0;right:0;border-width:0 5px 5px 0;border-style:solid;border-color:transparent var(--mid) transparent transparent}
+.sw.flag{background:var(--mid)}
+
+/* overview */
+.ov-scrim{position:fixed;inset:0;background:rgba(20,18,14,.5);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:4vh 3vw}
+.ov{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);max-width:1100px;width:100%;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line)}
+.ov-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--line);font-family:var(--serif);font-size:17px;font-weight:600}
+.ov-close{border:none;background:var(--panel2);color:var(--ink-soft);width:30px;height:30px;border-radius:8px;font-size:13px}
+.ov-legend{display:flex;gap:18px;padding:10px 22px;font-size:12px;color:var(--ink-soft);border-bottom:1px solid var(--line)}
+.ov-legend span{display:flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw.v1{background:var(--pos)}.sw.v0{background:var(--neg)}.sw.v5{background:var(--mid)}.sw.vu{background:var(--panel2);border:1px solid var(--line-strong)}
+.ov-grid-wrap{overflow:auto;padding:0}
+.ov-grid{border-collapse:separate;border-spacing:0;font-size:10px}
+.ov-grid th{position:sticky;background:var(--panel);z-index:2}
+.ov-grid thead th{top:0}
+.ov-corner{left:0;z-index:3}
+.ov-fh{font-family:var(--mono);font-weight:500;color:var(--ink-faint);padding:6px 2px;writing-mode:vertical-rl;transform:rotate(180deg);height:48px}
+.ov-vh{position:sticky;left:0;background:var(--panel);font-family:var(--serif);font-size:12px;padding:2px 10px 2px 16px;white-space:nowrap;border-right:1px solid var(--line);z-index:1}
+.ov-c{width:15px;height:15px;cursor:pointer;border:1px solid var(--panel)}
+.ov-c.v1{background:var(--pos)}.ov-c.v0{background:var(--neg)}.ov-c.v5{background:var(--mid)}.ov-c.vu{background:var(--panel2)}
+.ov-c:hover{outline:2px solid var(--accent);outline-offset:-1px}
+.ov-grid tbody tr:nth-child(even) .ov-vh{background:var(--panel2)}
+
+/* ---------- production additions ---------- */
+button:focus-visible, textarea:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
