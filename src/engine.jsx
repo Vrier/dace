@@ -107,7 +107,8 @@ function FeatureTipCard({ fk }) {
 }
 
 // ---------- atoms ----------
-function Dot({ on, accent }) {
+function Dot({ on, accent, na }) {
+  if (na) return <span className="fdot na" title="not applicable to a copular predicate" />;
   return <span className={"fdot" + (on ? " on" : "")} style={on ? { background: accent, borderColor: accent } : null} />;
 }
 

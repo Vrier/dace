@@ -11,7 +11,6 @@ const SYNC = window.DACE_SYNC;
 const VALUES = { "1": "present", "0": "absent", "5": "marginal" };
 const FEATURES = window.DACE_BINARY_COLS;
 const PREDS = window.DACE_PREDICATES;
-const TOTAL = PREDS.length * FEATURES.length;
 
 const CLASS_COLORS = {
   cognitive: "#3b6ea5", communicative: "#1f7a63", emotive: "#bd6a4c",
@@ -38,10 +37,13 @@ function useNarrow() {
 const QUEUE = (() => {
   const q = [];
   for (const p of PREDS) for (const fk of FEATURES) {
+    if (window.daceInapplicable(p.verb, fk)) continue; // verbal-only features on copular predicates
     q.push({ verb: p.verb, display: p.display, feature: fk, originalValue: p[fk], levin: p.levin_class, ahg: p.semantic_class, p });
   }
   return q;
 })();
+const TOTAL = QUEUE.length;
+const QUEUE_INDEX = Object.fromEntries(QUEUE.map((it, i) => [jkey(it.verb, it.feature), i]));
 
 // per-judge order: a Fisher–Yates shuffle of the queue indices driven by a small
 // seeded PRNG (mulberry32) keyed on the account id — random, but the same on every
@@ -226,7 +228,7 @@ function Overview({ judgements, flags, onJump, onClose }) {
         </div>
         <div className="ov-legend">
           <span><i className="sw v1" /> present</span><span><i className="sw v0" /> absent</span>
-          <span><i className="sw v5" /> marginal</span><span><i className="sw vu" /> unjudged</span>
+          <span><i className="sw v5" /> marginal</span><span><i className="sw vu" /> unjudged</span><span><i className="sw vna" /> n/a</span>
           <span><i className="sw flag" /> flagged ⚑</span>
         </div>
         <div className="ov-grid-wrap">
@@ -239,8 +241,9 @@ function Overview({ judgements, flags, onJump, onClose }) {
                   {FEATURES.map((fk) => {
                     const j = judgements[jkey(p.verb, fk)];
                     const fl = flags[jkey(p.verb, fk)];
+                    if (window.daceInapplicable(p.verb, fk)) return <td key={fk} className="ov-c vna" title="not applicable" />;
                     const cls = j === "1" ? "v1" : j === "0" ? "v0" : j === "5" ? "v5" : "vu";
-                    return <td key={fk} className={"ov-c " + cls + (fl ? " flagged" : "")} onClick={() => onJump(pi * FEATURES.length + FEATURES.indexOf(fk))} />;
+                    return <td key={fk} className={"ov-c " + cls + (fl ? " flagged" : "")} onClick={() => onJump(QUEUE_INDEX[jkey(p.verb, fk)])} />;
                   })}
                 </tr>
               ))}

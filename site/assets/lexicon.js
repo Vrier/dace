@@ -534,6 +534,15 @@ window.DACE_FRAME_TYPE = {
   "5.1": "desid", "6.1": "dir", "7.1": "raise", "8.1": "percep", "9.1": "impl",
 };
 
+// Copular (be_*) predicates: features that cannot apply to an adjective. The factive
+// passive and the recipient ditransitive are verbal constructions — *be surprised*
+// IS the factive passive of *surprise*, coded on the verb's row. These cells are
+// fixed at 0 in the CSV (npm test checks), skipped by the Judge and shown as n/a.
+window.DACE_COPULAR_NA = ["factive_passive", "ditransitive"];
+window.daceInapplicable = function (verb, fk) {
+  return verb.startsWith("be_") && window.DACE_COPULAR_NA.includes(fk);
+};
+
 // Psych verbs that strongly prefer the passive — active marked (?) marginal
 window.DACE_PASSIVE_LEANING = new Set(["abash", "nonplus", "discomfit"]);
 
@@ -543,7 +552,7 @@ function daceForms(display) {
   const fw = (w, fn) => { const p = w.split(" "); return [fn(p[0]), ...p.slice(1)].join(" "); };
   if (v.startsWith("be ")) {
     const adj = v.slice(3);
-    return { v, v3: "is " + adj, ved: "was " + adj, ving: "being " + adj };
+    return { v, v3: "is " + adj, ved: "was " + adj, ving: "being " + adj, adj };
   }
   return {
     v,
@@ -718,11 +727,29 @@ window.DACE_FRAMES = {
   },
 };
 
+// Copular predicates (be glad, be certain …): the frames that hinge on a verbal
+// auxiliary are rewritten around the copula; [ADJ] is the bare adjective. Other
+// features use the class frames, where "is glad" simply fills the verb slot.
+window.DACE_FRAMES.copular = {
+  extraposition:    "It is [ADJ] [that he had left].",
+  neg_raising:      "She isn\u2019t [ADJ] he\u2019ll come \u2248 She is [ADJ] he won\u2019t come.",
+  weak_island:      "What is she [ADJ] [that he bought ___]?",
+  factivity:        "She is [ADJ] / isn\u2019t [ADJ] [that he left] \u2014 does \u2018he left\u2019 survive negation?",
+  veridicality:     "She is [ADJ] that p, but p is false \u2014 contradiction?",
+  stative:          "She is being [ADJ] that he is there.",
+  factive_passive:  null, // n/a — see DACE_COPULAR_NA
+  ditransitive:     null,
+};
+
 // --- build a test sentence (HTML) for a feature on a given predicate ---
 window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored) {
   const frameType = DACE_FRAME_TYPE[levinClass] || "base";
   const frames = DACE_FRAMES[frameType] || {};
   let tmpl = frames[fk];
+  if (display.startsWith("be ") && fk in DACE_FRAMES.copular) {
+    tmpl = DACE_FRAMES.copular[fk];
+    if (tmpl === null) return `<div class="test-line na">Not applicable to a copular predicate: this is a verbal construction.</div>`;
+  }
   if (tmpl === undefined) tmpl = DACE_FRAMES.base[fk];
   if (tmpl === undefined) return null;
 
@@ -738,6 +765,7 @@ window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored
       .replace(/\[V3\]/g, `<strong>${forms.v3}</strong>`)
       .replace(/\[VD\]/g, `<strong>${forms.ved}</strong>`)
       .replace(/\[VG\]/g, `<strong>${forms.ving}</strong>`)
+      .replace(/\[ADJ\]/g, `<strong>${forms.adj || forms.v}</strong>`)
       .replace(/\[NOM\]/g, nominal ? `<strong${nomCandidate ? ' class="nom-candidate" title="candidate form"' : ''}>${nominal}</strong>` : "[nominal]")
       .replace(/\[V\]/g, `<strong>${forms.v}</strong>`);
   }

@@ -67,6 +67,7 @@ function WiktionarySenses({ lemma, display }) {
 function FlagRow({ fk, on, accent, verb, display, levinClass, onFeatureClick }) {
   const f = DACE_FEATURES[fk];
   const t = useTip();
+  const na = window.daceInapplicable(verb, fk);
   const nomInfo = (fk === 'derived_nominal' && window.daceNominal) ? window.daceNominal(verb, display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
   const nomCandidate = nomInfo ? nomInfo.candidate : false;
@@ -83,11 +84,11 @@ function FlagRow({ fk, on, accent, verb, display, levinClass, onFeatureClick }) 
     </div>
   );
   return (
-    <div className={"flag" + (on ? " on" : " off")}>
+    <div className={"flag" + (on ? " on" : " off") + (na ? " na" : "")}>
       <a className="flag-doc" href={f.url} target="_blank" rel="noopener"
          onMouseEnter={(e) => t && t.show(e, tipContent)}
          onMouseLeave={() => t && t.hide()}>
-        <Dot on={on} accent={accent} />
+        <Dot on={on} accent={accent} na={na} />
         <span className="flag-label">
           {f.label}
           {nominal && <em className="flag-nominal"> → {nomCandidate ? <span className="nom-candidate" title="candidate form — not an established nominal">?{nominal}</span> : nominal}</em>}

@@ -13,7 +13,7 @@ Production build of the Claude Design handoff (30 Sept 2026): Explorer + Judge, 
 
 ## Data
 
-- 245 predicates still have estimated features (·est): 6,370 cells to judge in the Judge.
+- 245 predicates still have estimated features (·est). Copular predicates' factive-passive and ditransitive cells are fixed at 0 and not judged (Oct 2026), so the judgeable grid is 24,292 cells.
 - `obsess` is listed as a Say verb (4.1) in `docs-src/verb_classes.md` and `src/levin_classes.js` — probably a slip.
 - Coverage tab (methodology Step 5): `data/sources.js` and `data/concordance.csv` are staged but not built.
 - MegaAcceptability v2's full verb list and the MegaNegRaising data are still needed for the concordance (`notes/coverage_report.md`); `provenance/` is now gitignored, so they stay local.

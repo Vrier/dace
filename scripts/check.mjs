@@ -142,6 +142,15 @@ check('Judge export (src/csv-export.js) reproduces data/predicates.csv exactly',
   return P;
 });
 
+check('copular predicates — inapplicable features (factive passive, ditransitive) are 0', () => {
+  // mirrors window.DACE_COPULAR_NA in src/frames.js
+  const P = [];
+  for (const r of records) if (r.verb.startsWith('be_')) for (const fk of ['factive_passive', 'ditransitive']) {
+    if (r[fk] !== '0') P.push(`${r.verb}.${fk} = ${r[fk]} (must be 0: not applicable to a copular predicate)`);
+  }
+  return P;
+});
+
 check('data/annotations — sidecar entries name known predicates', () => {
   const verbs = new Set(records.map((r) => r.verb));
   const P = [];

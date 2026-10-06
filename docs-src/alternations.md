@@ -597,6 +597,10 @@ doxastic predicates (*believe*, *think*).
 **Participating classes:** report-to (§4.2, defining alternation), partial
 in assertive report (§4.1), concessive (§4.3), and directive (§6.1).
 
+The alternation is not applicable to copular predicates (*be glad*, *be aware*;
+§27): an adjective takes no recipient object, so their `ditransitive` cells are
+fixed at 0 and are not judged.
+
 ---
 
 ## 16. The Factive Passive
@@ -633,6 +637,12 @@ Nor is it available to emotive predicates with a subject experiencer (*regret*,
 
 **Participating classes:** psych causative (§3.1), report-to (§4.2, partial:
 verbs with overt recipient *tell*, *inform*, *warn*, *advise*, *remind*, *assure*).
+
+The factive passive is not applicable to copular predicates (§27). An adjective
+does not passivize, and the participial ones — *be surprised*, *be amazed*,
+*be appalled* — already *are* the factive passive of the corresponding verb,
+which is coded on that verb's row (*surprise*, *amaze*, *appal*). Their
+`factive_passive` cells are therefore fixed at 0 and are not judged.
 
 ---
 

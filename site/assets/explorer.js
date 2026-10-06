@@ -208,7 +208,8 @@ function FeatureTipCard({ fk }) {
   if (!f) return null;
   return /* @__PURE__ */ React.createElement("div", { className: "ftip" }, /* @__PURE__ */ React.createElement("div", { className: "ftip-head" }, /* @__PURE__ */ React.createElement("span", { className: "ftip-name" }, f.label), /* @__PURE__ */ React.createElement("span", { className: "ftip-sec" }, "\xA7", f.sec)), /* @__PURE__ */ React.createElement("div", { className: "ftip-def", dangerouslySetInnerHTML: { __html: f.def } }), f.test && /* @__PURE__ */ React.createElement("div", { className: "ftip-test", dangerouslySetInnerHTML: { __html: f.test } }), f.eg && /* @__PURE__ */ React.createElement("div", { className: "ftip-eg" }, f.eg), /* @__PURE__ */ React.createElement("div", { className: "ftip-link" }, "\u2197 open \xA7", f.sec, " in alternations.md"));
 }
-function Dot({ on, accent }) {
+function Dot({ on, accent, na }) {
+  if (na) return /* @__PURE__ */ React.createElement("span", { className: "fdot na", title: "not applicable to a copular predicate" });
   return /* @__PURE__ */ React.createElement("span", { className: "fdot" + (on ? " on" : ""), style: on ? { background: accent, borderColor: accent } : null });
 }
 function ClassChip({ cls, link = true, small = false }) {
@@ -348,12 +349,13 @@ function WiktionarySenses({ lemma, display }) {
 function FlagRow({ fk, on, accent, verb, display, levinClass, onFeatureClick }) {
   const f = DACE_FEATURES[fk];
   const t = useTip();
+  const na = window.daceInapplicable(verb, fk);
   const nomInfo = fk === "derived_nominal" && window.daceNominal ? window.daceNominal(verb, display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
   const nomCandidate = nomInfo ? nomInfo.candidate : false;
   const testHtml = window.daceTestSentence ? window.daceTestSentence(fk, on, levinClass, display, nominal) : null;
   const tipContent = /* @__PURE__ */ React.createElement("div", { className: "ftip" }, /* @__PURE__ */ React.createElement("div", { className: "ftip-head" }, /* @__PURE__ */ React.createElement("span", { className: "ftip-name" }, f.label), /* @__PURE__ */ React.createElement("span", { className: "ftip-sec" }, "\xA7", f.sec)), /* @__PURE__ */ React.createElement("div", { className: "ftip-def", dangerouslySetInnerHTML: { __html: f.def } }), testHtml && /* @__PURE__ */ React.createElement("div", { className: "ftip-test", dangerouslySetInnerHTML: { __html: testHtml } }), /* @__PURE__ */ React.createElement("div", { className: "ftip-link" }, "\u2197 open \xA7", f.sec, " in alternations \xB7 click \u25B8 to filter"));
-  return /* @__PURE__ */ React.createElement("div", { className: "flag" + (on ? " on" : " off") }, /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { className: "flag" + (on ? " on" : " off") + (na ? " na" : "") }, /* @__PURE__ */ React.createElement(
     "a",
     {
       className: "flag-doc",
@@ -363,7 +365,7 @@ function FlagRow({ fk, on, accent, verb, display, levinClass, onFeatureClick }) 
       onMouseEnter: (e) => t && t.show(e, tipContent),
       onMouseLeave: () => t && t.hide()
     },
-    /* @__PURE__ */ React.createElement(Dot, { on, accent }),
+    /* @__PURE__ */ React.createElement(Dot, { on, accent, na }),
     /* @__PURE__ */ React.createElement("span", { className: "flag-label" }, f.label, nominal && /* @__PURE__ */ React.createElement("em", { className: "flag-nominal" }, " \u2192 ", nomCandidate ? /* @__PURE__ */ React.createElement("span", { className: "nom-candidate", title: "candidate form \u2014 not an established nominal" }, "?", nominal) : nominal)),
     /* @__PURE__ */ React.createElement("span", { className: "flag-sec" }, "\xA7", f.sec)
   ), onFeatureClick && /* @__PURE__ */ React.createElement(
@@ -432,7 +434,7 @@ function SortHead({ label, k, sort, onSort, className, title }) {
   return /* @__PURE__ */ React.createElement("th", { className: (className || "") + (active ? " sorted" : ""), onClick: () => onSort(k), title }, /* @__PURE__ */ React.createElement("span", { className: "th-in" }, label, active && /* @__PURE__ */ React.createElement("span", { className: "th-arrow" }, sort.dir === "asc" ? "\u25B2" : "\u25BC")));
 }
 const TableRow = React.memo(function TableRow2({ p, accent, onOpen }) {
-  return /* @__PURE__ */ React.createElement("tr", { onClick: () => onOpen(p) }, /* @__PURE__ */ React.createElement("td", { className: "col-verb" }, /* @__PURE__ */ React.createElement("span", { className: "tbl-verb" }, p.display)), /* @__PURE__ */ React.createElement("td", { className: "col-cls" }, /* @__PURE__ */ React.createElement(AhgChip, { p })), /* @__PURE__ */ React.createElement("td", { className: "col-cls" }, /* @__PURE__ */ React.createElement("span", { className: "tbl-cls" }, /* @__PURE__ */ React.createElement("span", { className: "cls-dot", style: { background: CLASS_COLORS[p.semantic_class] } }), DACE_CLASSES[p.semantic_class] ? DACE_CLASSES[p.semantic_class].label : p.semantic_class)), /* @__PURE__ */ React.createElement("td", { className: "col-cls" }, p.levin_class && /* @__PURE__ */ React.createElement("span", { className: "tbl-cls" }, /* @__PURE__ */ React.createElement("span", { className: "cls-dot", style: { background: DACE_LEVIN_COLORS[p.levin_class] } }), DACE_LEVIN_CLASSES[p.levin_class] ? DACE_LEVIN_CLASSES[p.levin_class].short : p.levin_class)), /* @__PURE__ */ React.createElement("td", { className: "col-cat" }, /* @__PURE__ */ React.createElement(CatTag, { kind: "factivity", value: p.factivity })), /* @__PURE__ */ React.createElement("td", { className: "col-cat" }, /* @__PURE__ */ React.createElement(CatTag, { kind: "veridicality", value: p.veridicality })), window.DACE_BINARY_COLS.map((k) => /* @__PURE__ */ React.createElement("td", { key: k, className: "col-feat" + (p[k] ? " y" : "") }, /* @__PURE__ */ React.createElement(Dot, { on: p[k] === 1, accent }))));
+  return /* @__PURE__ */ React.createElement("tr", { onClick: () => onOpen(p) }, /* @__PURE__ */ React.createElement("td", { className: "col-verb" }, /* @__PURE__ */ React.createElement("span", { className: "tbl-verb" }, p.display)), /* @__PURE__ */ React.createElement("td", { className: "col-cls" }, /* @__PURE__ */ React.createElement(AhgChip, { p })), /* @__PURE__ */ React.createElement("td", { className: "col-cls" }, /* @__PURE__ */ React.createElement("span", { className: "tbl-cls" }, /* @__PURE__ */ React.createElement("span", { className: "cls-dot", style: { background: CLASS_COLORS[p.semantic_class] } }), DACE_CLASSES[p.semantic_class] ? DACE_CLASSES[p.semantic_class].label : p.semantic_class)), /* @__PURE__ */ React.createElement("td", { className: "col-cls" }, p.levin_class && /* @__PURE__ */ React.createElement("span", { className: "tbl-cls" }, /* @__PURE__ */ React.createElement("span", { className: "cls-dot", style: { background: DACE_LEVIN_COLORS[p.levin_class] } }), DACE_LEVIN_CLASSES[p.levin_class] ? DACE_LEVIN_CLASSES[p.levin_class].short : p.levin_class)), /* @__PURE__ */ React.createElement("td", { className: "col-cat" }, /* @__PURE__ */ React.createElement(CatTag, { kind: "factivity", value: p.factivity })), /* @__PURE__ */ React.createElement("td", { className: "col-cat" }, /* @__PURE__ */ React.createElement(CatTag, { kind: "veridicality", value: p.veridicality })), window.DACE_BINARY_COLS.map((k) => /* @__PURE__ */ React.createElement("td", { key: k, className: "col-feat" + (p[k] ? " y" : "") }, /* @__PURE__ */ React.createElement(Dot, { on: p[k] === 1, accent, na: window.daceInapplicable(p.verb, k) }))));
 });
 const V_OVERSCAN = 12;
 function TableView({ rows, accent, sort, onSort, onOpen }) {

@@ -185,7 +185,6 @@ const SYNC = window.DACE_SYNC;
 const VALUES = { "1": "present", "0": "absent", "5": "marginal" };
 const FEATURES = window.DACE_BINARY_COLS;
 const PREDS = window.DACE_PREDICATES;
-const TOTAL = PREDS.length * FEATURES.length;
 const CLASS_COLORS = {
   cognitive: "#3b6ea5",
   communicative: "#1f7a63",
@@ -214,10 +213,13 @@ function useNarrow() {
 const QUEUE = (() => {
   const q = [];
   for (const p of PREDS) for (const fk of FEATURES) {
+    if (window.daceInapplicable(p.verb, fk)) continue;
     q.push({ verb: p.verb, display: p.display, feature: fk, originalValue: p[fk], levin: p.levin_class, ahg: p.semantic_class, p });
   }
   return q;
 })();
+const TOTAL = QUEUE.length;
+const QUEUE_INDEX = Object.fromEntries(QUEUE.map((it, i) => [jkey(it.verb, it.feature), i]));
 function orderPrefKey(userId) {
   return "dace_judge_order_" + userId;
 }
@@ -361,11 +363,12 @@ function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, on
   ))));
 }
 function Overview({ judgements, flags, onJump, onClose }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "ov-scrim", onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "ov", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "ov-head" }, /* @__PURE__ */ React.createElement("span", null, "Coverage map \u2014 ", Object.keys(judgements).length.toLocaleString(), " / ", TOTAL.toLocaleString(), " judged \xB7 ", Object.keys(flags).length, " flagged"), /* @__PURE__ */ React.createElement("button", { className: "ov-close", onClick: onClose }, "\u2715")), /* @__PURE__ */ React.createElement("div", { className: "ov-legend" }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v1" }), " present"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v0" }), " absent"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v5" }), " marginal"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vu" }), " unjudged"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw flag" }), " flagged \u2691")), /* @__PURE__ */ React.createElement("div", { className: "ov-grid-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "ov-grid" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", { className: "ov-corner" }), FEATURES.map((fk) => /* @__PURE__ */ React.createElement("th", { key: fk, className: "ov-fh", title: DACE_FEATURES[fk]?.label }, fk.slice(0, 4))))), /* @__PURE__ */ React.createElement("tbody", null, PREDS.map((p, pi) => /* @__PURE__ */ React.createElement("tr", { key: p.verb }, /* @__PURE__ */ React.createElement("td", { className: "ov-vh" }, p.display), FEATURES.map((fk) => {
+  return /* @__PURE__ */ React.createElement("div", { className: "ov-scrim", onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "ov", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "ov-head" }, /* @__PURE__ */ React.createElement("span", null, "Coverage map \u2014 ", Object.keys(judgements).length.toLocaleString(), " / ", TOTAL.toLocaleString(), " judged \xB7 ", Object.keys(flags).length, " flagged"), /* @__PURE__ */ React.createElement("button", { className: "ov-close", onClick: onClose }, "\u2715")), /* @__PURE__ */ React.createElement("div", { className: "ov-legend" }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v1" }), " present"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v0" }), " absent"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v5" }), " marginal"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vu" }), " unjudged"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vna" }), " n/a"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw flag" }), " flagged \u2691")), /* @__PURE__ */ React.createElement("div", { className: "ov-grid-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "ov-grid" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", { className: "ov-corner" }), FEATURES.map((fk) => /* @__PURE__ */ React.createElement("th", { key: fk, className: "ov-fh", title: DACE_FEATURES[fk]?.label }, fk.slice(0, 4))))), /* @__PURE__ */ React.createElement("tbody", null, PREDS.map((p, pi) => /* @__PURE__ */ React.createElement("tr", { key: p.verb }, /* @__PURE__ */ React.createElement("td", { className: "ov-vh" }, p.display), FEATURES.map((fk) => {
     const j = judgements[jkey(p.verb, fk)];
     const fl = flags[jkey(p.verb, fk)];
+    if (window.daceInapplicable(p.verb, fk)) return /* @__PURE__ */ React.createElement("td", { key: fk, className: "ov-c vna", title: "not applicable" });
     const cls = j === "1" ? "v1" : j === "0" ? "v0" : j === "5" ? "v5" : "vu";
-    return /* @__PURE__ */ React.createElement("td", { key: fk, className: "ov-c " + cls + (fl ? " flagged" : ""), onClick: () => onJump(pi * FEATURES.length + FEATURES.indexOf(fk)) });
+    return /* @__PURE__ */ React.createElement("td", { key: fk, className: "ov-c " + cls + (fl ? " flagged" : ""), onClick: () => onJump(QUEUE_INDEX[jkey(p.verb, fk)]) });
   }))))))));
 }
 function AuthCard({ onAuthed }) {
