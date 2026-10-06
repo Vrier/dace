@@ -45,7 +45,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 .ta.danger:hover{border-color:var(--neg);color:var(--neg)}
 
 /* stage */
-.stage{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:24px;min-height:0}
+.stage{flex:1;display:flex;align-items:safe center;justify-content:center;gap:6px;padding:24px;min-height:0;overflow-y:auto}
 .stage-mid{flex:1;max-width:760px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .pos{font-size:12px;color:var(--ink-faint);font-variant-numeric:tabular-nums;letter-spacing:.03em}
 .nav{border:1px solid var(--line-strong);background:var(--panel);color:var(--ink-soft);width:46px;height:72px;border-radius:12px;font-size:30px;flex-shrink:0}
@@ -83,6 +83,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 .judge-btns{display:flex;gap:12px}
 .jb{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px 12px;border:2px solid var(--line-strong);background:var(--bg);border-radius:12px;color:var(--ink-soft);transition:all .12s}
 .jb:hover{transform:translateY(-2px);box-shadow:0 6px 18px -6px rgba(0,0,0,.2)}
+@media (hover:none){.jb:hover{transform:none;box-shadow:none}}
 .jb kbd{font-size:15px;font-weight:600;padding:3px 11px;background:var(--panel);margin-bottom:2px}
 .jb-l{font-size:15px;font-weight:600}
 .jb-s{font-size:11px;opacity:.7}
@@ -167,6 +168,14 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline:2px 
 .auth-back a{color:var(--ink-soft);text-decoration:none}
 .auth-back a:hover{color:var(--accent)}
 .auth-loading{font-size:13.5px;color:var(--ink-soft)}
+
+/* minimal pair under the question */
+.card-pair{display:flex;flex-wrap:wrap;gap:4px 22px;font-size:12.5px;color:var(--ink-faint);margin-top:-8px;line-height:1.45}
+.card-pair i{font-style:normal;font-weight:600;margin-right:4px}
+.pair-ok i{color:var(--pos)}
+.pair-bad i{color:var(--neg)}
+.card-suffixes{list-style:none;padding:0;margin:8px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:3px 18px;font-size:12.5px;font-weight:400;color:var(--ink-soft)}
+.card-suffixes b{font-family:var(--mono);font-weight:500;color:var(--ink);margin-right:6px}
 
 /* save status in the top bar */
 .save-st{font-size:12px;color:var(--ink-faint);font-variant-numeric:tabular-nums;padding-right:4px}
@@ -258,7 +267,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline:2px 
 <script src="../assets/react.js?v=731d621c18"></script>
 <script src="../assets/pocketbase.js?v=f8080de99f"></script>
 <script src="../assets/data.js?v=1210e5b28b"></script>
-<script src="../assets/lexicon.js?v=7ce64794c6"></script>
-<script src="../assets/judge.js?v=464fce8338"></script>
+<script src="../assets/lexicon.js?v=1e22b18f41"></script>
+<script src="../assets/judge.js?v=4246da6c45"></script>
 </body>
 </html>

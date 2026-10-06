@@ -8,7 +8,7 @@
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
 const SYNC = window.DACE_SYNC;
-const VALUES = { "1": "present", "0": "absent", "5": "marginal" };
+const VALUES = { "1": "acceptable", "0": "unacceptable", "5": "marginal" };
 const FEATURES = window.DACE_BINARY_COLS;
 const PREDS = window.DACE_PREDICATES;
 
@@ -37,6 +37,7 @@ function useNarrow() {
 const QUEUE = (() => {
   const q = [];
   for (const p of PREDS) for (const fk of FEATURES) {
+    if (window.DACE_UNJUDGED.includes(fk)) continue;       // lexical facts settled in the CSV (phrasal, be_copula)
     if (window.daceInapplicable(p.verb, fk)) continue; // verbal-only features on copular predicates
     q.push({ verb: p.verb, display: p.display, feature: fk, originalValue: p[fk], levin: p.levin_class, ahg: p.semantic_class, p });
   }
@@ -138,11 +139,26 @@ function TestSentence({ item }) {
   const f = DACE_FEATURES[item.feature];
   const nomInfo = window.daceNominal ? window.daceNominal(item.verb, item.display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
-  const html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal) : null;
+  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal) : null;
+  // the that-omission test is the sentence WITHOUT "that"; the examples keep "(that)"
+  if (html && item.feature === "that_omission") html = html.replace(/\(that\) /g, "");
   return (
     <div className="ts">
       <div className="ts-def" dangerouslySetInnerHTML={{ __html: f ? f.def : "" }} />
       <div className="ts-sentence" dangerouslySetInnerHTML={{ __html: html || "<em>No frame for this feature.</em>" }} />
+    </div>
+  );
+}
+
+// one predicate that clearly has the feature, one that clearly lacks it (glossary.js)
+function MinimalPair({ fk }) {
+  const pr = window.DACE_FEATURE_PAIRS && window.DACE_FEATURE_PAIRS[fk];
+  if (!pr) return null;
+  const aspect = fk === "stative";
+  return (
+    <div className="card-pair">
+      <span className="pair-ok"><i>{aspect ? "stative" : "✓"}</i> {pr.good}</span>
+      <span className="pair-bad"><i>{aspect ? "eventive" : "✗"}</i> {pr.bad}</span>
     </div>
   );
 }
@@ -174,21 +190,28 @@ function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, on
         </div>
       </div>
 
-      <div className="card-q">Does <b>{item.display}</b> license the <b>{f ? f.label : item.feature}</b> construction?</div>
+      {item.feature === "derived_nominal" ? (
+        <div className="card-q">Does <b>{item.display}</b> have a nominalisation that takes the same complement — either a noun it is derived from (<i>hope</i> → <i>her hope that…</i>) or one formed with a suffix?
+          <ul className="card-suffixes">{window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => <li key={suf}><b>{suf}</b> <span>{eg}</span></li>)}</ul>
+        </div>
+      ) : (
+        <div className="card-q">Does <b>{item.display}</b> license the <b>{f ? f.label : item.feature}</b> construction?</div>
+      )}
+      <MinimalPair fk={item.feature} />
 
       <TestSentence item={item} />
 
       <div className="judge-btns">
-        <button className={"jb v1" + (judgement === "1" ? " on" : "")} onClick={() => onJudge("1")}>
-          <kbd>1</kbd><span className="jb-l">Present</span><span className="jb-s">has the feature</span>
+        <button className={"jb v1" + (judgement === "1" ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge("1"); }}>
+          <kbd>1</kbd><span className="jb-l">Acceptable</span><span className="jb-s">the sentence is fine</span>
         </button>
-        <button className={"jb v0" + (judgement === "0" ? " on" : "")} onClick={() => onJudge("0")}>
-          <kbd>0</kbd><span className="jb-l">Absent</span><span className="jb-s">no feature</span>
+        <button className={"jb v0" + (judgement === "0" ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge("0"); }}>
+          <kbd>0</kbd><span className="jb-l">Unacceptable</span><span className="jb-s">the sentence is out</span>
         </button>
-        <button className={"jb v5" + (judgement === "5" ? " on" : "")} onClick={() => onJudge("5")}>
+        <button className={"jb v5" + (judgement === "5" ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge("5"); }}>
           <kbd>5</kbd><span className="jb-l">Marginal</span><span className="jb-s">?  degraded</span>
         </button>
-        <button className={"jb vflag" + (flagged ? " on" : "")} onClick={() => onFlag()}>
+        <button className={"jb vflag" + (flagged ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onFlag(); }}>
           <kbd>7</kbd><span className="jb-l">{flagged ? "Flagged" : "Flag"}</span><span className="jb-s">review later</span>
         </button>
       </div>
@@ -205,7 +228,7 @@ function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, on
         </label>
         {item.feature === "derived_nominal" && (
           <label className="anno-field">
-            <span className="anno-label">Nominal form for <i>{item.display}</i> <span className="anno-hint">(only if you marked Present above)</span></span>
+            <span className="anno-label">Nominal form for <i>{item.display}</i> <span className="anno-hint">(only if you marked Acceptable above)</span></span>
             <input className="anno-input" type="text" value={nomVal}
               placeholder={"e.g. " + ((window.daceNominal ? window.daceNominal(item.verb, item.display).nom : "") || item.display)}
               onChange={(e) => setNomVal(e.target.value)}
@@ -227,13 +250,13 @@ function Overview({ judgements, flags, onJump, onClose }) {
           <button className="ov-close" onClick={onClose}>✕</button>
         </div>
         <div className="ov-legend">
-          <span><i className="sw v1" /> present</span><span><i className="sw v0" /> absent</span>
+          <span><i className="sw v1" /> acceptable</span><span><i className="sw v0" /> unacceptable</span>
           <span><i className="sw v5" /> marginal</span><span><i className="sw vu" /> unjudged</span><span><i className="sw vna" /> n/a</span>
           <span><i className="sw flag" /> flagged ⚑</span>
         </div>
         <div className="ov-grid-wrap">
           <table className="ov-grid">
-            <thead><tr><th className="ov-corner"></th>{FEATURES.map((fk) => <th key={fk} className="ov-fh" title={DACE_FEATURES[fk]?.label}>{fk.slice(0, 4)}</th>)}</tr></thead>
+            <thead><tr><th className="ov-corner"></th>{FEATURES.filter((fk) => !window.DACE_UNJUDGED.includes(fk)).map((fk) => <th key={fk} className="ov-fh" title={DACE_FEATURES[fk]?.label}>{fk.slice(0, 4)}</th>)}</tr></thead>
             <tbody>
               {PREDS.map((p, pi) => (
                 <tr key={p.verb}>
@@ -241,6 +264,7 @@ function Overview({ judgements, flags, onJump, onClose }) {
                   {FEATURES.map((fk) => {
                     const j = judgements[jkey(p.verb, fk)];
                     const fl = flags[jkey(p.verb, fk)];
+                    if (window.DACE_UNJUDGED.includes(fk)) return null;
                     if (window.daceInapplicable(p.verb, fk)) return <td key={fk} className="ov-c vna" title="not applicable" />;
                     const cls = j === "1" ? "v1" : j === "0" ? "v0" : j === "5" ? "v5" : "vu";
                     return <td key={fk} className={"ov-c " + cls + (fl ? " flagged" : "")} onClick={() => onJump(QUEUE_INDEX[jkey(p.verb, fk)])} />;
@@ -540,8 +564,8 @@ function Judge({ user, onSignOut }) {
       )}
 
       <footer className="foot">
-        <span className="kb"><kbd>1</kbd> Present</span>
-        <span className="kb"><kbd>0</kbd> Absent</span>
+        <span className="kb"><kbd>1</kbd> Acceptable</span>
+        <span className="kb"><kbd>0</kbd> Unacceptable</span>
         <span className="kb"><kbd>5</kbd> Marginal</span>
         <span className="kb"><kbd>7</kbd> Flag</span>
         <span className="kb"><kbd>←</kbd><kbd>→</kbd> Back / forward</span>

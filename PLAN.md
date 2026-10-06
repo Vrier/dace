@@ -13,7 +13,7 @@ Production build of the Claude Design handoff (30 Sept 2026): Explorer + Judge, 
 
 ## Data
 
-- 245 predicates still have estimated features (·est). Copular predicates' factive-passive and ditransitive cells are fixed at 0 and not judged (Oct 2026), so the judgeable grid is 24,292 cells.
+- 245 predicates still have estimated features (·est). Copular predicates' factive-passive and ditransitive cells are fixed at 0 and not judged (Oct 2026), and `phrasal` / `be_copula` are never judged, so the judgeable grid is 22,400 cells.
 - `obsess` is listed as a Say verb (4.1) in `docs-src/verb_classes.md` and `src/levin_classes.js` — probably a slip.
 - Coverage tab (methodology Step 5): `data/sources.js` and `data/concordance.csv` are staged but not built.
 - MegaAcceptability v2's full verb list and the MegaNegRaising data are still needed for the concordance (`notes/coverage_report.md`); `provenance/` is now gitignored, so they stay local.
@@ -69,4 +69,5 @@ Put `/judge/` behind a login and store each judge's progress on the server, so s
 - [x] Phone layout for the Judge (6 Oct 2026).
 - [ ] Thomas: register his judge account, tick `dace_admin` on it, judge a few cells on the live site.
 - [ ] Consolidation: how several judges' CSVs become `data/predicates.csv` (majority? Thomas adjudicates flags?). Not designed yet; the per-judge files have `judged_at`, so timing is available.
+- [ ] Aktionsart as a feature? `stative` is binary now; a categorical column (state / activity / achievement / accomplishment) like `factivity` would replace it and explain which frames sound off in the present tense. Thomas raised it 6 Oct 2026; not decided.
 - [ ] Nice to have: show inter-judge agreement in the Judges panel once two or more judges overlap.

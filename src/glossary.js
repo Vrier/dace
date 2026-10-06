@@ -153,3 +153,44 @@ window.DACE_CLASSES = {
 
 // csv: the site's own copy of data/predicates.csv (copied into site/data/ by the build)
 window.DACE_LINKS = { alt: ALT, vc: VC, csv: "data/predicates.csv" };
+
+// Minimal pairs shown under the Judge's question: one predicate that clearly has
+// the feature and one that clearly lacks it. Edit freely — plain text, * marks the
+// bad sentence. (stative has no acceptability contrast; the pair shows the two aspects.)
+window.DACE_FEATURE_PAIRS = {
+  that_omission:    { good: "She thought he had left.",                 bad: "*She resented he had left." },
+  comp_inf:         { good: "She expected to win.",                     bad: "*She doubted to win." },
+  ecm:              { good: "She believed him to be honest.",           bad: "*She thought him to be honest." },
+  comp_interrog:    { good: "She knew whether he had left.",            bad: "*She believed whether he had left." },
+  comp_gerund:      { good: "She regretted leaving early.",             bad: "*She thought leaving early." },
+  comp_small_clause:{ good: "She considered him a fool.",               bad: "*She knew him a fool." },
+  np_comp_alt:      { good: "She announced the decision.",              bad: "*She thought the decision." },
+  direct_speech:    { good: "\u201cI quit,\u201d she said.",             bad: "*\u201cI quit,\u201d she believed." },
+  subjunctive_comp: { good: "She insisted that he be present.",         bad: "*She knew that he be present." },
+  comp_for_to:      { good: "She preferred for him to leave.",          bad: "*She thought for him to leave." },
+  comp_bare_inf:    { good: "She saw him leave.",                       bad: "*She knew him leave." },
+  comp_exclamative: { good: "She realized what a linguist he was.",     bad: "*She thought what a linguist he was." },
+  comp_poss_ing:    { good: "She resented his leaving.",                bad: "*She saw his leaving." },
+  extraposition:    { good: "It surprised her that he had left.",       bad: "*It regretted her that he had left." },
+  raising:          { good: "There seemed to be a problem.",            bad: "*There hoped to be a problem." },
+  ditransitive:     { good: "She told him that it was over.",           bad: "*She said him that it was over." },
+  factive_passive:  { good: "She was surprised that he had left.",      bad: "*She was regretted that he had left." },
+  neg_raising:      { good: "I didn\u2019t think he left \u2248 I thought he didn\u2019t.", bad: "I didn\u2019t know he left \u2260 I knew he didn\u2019t." },
+  weak_island:      { good: "Who did she say that he saw __?",          bad: "*Who did she regret that he saw __?" },
+  pro_complement:   { good: "I think so. / I hope not.",                bad: "*I regret so. / *I regret not." },
+  npi_licenser:     { good: "I doubt he has any money.",                bad: "*I know he has any money." },
+  stative:          { good: "know: *She is knowing the answer.",        bad: "discover: She is discovering the answer." },
+  content_noun_fact:{ good: "She regretted the fact that he had left.", bad: "*She thought the fact that he had left." },
+  derived_nominal:  { good: "believe \u2192 her belief that he had left", bad: "think \u2192 *her thinkment / *her thought that he had left" },
+};
+
+// Nominalising suffixes, with an example each, for the derived-nominal question.
+window.DACE_NOMINAL_SUFFIXES = [
+  ["-tion / -sion", "assert \u2192 assertion, decide \u2192 decision"],
+  ["-ment", "announce \u2192 announcement"],
+  ["-ance / -ence", "assure \u2192 assurance, insist \u2192 insistence"],
+  ["-al", "deny \u2192 denial, propose \u2192 proposal"],
+  ["-y / -ery", "discover \u2192 discovery"],
+  ["-ure", "disclose \u2192 disclosure, fail \u2192 failure"],
+  ["zero (noun = verb)", "claim \u2192 claim, hope \u2192 hope, doubt \u2192 doubt"],
+];
