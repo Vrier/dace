@@ -17,8 +17,8 @@ Production build of the Claude Design handoff (30 Sept 2026): Explorer + Judge, 
 - `obsess` is listed as a Say verb (4.1) in `docs-src/verb_classes.md` and `src/levin_classes.js` — probably a slip.
 - Author order: the Festschrift lists **Anand, Grimshaw & Hacquard**; the interface says "Anand, Hacquard & Grimshaw (2017)" (`src/engine.jsx`, `src/app.jsx`, `src/ahg.js`). Decide whether "AHG" stays as the label.
 - Coverage tab (methodology Step 5): `data/sources.js` and `data/concordance.csv` are staged but not built.
-- MegaAcceptability v2's full verb list and the MegaNegRaising data are still needed for the concordance (`notes/coverage_report.md`).
-- Audit leftovers (`notes/audit_2026-08-17.md`): C2 — state which MegaV scale is authoritative (the build uses `veridicalitynorm`); C4 — registry/concordance mismatches.
+- MegaAcceptability v2's full verb list and the MegaNegRaising data are still needed for the concordance (`notes/coverage_report.md`); `provenance/` is now gitignored, so they stay local.
+- Audit leftovers (`notes/audit_2026-08-17.md`): C4 — registry/concordance mismatches. (C2, the MegaV scale question, is moot since the scores were removed.)
 
 ## Interface
 
@@ -29,7 +29,7 @@ Production build of the Claude Design handoff (30 Sept 2026): Explorer + Judge, 
 
 ## Licence
 
-Not chosen yet. MegaVeridicality is CC BY-SA 4.0 and DACE redistributes its scores, so CC BY-SA 4.0 for the data is the straightforward option.
+Not chosen yet, and no longer urgent: DACE redistributes no third-party data since the MegaVeridicality scores were removed (6 Oct 2026; the join logic is in git history, commit before this one, if they ever come back under a licence decision). The `factivity`/`veridicality` columns are DACE's own coding.
 
 ## Judge accounts (October 2026)
 

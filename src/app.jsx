@@ -307,7 +307,6 @@ function App() {
     { k: "semantic_class|asc", label: "Semantic class" },
     { k: "levin_class|asc", label: "Levin class" },
     { k: "factivity|asc", label: "Factivity" }, { k: "veridicality|asc", label: "Veridicality" },
-    { k: "megav|desc", label: "MegaV ↓" }, { k: "megav|asc", label: "MegaV ↑" },
   ];
 
   return (

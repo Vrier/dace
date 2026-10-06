@@ -179,5 +179,5 @@ check('site/ matches the sources (if not: npm run build, then commit site/)', ()
 
 const s = data.stats;
 console.log(failed ? `\n${failed} check(s) failed.` :
-  `\nAll checks passed — ${s.predicates} predicates, ${s.features} features, ${s.megav} MegaV scores, ${s.estimated} estimated.`);
+  `\nAll checks passed — ${s.predicates} predicates, ${s.features} features, ${s.estimated} estimated.`);
 process.exit(failed ? 1 : 0);

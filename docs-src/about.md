@@ -18,8 +18,6 @@ DACE currently lists {{predicates}} predicates. Each is coded for {{features}} b
 
 **Verb classes.** Levin, Beth. 1993. *English Verb Classes and Alternations: A Preliminary Investigation*. Chicago: University of Chicago Press.
 
-**Veridicality ratings.** {{megav}} predicates show the normalized veridicality rating of their *that*-clause frame from MegaVeridicality v2.1 by Aaron Steven White and Kyle Rawlins ([megaattitude.io](http://megaattitude.io/)), licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). If you use these values, please also cite White, Aaron Steven & Kyle Rawlins. 2018. The role of veridicality and factivity in clause selection. In *Proceedings of the 48th Meeting of the North East Linguistic Society*; and White, Aaron Steven, Rachel Rudinger, Kyle Rawlins & Benjamin Van Durme. 2018. Lexicosyntactic inference in neural models. In *Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing*.
-
 **Definitions.** The senses shown for each predicate are loaded live from [Wiktionary](https://en.wiktionary.org/) (CC BY-SA).
 
 ## Citing DACE

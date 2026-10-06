@@ -43,11 +43,6 @@ function sortPredicates(list, sort) {
   const mul = dir === "asc" ? 1 : -1;
   const arr = [...list];
   arr.sort((a, b) => {
-    if (key === "megav") {
-      const num = (x) => typeof x.megav === "number" ? x.megav : (dir === "asc" ? Infinity : -Infinity); // missing values last
-      const c = num(a) - num(b);
-      return c !== 0 ? c * mul : a.display.localeCompare(b.display);
-    }
     let av, bv;
     if (key === "verb") { av = a.display; bv = b.display; }
     else { av = (a[key] || "") + ""; bv = (b[key] || "") + ""; }
@@ -116,32 +111,6 @@ function Dot({ on, accent }) {
   return <span className={"fdot" + (on ? " on" : "")} style={on ? { background: accent, borderColor: accent } : null} />;
 }
 
-// ---- MegaVeridicality bar (normalized veridicality, that-clause frame, v2.1) ----
-const MEGAV_MAX = 2.5;
-function MegaVBar({ v }) {
-  const t = useTip();
-  if (v === null || v === undefined) return <span className="megav-na">—</span>;
-  if (v === "no_ver") return <span className="megav-na" title="verb has no that-clause frame in MegaVeridicality">no ver.</span>;
-  const c = Math.max(-MEGAV_MAX, Math.min(MEGAV_MAX, v));
-  const pct = (x) => 50 + (x / MEGAV_MAX) * 50;
-  const tone = v > 0.35 ? "pos" : v < -0.35 ? "neg" : "neu";
-  const tip = (
-    <div className="ftip">
-      <div className="ftip-head"><span className="ftip-name">MegaVeridicality {v > 0 ? "+" : ""}{v.toFixed(2)}</span><span className="ftip-sec">v2.1</span></div>
-      <div className="ftip-def">Normalized veridicality rating for the <i>that</i>-clause frame (White &amp; Rawlins). Positive → the complement is inferred true; negative → inferred false; near 0 → no inference.</div>
-    </div>
-  );
-  return (
-    <span className="megav" onMouseEnter={(e) => t && t.show(e, tip)} onMouseLeave={() => t && t.hide()}>
-      <span className="megav-track">
-        <span className="megav-zero" style={{ left: "50%" }} />
-        <span className={"megav-fill " + tone} style={{ left: Math.min(50, pct(Math.min(0, c))) + "%", width: Math.abs(pct(c) - 50) + "%" }} />
-        <span className={"megav-knob " + tone} style={{ left: pct(c) + "%" }} />
-      </span>
-      <span className={"megav-num " + tone}>{v > 0 ? "+" : ""}{v.toFixed(2)}</span>
-    </span>
-  );
-}
 
 function ClassChip({ cls, link = true, small = false }) {
   const c = DACE_CLASSES[cls];
@@ -232,5 +201,5 @@ function LevinChip({ code, small = false }) {
 Object.assign(window, {
   CLASS_COLORS, CLASS_ORDER, AhgChip, SUBCLASS_LABEL, isEstimated, predicateMatches, sortPredicates,
   TooltipLayer, useTip, Tip, FeatureTipCard,
-  Dot, ClassChip, CatTag, LevinChip, MegaVBar,
+  Dot, ClassChip, CatTag, LevinChip,
 });

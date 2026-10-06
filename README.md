@@ -12,7 +12,7 @@ Needs Node 20 or later.
 
 ```sh
 npm ci          # install the pinned build tools (esbuild, marked, React 18.3.1)
-npm run build   # rebuild site/ from src/, data/, docs-src/ and provenance/
+npm run build   # rebuild site/ from src/, data/ and docs-src/
 npm test        # the checks CI runs before every deploy
 npm run serve   # preview at http://localhost:8000
 ```
@@ -21,4 +21,4 @@ npm run serve   # preview at http://localhost:8000
 
 ## Credits
 
-AHG classes follow Anand, Grimshaw & Hacquard (2017), *Sentence embedding predicates, factivity and subjects* (Lauri Karttunen Festschrift, CSLI). Veridicality scores come from MegaVeridicality v2.1 by Aaron Steven White and Kyle Rawlins, CC BY-SA 4.0 — see [provenance/README.md](provenance/README.md). Definitions in the Explorer are loaded live from Wiktionary.
+AHG classes follow Anand, Grimshaw & Hacquard (2017), *Sentence embedding predicates, factivity and subjects* (Lauri Karttunen Festschrift, CSLI). Definitions in the Explorer are loaded live from Wiktionary.

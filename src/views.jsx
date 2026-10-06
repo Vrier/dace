@@ -40,7 +40,6 @@ const TableRow = React.memo(function TableRow({ p, accent, onOpen }) {
       </td>
       <td className="col-cat"><CatTag kind="factivity" value={p.factivity} /></td>
       <td className="col-cat"><CatTag kind="veridicality" value={p.veridicality} /></td>
-      <td className="col-megav"><MegaVBar v={p.megav} /></td>
       {window.DACE_BINARY_COLS.map((k) => (
         <td key={k} className={"col-feat" + (p[k] ? " y" : "")}>
           <Dot on={p[k] === 1} accent={accent} />
@@ -84,7 +83,6 @@ function TableView({ rows, accent, sort, onSort, onOpen }) {
             <SortHead label="Levin class" k="levin_class" sort={sort} onSort={onSort} className="col-cls" />
             <SortHead label="Factivity" k="factivity" sort={sort} onSort={onSort} className="col-cat" />
             <SortHead label="Veridicality" k="veridicality" sort={sort} onSort={onSort} className="col-cat" />
-            <SortHead label="MegaV" k="megav" sort={sort} onSort={onSort} className="col-megav" title="MegaVeridicality v2.1 — normalized veridicality, that-clause frame" />
             {window.DACE_BINARY_COLS.map((k) => {
               const active = sort.key === k;
               return (

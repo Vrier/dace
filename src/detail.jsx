@@ -1,4 +1,4 @@
-// detail.jsx — predicate detail (all flags grouped + megav + Wiktionary) + Wiktionary fetch.
+// detail.jsx — predicate detail (all flags grouped + Wiktionary) + Wiktionary fetch.
 const { useState: useStateD, useEffect: useEffectD, useRef: useRefD } = React;
 
 const WIKT_CACHE = {};
@@ -131,12 +131,6 @@ function DetailBody({ p, accent, onFeatureClick }) {
 
       <WiktionarySenses lemma={p.lemma} display={p.display} />
 
-      {p.megav !== null && p.megav !== undefined && (
-        <div className="detail-megav">
-          <span className="dm-label" title="MegaVeridicality v2.1 (White & Rawlins) — normalized veridicality rating for the that-clause frame. Positive → complement inferred true; negative → inferred false.">MegaVeridicality</span>
-          <MegaVBar v={p.megav} />
-        </div>
-      )}
 
       {example && <div className="detail-example"><span className={"ex-tag" + (customEx ? " custom" : "")}>{customEx ? "custom example" : "example"}</span><span className="ex-text">{example}</span></div>}
 
