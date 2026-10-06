@@ -20,6 +20,13 @@ const CLASS_COLORS = {
 
 function jkey(verb, feature) { return verb + "|" + feature; }
 
+// Buttons judge the SENTENCE (acceptable / unacceptable); for weak_island and stative
+// (DACE_INVERTED) an acceptable sentence means the feature is absent, so the stored
+// value is flipped. toStored: verdict → CSV value; toVerdict: CSV value → verdict.
+const FLIP = { "1": "0", "0": "1", "5": "5" };
+function toStored(fk, verdict) { return window.DACE_INVERTED.includes(fk) ? FLIP[verdict] : verdict; }
+function toVerdict(fk, stored) { return stored === undefined ? undefined : window.DACE_INVERTED.includes(fk) ? FLIP[stored] : stored; }
+
 // phone layout below 700px: one-row header with a menu, 2×2 judgement buttons,
 // a bottom bar for moving through the queue (judge.css, @media (max-width: 700px))
 const NARROW_MQ = "(max-width: 700px)";
@@ -139,7 +146,10 @@ function TestSentence({ item }) {
   const f = DACE_FEATURES[item.feature];
   const nomInfo = window.daceNominal ? window.daceNominal(item.verb, item.display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
-  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal) : null;
+  // the Judge shows the sentence unstarred: the judge decides (daceTestSentence stars
+  // inverted features when on, so pass on=0 for those)
+  const unstarred = window.DACE_INVERTED.includes(item.feature) ? 0 : 1;
+  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, unstarred, item.levin, item.display, nominal) : null;
   // the that-omission test is the sentence WITHOUT "that"; the examples keep "(that)"
   if (html && item.feature === "that_omission") html = html.replace(/\(that\) /g, "");
   return (
@@ -154,17 +164,18 @@ function TestSentence({ item }) {
 function MinimalPair({ fk }) {
   const pr = window.DACE_FEATURE_PAIRS && window.DACE_FEATURE_PAIRS[fk];
   if (!pr) return null;
-  const aspect = fk === "stative";
   return (
     <div className="card-pair">
-      <span className="pair-ok"><i>{aspect ? "stative" : "✓"}</i> {pr.good}</span>
-      <span className="pair-bad"><i>{aspect ? "eventive" : "✗"}</i> {pr.bad}</span>
+      <span className="pair-ok"><i>✓</i> {pr.good}</span>
+      <span className="pair-bad"><i>✗</i> {pr.bad}</span>
     </div>
   );
 }
 
-function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, onSentence, onNominal }) {
+function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, onFlag, onSentence, onNominal }) {
   const f = DACE_FEATURES[item.feature];
+  const judgement = toVerdict(item.feature, stored); // what the buttons show
+  const inverted = window.DACE_INVERTED.includes(item.feature);
   const defaultEx = useMemo(() => {
     const baked = window.DACE_BAKED_ANNOTATIONS && window.DACE_BAKED_ANNOTATIONS.sentences && window.DACE_BAKED_ANNOTATIONS.sentences[item.verb];
     return baked || (window.daceDefaultExample ? window.daceDefaultExample(item.verb, item.display, item.levin) : "");
@@ -194,6 +205,10 @@ function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, on
         <div className="card-q">Does <b>{item.display}</b> have a nominalisation that takes the same complement — either a noun it is derived from (<i>hope</i> → <i>her hope that…</i>) or one formed with a suffix?
           <ul className="card-suffixes">{window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => <li key={suf}><b>{suf}</b> <span>{eg}</span></li>)}</ul>
         </div>
+      ) : item.feature === "weak_island" ? (
+        <div className="card-q">Can a <i>wh</i>-phrase be extracted out of <b>{item.display}</b>'s complement? Judge the sentence: <b>Acceptable</b> = bridge verb (recorded as 0), <b>Unacceptable</b> = weak island (recorded as 1).</div>
+      ) : item.feature === "stative" ? (
+        <div className="card-q">Is <b>{item.display}</b> stative? Judge the progressive: <b>Acceptable</b> = eventive (recorded as 0), <b>Unacceptable</b> = stative (recorded as 1).</div>
       ) : (
         <div className="card-q">Does <b>{item.display}</b> license the <b>{f ? f.label : item.feature}</b> construction?</div>
       )}
@@ -216,7 +231,7 @@ function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, on
         </button>
       </div>
       {judgement !== undefined && (
-        <div className="card-current">Recorded: <b className={"v" + judgement}>{VALUES[judgement]}</b>{flagged ? " · ⚑ flagged" : ""} — press a key or button to change</div>
+        <div className="card-current">Recorded: <b className={"v" + judgement}>{VALUES[judgement]}</b>{inverted && stored !== "5" ? ` (CSV value ${stored})` : ""}{flagged ? " · ⚑ flagged" : ""} — press a key or button to change</div>
       )}
 
       <div className="card-anno">
@@ -440,8 +455,9 @@ function Judge({ user, onSignOut }) {
     return n < ORDER.length ? n : -1;
   }, [ORDER]);
 
-  const judge = useCallback((val) => {
+  const judge = useCallback((verdict) => {
     if (!item) return;
+    const val = toStored(item.feature, verdict);
     const now = new Date().toISOString();
     SYNC.update(item.verb, (d) => { d.f[item.feature] = val; d.t[item.feature] = now; });
     const next = { ...judgements, [jkey(item.verb, item.feature)]: val };

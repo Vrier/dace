@@ -199,6 +199,13 @@ const CLASS_COLORS = {
 function jkey(verb, feature) {
   return verb + "|" + feature;
 }
+const FLIP = { "1": "0", "0": "1", "5": "5" };
+function toStored(fk, verdict) {
+  return window.DACE_INVERTED.includes(fk) ? FLIP[verdict] : verdict;
+}
+function toVerdict(fk, stored) {
+  return stored === void 0 ? void 0 : window.DACE_INVERTED.includes(fk) ? FLIP[stored] : stored;
+}
 const NARROW_MQ = "(max-width: 700px)";
 function useNarrow() {
   const [n, setN] = useState(() => window.matchMedia(NARROW_MQ).matches);
@@ -326,18 +333,20 @@ function TestSentence({ item }) {
   const f = DACE_FEATURES[item.feature];
   const nomInfo = window.daceNominal ? window.daceNominal(item.verb, item.display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
-  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal) : null;
+  const unstarred = window.DACE_INVERTED.includes(item.feature) ? 0 : 1;
+  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, unstarred, item.levin, item.display, nominal) : null;
   if (html && item.feature === "that_omission") html = html.replace(/\(that\) /g, "");
   return /* @__PURE__ */ React.createElement("div", { className: "ts" }, /* @__PURE__ */ React.createElement("div", { className: "ts-def", dangerouslySetInnerHTML: { __html: f ? f.def : "" } }), /* @__PURE__ */ React.createElement("div", { className: "ts-sentence", dangerouslySetInnerHTML: { __html: html || "<em>No frame for this feature.</em>" } }));
 }
 function MinimalPair({ fk }) {
   const pr = window.DACE_FEATURE_PAIRS && window.DACE_FEATURE_PAIRS[fk];
   if (!pr) return null;
-  const aspect = fk === "stative";
-  return /* @__PURE__ */ React.createElement("div", { className: "card-pair" }, /* @__PURE__ */ React.createElement("span", { className: "pair-ok" }, /* @__PURE__ */ React.createElement("i", null, aspect ? "stative" : "\u2713"), " ", pr.good), /* @__PURE__ */ React.createElement("span", { className: "pair-bad" }, /* @__PURE__ */ React.createElement("i", null, aspect ? "eventive" : "\u2717"), " ", pr.bad));
+  return /* @__PURE__ */ React.createElement("div", { className: "card-pair" }, /* @__PURE__ */ React.createElement("span", { className: "pair-ok" }, /* @__PURE__ */ React.createElement("i", null, "\u2713"), " ", pr.good), /* @__PURE__ */ React.createElement("span", { className: "pair-bad" }, /* @__PURE__ */ React.createElement("i", null, "\u2717"), " ", pr.bad));
 }
-function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, onSentence, onNominal }) {
+function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, onFlag, onSentence, onNominal }) {
   const f = DACE_FEATURES[item.feature];
+  const judgement = toVerdict(item.feature, stored);
+  const inverted = window.DACE_INVERTED.includes(item.feature);
   const defaultEx = useMemo(() => {
     const baked = window.DACE_BAKED_ANNOTATIONS && window.DACE_BAKED_ANNOTATIONS.sentences && window.DACE_BAKED_ANNOTATIONS.sentences[item.verb];
     return baked || (window.daceDefaultExample ? window.daceDefaultExample(item.verb, item.display, item.levin) : "");
@@ -348,7 +357,7 @@ function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, on
     setSentVal(sentence || "");
     setNomVal(nominal || "");
   }, [item.verb]);
-  return /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { className: "card-top" }, /* @__PURE__ */ React.createElement("div", { className: "card-left" }, /* @__PURE__ */ React.createElement("div", { className: "card-verb" }, item.display, flagged && /* @__PURE__ */ React.createElement("span", { className: "flag-badge", title: "Flagged for review" }, "\u2691")), /* @__PURE__ */ React.createElement("div", { className: "card-chips" }, /* @__PURE__ */ React.createElement(AhgChip, { cls: item.ahg }), item.levin && /* @__PURE__ */ React.createElement(LevinChip2, { code: item.levin }))), /* @__PURE__ */ React.createElement("div", { className: "card-right" }, /* @__PURE__ */ React.createElement("div", { className: "card-feat" }, f ? f.label : item.feature), /* @__PURE__ */ React.createElement("div", { className: "card-feat-sec" }, f ? "\xA7" + f.sec : ""), /* @__PURE__ */ React.createElement("div", { className: "card-csv " + (item.originalValue ? "v1" : "v0") }, "current CSV: ", item.originalValue))), item.feature === "derived_nominal" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " have a nominalisation that takes the same complement \u2014 either a noun it is derived from (", /* @__PURE__ */ React.createElement("i", null, "hope"), " \u2192 ", /* @__PURE__ */ React.createElement("i", null, "her hope that\u2026"), ") or one formed with a suffix?", /* @__PURE__ */ React.createElement("ul", { className: "card-suffixes" }, window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => /* @__PURE__ */ React.createElement("li", { key: suf }, /* @__PURE__ */ React.createElement("b", null, suf), " ", /* @__PURE__ */ React.createElement("span", null, eg))))) : /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " license the ", /* @__PURE__ */ React.createElement("b", null, f ? f.label : item.feature), " construction?"), /* @__PURE__ */ React.createElement(MinimalPair, { fk: item.feature }), /* @__PURE__ */ React.createElement(TestSentence, { item }), /* @__PURE__ */ React.createElement("div", { className: "judge-btns" }, /* @__PURE__ */ React.createElement("button", { className: "jb v1" + (judgement === "1" ? " on" : ""), onClick: (e) => {
+  return /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { className: "card-top" }, /* @__PURE__ */ React.createElement("div", { className: "card-left" }, /* @__PURE__ */ React.createElement("div", { className: "card-verb" }, item.display, flagged && /* @__PURE__ */ React.createElement("span", { className: "flag-badge", title: "Flagged for review" }, "\u2691")), /* @__PURE__ */ React.createElement("div", { className: "card-chips" }, /* @__PURE__ */ React.createElement(AhgChip, { cls: item.ahg }), item.levin && /* @__PURE__ */ React.createElement(LevinChip2, { code: item.levin }))), /* @__PURE__ */ React.createElement("div", { className: "card-right" }, /* @__PURE__ */ React.createElement("div", { className: "card-feat" }, f ? f.label : item.feature), /* @__PURE__ */ React.createElement("div", { className: "card-feat-sec" }, f ? "\xA7" + f.sec : ""), /* @__PURE__ */ React.createElement("div", { className: "card-csv " + (item.originalValue ? "v1" : "v0") }, "current CSV: ", item.originalValue))), item.feature === "derived_nominal" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " have a nominalisation that takes the same complement \u2014 either a noun it is derived from (", /* @__PURE__ */ React.createElement("i", null, "hope"), " \u2192 ", /* @__PURE__ */ React.createElement("i", null, "her hope that\u2026"), ") or one formed with a suffix?", /* @__PURE__ */ React.createElement("ul", { className: "card-suffixes" }, window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => /* @__PURE__ */ React.createElement("li", { key: suf }, /* @__PURE__ */ React.createElement("b", null, suf), " ", /* @__PURE__ */ React.createElement("span", null, eg))))) : item.feature === "weak_island" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Can a ", /* @__PURE__ */ React.createElement("i", null, "wh"), "-phrase be extracted out of ", /* @__PURE__ */ React.createElement("b", null, item.display), "'s complement? Judge the sentence: ", /* @__PURE__ */ React.createElement("b", null, "Acceptable"), " = bridge verb (recorded as 0), ", /* @__PURE__ */ React.createElement("b", null, "Unacceptable"), " = weak island (recorded as 1).") : item.feature === "stative" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Is ", /* @__PURE__ */ React.createElement("b", null, item.display), " stative? Judge the progressive: ", /* @__PURE__ */ React.createElement("b", null, "Acceptable"), " = eventive (recorded as 0), ", /* @__PURE__ */ React.createElement("b", null, "Unacceptable"), " = stative (recorded as 1).") : /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " license the ", /* @__PURE__ */ React.createElement("b", null, f ? f.label : item.feature), " construction?"), /* @__PURE__ */ React.createElement(MinimalPair, { fk: item.feature }), /* @__PURE__ */ React.createElement(TestSentence, { item }), /* @__PURE__ */ React.createElement("div", { className: "judge-btns" }, /* @__PURE__ */ React.createElement("button", { className: "jb v1" + (judgement === "1" ? " on" : ""), onClick: (e) => {
     e.currentTarget.blur();
     onJudge("1");
   } }, /* @__PURE__ */ React.createElement("kbd", null, "1"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, "Acceptable"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "the sentence is fine")), /* @__PURE__ */ React.createElement("button", { className: "jb v0" + (judgement === "0" ? " on" : ""), onClick: (e) => {
@@ -360,7 +369,7 @@ function Card({ item, judgement, flagged, sentence, nominal, onJudge, onFlag, on
   } }, /* @__PURE__ */ React.createElement("kbd", null, "5"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, "Marginal"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "?  degraded")), /* @__PURE__ */ React.createElement("button", { className: "jb vflag" + (flagged ? " on" : ""), onClick: (e) => {
     e.currentTarget.blur();
     onFlag();
-  } }, /* @__PURE__ */ React.createElement("kbd", null, "7"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, flagged ? "Flagged" : "Flag"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "review later"))), judgement !== void 0 && /* @__PURE__ */ React.createElement("div", { className: "card-current" }, "Recorded: ", /* @__PURE__ */ React.createElement("b", { className: "v" + judgement }, VALUES[judgement]), flagged ? " \xB7 \u2691 flagged" : "", " \u2014 press a key or button to change"), /* @__PURE__ */ React.createElement("div", { className: "card-anno" }, /* @__PURE__ */ React.createElement("label", { className: "anno-field" }, /* @__PURE__ */ React.createElement("span", { className: "anno-label" }, "Example sentence for ", /* @__PURE__ */ React.createElement("i", null, item.display), " ", /* @__PURE__ */ React.createElement("span", { className: "anno-hint" }, "(your own; optional)")), /* @__PURE__ */ React.createElement(
+  } }, /* @__PURE__ */ React.createElement("kbd", null, "7"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, flagged ? "Flagged" : "Flag"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "review later"))), judgement !== void 0 && /* @__PURE__ */ React.createElement("div", { className: "card-current" }, "Recorded: ", /* @__PURE__ */ React.createElement("b", { className: "v" + judgement }, VALUES[judgement]), inverted && stored !== "5" ? ` (CSV value ${stored})` : "", flagged ? " \xB7 \u2691 flagged" : "", " \u2014 press a key or button to change"), /* @__PURE__ */ React.createElement("div", { className: "card-anno" }, /* @__PURE__ */ React.createElement("label", { className: "anno-field" }, /* @__PURE__ */ React.createElement("span", { className: "anno-label" }, "Example sentence for ", /* @__PURE__ */ React.createElement("i", null, item.display), " ", /* @__PURE__ */ React.createElement("span", { className: "anno-hint" }, "(your own; optional)")), /* @__PURE__ */ React.createElement(
     "textarea",
     {
       className: "anno-input",
@@ -488,8 +497,9 @@ function Judge({ user, onSignOut }) {
     while (n < ORDER.length && j[jkey(QUEUE[ORDER[n]].verb, QUEUE[ORDER[n]].feature)] !== void 0) n++;
     return n < ORDER.length ? n : -1;
   }, [ORDER]);
-  const judge = useCallback((val) => {
+  const judge = useCallback((verdict) => {
     if (!item) return;
+    const val = toStored(item.feature, verdict);
     const now = (/* @__PURE__ */ new Date()).toISOString();
     SYNC.update(item.verb, (d) => {
       d.f[item.feature] = val;

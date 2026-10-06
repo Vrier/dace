@@ -24,6 +24,10 @@ window.DACE_COPULAR_NA = ["factive_passive", "ditransitive"];
 // Features that are lexical facts settled in the CSV, not judgements: the Judge
 // never shows them (phrasal = has a particle; be_copula = is a be-predicate).
 window.DACE_UNJUDGED = ["phrasal", "be_copula"];
+// Features whose value 1 means the test sentence is BAD: weak_island (1 = resists
+// extraction) and stative (1 = stative, so the progressive is out). The Judge
+// records Acceptable as 0 for these; daceTestSentence stars them when on.
+window.DACE_INVERTED = ["weak_island", "stative"];
 window.daceInapplicable = function (verb, fk) {
   return verb.startsWith("be_") && window.DACE_COPULAR_NA.includes(fk);
 };
@@ -285,7 +289,8 @@ window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored
       .replace(/\[NOM\]/g, nominal ? `<strong${nomCandidate ? ' class="nom-candidate" title="candidate form"' : ''}>${nominal}</strong>` : "[nominal]")
       .replace(/\[V\]/g, `<strong>${forms.v}</strong>`);
   }
-  const star = on ? "" : `<span class="bad">*</span>`;
+  const bad = DACE_INVERTED.includes(fk) ? !!on : !on;
+  const star = bad ? `<span class="bad">*</span>` : "";
 
   if (typeof tmpl === "object") {
     const aMark = passiveLeaning ? `<span class="marginal">(?)</span> ` : "";

@@ -74,7 +74,7 @@ window.DACE_FEATURES = {
     def: "Matrix negation is interpreted in the embedded clause.", eg: "I don't think he left \u2248 I think he didn't." ,
     test: "<em>I don't [VERB] he'll come \u2248 I [VERB] he won't come.</em> — negation shifts to embedded clause." },
   weak_island:      { label: "Weak island / bridge", group: "B", sec: 18, url: ALT + "#18-weak-island-sensitivity-and-bridge-effects",
-    def: "Bridge behaviour: permits long-distance extraction from the complement.", eg: "Who did she say that he saw __?" ,
+    def: "Resists long-distance extraction from its complement (1 = weak island; 0 = bridge verb, extraction fine).", eg: "*Who did she regret that he saw __? (vs. Who did she say that he saw __?)" ,
     test: "<em>What did she [VERB] [that he bought ___]?</em> — wh-extraction from embedded clause; degradation = weak island." },
 
   pro_complement:   { label: "Pro-complement (so/not)", group: "C", sec: 19, url: ALT + "#19-the-pro-complement-sonot-alternation",
@@ -156,11 +156,12 @@ window.DACE_LINKS = { alt: ALT, vc: VC, csv: "data/predicates.csv" };
 
 // Minimal pairs shown under the Judge's question: one predicate that clearly has
 // the feature and one that clearly lacks it. Edit freely — plain text, * marks the
-// bad sentence. (stative has no acceptability contrast; the pair shows the two aspects.)
+// bad sentence. For the two inverted features (DACE_INVERTED in frames.js: weak_island,
+// stative) an ACCEPTABLE sentence means the feature is ABSENT, and the pair says so.
 window.DACE_FEATURE_PAIRS = {
   that_omission:    { good: "She thought he had left.",                 bad: "*She resented he had left." },
   comp_inf:         { good: "She expected to win.",                     bad: "*She doubted to win." },
-  ecm:              { good: "She believed him to be honest.",           bad: "*She thought him to be honest." },
+  ecm:              { good: "She believed him to be honest.",           bad: "*She hoped him to be honest." },
   comp_interrog:    { good: "She knew whether he had left.",            bad: "*She believed whether he had left." },
   comp_gerund:      { good: "She regretted leaving early.",             bad: "*She thought leaving early." },
   comp_small_clause:{ good: "She considered him a fool.",               bad: "*She knew him a fool." },
@@ -176,10 +177,10 @@ window.DACE_FEATURE_PAIRS = {
   ditransitive:     { good: "She told him that it was over.",           bad: "*She said him that it was over." },
   factive_passive:  { good: "She was surprised that he had left.",      bad: "*She was regretted that he had left." },
   neg_raising:      { good: "I didn\u2019t think he left \u2248 I thought he didn\u2019t.", bad: "I didn\u2019t know he left \u2260 I knew he didn\u2019t." },
-  weak_island:      { good: "Who did she say that he saw __?",          bad: "*Who did she regret that he saw __?" },
+  weak_island:      { good: "Who did she say that he saw __?  (bridge: recorded as 0)", bad: "*Who did she regret that he saw __?  (island: recorded as 1)" },
   pro_complement:   { good: "I think so. / I hope not.",                bad: "*I regret so. / *I regret not." },
-  npi_licenser:     { good: "I doubt he has any money.",                bad: "*I know he has any money." },
-  stative:          { good: "know: *She is knowing the answer.",        bad: "discover: She is discovering the answer." },
+  npi_licenser:     { good: "I doubt he has any money.",                bad: "*I think he has any money." },
+  stative:          { good: "discover: She is discovering the answer.  (eventive: recorded as 0)", bad: "know: *She is knowing the answer.  (stative: recorded as 1)" },
   content_noun_fact:{ good: "She regretted the fact that he had left.", bad: "*She thought the fact that he had left." },
   derived_nominal:  { good: "believe \u2192 her belief that he had left", bad: "find out \u2192 *her find-out that he had left" },
 };
