@@ -1,16 +1,11 @@
 # ===========================================================================
-# DACE — test + deploy on every push to main.
+# DACE — test, then release to the server.
 #
-# Static recipe, as for www and slides: Caddy serves /srv/dace/site straight
-# from a clone on the VPS, so deploying = fast-forwarding that clone. First,
-# `npm test` rebuilds the site from src/ + data/ + docs-src/ and fails if the
-# committed site/ is out of date or a data/doc check fails — a red run never
-# reaches the server.
-#
-# Required repository secret (Settings → Secrets and variables → Actions):
-#   DEPLOY_SSH_KEY — the same BASE64 value as the slides repo's secret (the
-#                    gha-slides key for compose@167.233.233.109). Raw keys
-#                    are accepted too.
+# The server pulls: a cron job installed by deploy/setup-server.sh moves
+# /srv/dace to branch "live" every two minutes. This workflow points "live"
+# at a commit only after `npm test` passes (the test rebuilds the site from
+# src/ + data/ + docs-src/ and fails if the committed site/ is out of date),
+# so a red run never reaches the server. No SSH key or secret is needed.
 # ===========================================================================
 name: deploy
 
@@ -23,11 +18,16 @@ concurrency:
   group: deploy
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
-  test-and-deploy:
+  test-and-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -40,22 +40,5 @@ jobs:
       - name: Checks (data, doc links, Judge export round trip, site/ up to date)
         run: npm test
 
-      - name: Set up SSH key
-        env:
-          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          if printf '%s' "$DEPLOY_SSH_KEY" | base64 -d > ~/.ssh/deploy_key 2>/dev/null \
-             && grep -q 'PRIVATE KEY' ~/.ssh/deploy_key; then
-            echo "key: base64-decoded"
-          else
-            printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
-            echo "key: used raw"
-          fi
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H 167.233.233.109 >> ~/.ssh/known_hosts
-
-      - name: Update served files
-        run: |
-          ssh -o BatchMode=yes -i ~/.ssh/deploy_key compose@167.233.233.109 \
-            'git -C /srv/dace fetch origin main && git -C /srv/dace reset --hard origin/main'
+      - name: Release (move branch live here; the server picks it up within 2 minutes)
+        run: git push --force origin HEAD:refs/heads/live
