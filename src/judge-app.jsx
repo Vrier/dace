@@ -21,6 +21,20 @@ const CLASS_COLORS = {
 
 function jkey(verb, feature) { return verb + "|" + feature; }
 
+// phone layout below 700px: one-row header with a menu, 2×2 judgement buttons,
+// a bottom bar for moving through the queue (judge.css, @media (max-width: 700px))
+const NARROW_MQ = "(max-width: 700px)";
+function useNarrow() {
+  const [n, setN] = useState(() => window.matchMedia(NARROW_MQ).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(NARROW_MQ);
+    const h = (e) => setN(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+  return n;
+}
+
 const QUEUE = (() => {
   const q = [];
   for (const p of PREDS) for (const fk of FEATURES) {
@@ -95,7 +109,9 @@ function Menu({ label, primary, items }) {
   return (
     <div className="menu" ref={ref}>
       <button className={"ta" + (primary ? " primary" : "")} onClick={() => setOpen((o) => !o)}>{label} ▾</button>
-      {open && <div className="menu-pop">{items.map((it, i) => <button key={i} className="menu-item" onClick={() => { it.fn(); setOpen(false); }}>{it.label}</button>)}</div>}
+      {open && <div className="menu-pop">{items.map((it, i) => it.heading
+        ? <div key={i} className="menu-heading">{it.heading}</div>
+        : <button key={i} className="menu-item" onClick={() => { it.fn(); setOpen(false); }}>{it.label}</button>)}</div>}
     </div>
   );
 }
@@ -344,13 +360,14 @@ function JudgesPanel({ onClose }) {
 }
 
 function SaveStatus({ st }) {
-  if (st.failed) return <span className="save-st err" title="Will keep retrying">⚠ {st.pending} unsaved — retrying</span>;
-  if (st.pending) return <span className="save-st busy">saving…</span>;
-  return <span className="save-st ok">saved</span>;
+  if (st.failed) return <span className="save-st err" title="Will keep retrying"><span className="save-dot" />⚠ {st.pending} unsaved — retrying</span>;
+  if (st.pending) return <span className="save-st busy"><span className="save-dot" />saving…</span>;
+  return <span className="save-st ok"><span className="save-dot" />saved</span>;
 }
 
 // ---------------------------------------------------------------------------
 function Judge({ user, onSignOut }) {
+  const narrow = useNarrow();
   const ORDER = useMemo(() => judgeOrder(user.id), [user.id]);
   const POS_OF = useMemo(() => { const m = new Array(ORDER.length); ORDER.forEach((qi, pos) => { m[qi] = pos; }); return m; }, [ORDER]);
 
@@ -440,20 +457,35 @@ function Judge({ user, onSignOut }) {
     { label: "My derived nominals (.json)", fn: () => exportOwnAnnotations("nominals", nominals) },
   ];
 
+  const menuItems = [
+    { label: "Coverage map", fn: () => setShowOverview(true) },
+    ...(user.admin ? [{ label: "Judges", fn: () => setShowJudges(true) }] : []),
+    { heading: "Export" },
+    ...exportItems,
+    { heading: user.email },
+    { label: "Sign out", fn: signOut },
+  ];
+
   return (
-    <div className="app">
+    <div className={"app" + (narrow ? " narrow" : "")}>
       <header className="top">
-        <div className="brand"><span className="brand-mark">DACE</span><span className="brand-sub">Judgement Tool</span></div>
+        <div className="brand"><span className="brand-mark">DACE</span>{!narrow && <span className="brand-sub">Judgement Tool</span>}</div>
         <div className="prog">
           <div className="prog-bar"><div className="prog-fill" style={{ width: pct + "%" }} /></div>
-          <span className="prog-label">{judgedCount.toLocaleString()} judged · {remaining.toLocaleString()} remaining ({pct}%)</span>
+          <span className="prog-label">{narrow
+            ? <>{judgedCount.toLocaleString()} · <b>{remaining.toLocaleString()}</b> left</>
+            : <>{judgedCount.toLocaleString()} judged · {remaining.toLocaleString()} remaining ({pct}%)</>}</span>
         </div>
         <div className="top-actions">
           <SaveStatus st={saveSt} />
-          <button className="ta" onClick={() => setShowOverview(true)}>Coverage map</button>
-          <Menu label="Export" items={exportItems} />
-          {user.admin && <button className="ta" onClick={() => setShowJudges(true)}>Judges</button>}
-          <Menu label={user.email} items={[{ label: "Sign out", fn: signOut }]} />
+          {narrow
+            ? <Menu label="Menu" items={menuItems} />
+            : <>
+              <button className="ta" onClick={() => setShowOverview(true)}>Coverage map</button>
+              <Menu label="Export" items={exportItems} />
+              {user.admin && <button className="ta" onClick={() => setShowJudges(true)}>Judges</button>}
+              <Menu label={user.email} items={[{ label: "Sign out", fn: signOut }]} />
+            </>}
         </div>
       </header>
 
@@ -470,6 +502,15 @@ function Judge({ user, onSignOut }) {
         </div>
         <button className="nav" onClick={() => go(1)} disabled={pos >= ORDER.length - 1} title="Next in your queue (→)">›</button>
       </div>
+
+      {narrow && (
+        <nav className="mnav">
+          <button className="mnav-btn" onClick={() => go(-1)} disabled={pos === 0}>‹ Back</button>
+          <span className="mnav-pos">{pos + 1} / {ORDER.length.toLocaleString()}</span>
+          <button className="mnav-btn" onClick={nextUnjudged} title="Next unjudged">Unjudged ↷</button>
+          <button className="mnav-btn" onClick={() => go(1)} disabled={pos >= ORDER.length - 1}>Next ›</button>
+        </nav>
+      )}
 
       <footer className="foot">
         <span className="kb"><kbd>1</kbd> Present</span>

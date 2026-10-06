@@ -67,6 +67,7 @@ Put `/judge/` behind a login and store each judge's progress on the server, so s
 
 - [x] COMPOSE backend (migration 1751700008, `dace.pb.js`, guard; suite 243) — deployed 6 Oct 2026; judge invite code created.
 - [x] DACE: SDK in `site/assets/`, `src/judge-sync.js`, sign-in/register card, server-backed judgements, per-judge order, judged/remaining, Judges panel with per-judge downloads. Tested in headless Chrome against a throwaway PocketBase: register → judge → backtrack → reload (same order, same position) → outage (unsaved — retrying) → recovery → admin panel.
+- [x] Phone layout for the Judge (6 Oct 2026).
 - [ ] Thomas: register his judge account, tick `dace_admin` on it, judge a few cells on the live site.
 - [ ] Consolidation: how several judges' CSVs become `data/predicates.csv` (majority? Thomas adjudicates flags?). Not designed yet; the per-judge files have `judged_at`, so timing is available.
 - [ ] Nice to have: show inter-judge agreement in the Judges panel once two or more judges overlap.
