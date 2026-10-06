@@ -181,7 +181,7 @@ window.DACE_FEATURE_PAIRS = {
   npi_licenser:     { good: "I doubt he has any money.",                bad: "*I know he has any money." },
   stative:          { good: "know: *She is knowing the answer.",        bad: "discover: She is discovering the answer." },
   content_noun_fact:{ good: "She regretted the fact that he had left.", bad: "*She thought the fact that he had left." },
-  derived_nominal:  { good: "believe \u2192 her belief that he had left", bad: "think \u2192 *her thinkment / *her thought that he had left" },
+  derived_nominal:  { good: "believe \u2192 her belief that he had left", bad: "find out \u2192 *her find-out that he had left" },
 };
 
 // Nominalising suffixes, with an example each, for the derived-nominal question.
