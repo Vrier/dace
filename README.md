@@ -3,7 +3,7 @@
 DACE maps the alternation patterns of English clause-embedding predicates: the complements each predicate takes, the matrix alternations it allows, and what it implies about the truth of its complement. It is inspired by Levin's *English Verb Classes and Alternations* (1993).
 
 - **Explorer:** https://dace.tstephen.com — browse the predicates by class and feature
-- **Judge:** https://dace.tstephen.com/judge/ — the (unlisted) annotation tool
+- **Judge:** https://dace.tstephen.com/judge/ — the (unlisted) annotation tool; judges sign in with an account from COMPOSE's PocketBase
 - **Data:** [`data/predicates.csv`](data/predicates.csv)
 
 ## Working on it

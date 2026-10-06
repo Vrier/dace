@@ -1,105 +1,63 @@
-# DEPLOY.md — one-time setup for dace.tstephen.com
+# DEPLOY.md — how dace.tstephen.com is served and updated
 
-This is the **static-project recipe** used for www.tstephen.com and slides.tstephen.com: Caddy serves files straight from a clone on the VPS, and deploying is a `git fetch`/`reset` triggered by GitHub Actions. The only difference is that this repo has a build step — but its output, `site/`, is committed, so the server never builds anything. Caddy serves **only `site/`**, so the rest of the repo (and `.git`) is never public.
+Caddy on the VPS (`167.233.233.109`, the server that also runs COMPOSE and www/slides) serves **only `site/`** from a clone of this repo at `/srv/dace`. The site is static and `site/` is committed, so the server never builds anything and never needs a GitHub credential.
 
-Do these in order. The first Actions run will fail at *Update served files* if it runs before step 3 — re-run it from the Actions tab once the server is ready.
+## How a push reaches the site
 
-## 1. GitHub
+1. You push to `main`.
+2. GitHub Actions (`.github/workflows/deploy.yml`) runs `npm ci` and `npm test` (the same checks as locally, including "site/ matches the sources").
+3. If green, the workflow force-moves branch **`live`** to that commit. Nothing else happens on GitHub's side; there is no SSH key or secret.
+4. A cron job on the VPS (`/etc/cron.d/dace`, installed by `deploy/setup-server.sh`) runs every 2 minutes as the `compose` user: `git fetch origin live && git reset --hard FETCH_HEAD` in `/srv/dace`.
+5. About 3 minutes after the push, the change is live. Check by fetching a changed file from `https://dace.tstephen.com/…` and comparing it with `site/`.
 
-1. Create the repository (suggested: `Vrier/dace`). **Public** matches compose and slides, and lets the server fetch without credentials. **Private** works too — see the private-repo variant in step 3.
-2. *Settings → Secrets and variables → Actions → New repository secret*: `DEPLOY_SSH_KEY`, with the **same base64 value as the slides repo's secret** (the gha-slides key for `compose@167.233.233.109`). It's a server credential, so sharing it across repos is fine.
-3. A write deploy key so Cowork can push (GitHub deploy keys are unique per repo). In the repo folder:
+**Never push to `live` yourself** — the workflow owns it, and the test gate is the only thing standing between a broken `site/` and the server. If a run is red, fix `main` and push again.
 
-   ```sh
-   ssh-keygen -t ed25519 -f .deploy-key -C "cowork-dace"     # press Enter twice: no passphrase
-   ```
+## One-time server setup (done)
 
-   Add `.deploy-key.pub` under *Settings → Deploy keys*, tick **Allow write access**, then:
-
-   ```sh
-   git config core.sshCommand "ssh -i .deploy-key -o IdentitiesOnly=yes"
-   ```
-
-   `.deploy-key` is gitignored — never commit it.
-
-## 2. DNS (Porkbun) — before the Caddy block
-
-Add an A record: `dace` → `167.233.233.109`. Caddy requests the TLS certificate on the first request to the new site block; if the record isn't live yet, issuance fails.
-
-## 3. VPS (as root)
-
-**Public repo:**
-
-```sh
-git clone https://github.com/Vrier/dace.git /srv/dace
-chown -R compose:compose /srv/dace
-```
-
-**Private repo:** the server needs its own read-only key to fetch.
-
-```sh
-sudo -u compose ssh-keygen -t ed25519 -N '' -f ~compose/.ssh/dace_read -C dace-read
-cat ~compose/.ssh/dace_read.pub     # add on GitHub: Settings → Deploy keys (read-only)
-sudo -u compose tee -a ~compose/.ssh/config >/dev/null <<'CFG'
-Host github-dace
-  HostName github.com
-  User git
-  IdentityFile ~/.ssh/dace_read
-  IdentitiesOnly yes
-CFG
-sudo -u compose sh -c 'ssh-keyscan github.com >> ~/.ssh/known_hosts'
-install -d -o compose -g compose /srv/dace
-sudo -u compose git clone github-dace:Vrier/dace.git /srv/dace
-```
-
-Then append to `/etc/caddy/Caddyfile` and reload:
+`deploy/setup-server.sh` does everything the server needs: clone to `/srv/dace`, add the `dace.tstephen.com` block to `/etc/caddy/Caddyfile` (with a safe rollback if Caddy refuses the reload), install the cron job, and wait for the certificate. It is safe to re-run. Run it as root from the Hetzner web console — the two lines at the top of the script use no capitals or shifted symbols, because the console drops those:
 
 ```
-dace.tstephen.com {
-	root * /srv/dace/site
-	file_server
-	encode gzip
-}
+curl -f --location -o /root/dace-setup.sh raw.githubusercontent.com/vrier/dace/main/deploy/setup-server.sh
+bash /root/dace-setup.sh
 ```
 
-```sh
-systemctl reload caddy
+Anything else that ever has to run on the server goes the same way: a script under `deploy/` fetched with `curl`.
+
+DNS (Porkbun): A record `dace` → `167.233.233.109`, in place before Caddy first serves the host, or certificate issuance fails.
+
+## Pushing from a Claude session
+
+Claude's Linux sandbox can't open SSH connections, so deploy keys don't help it push. Changes made there come back as a patch file (`git format-patch`) that you apply on your PC:
+
+```powershell
+cd "$env:USERPROFILE\Desktop\dace-repo"
+git pull
+git am "$env:USERPROFILE\Downloads\<name>.patch"
+git log --oneline -1
+git push
 ```
 
-## 4. Verify
+`git push` over HTTPS signs in through the browser. If `git am` fails, `git am --abort` and send the output back.
 
-Push a commit (or re-run the workflow), watch it go green under **Actions**, then:
+## The Judge's backend
+
+The Judge (`/judge/`) is static too, but it signs judges in against **COMPOSE's PocketBase** at `https://compose.tstephen.com` and stores their judgements there. That code lives in the `Vrier/compose` repo (`server/pb_hooks/dace.pb.js`, migration `1751700008`) and deploys with COMPOSE (its workflow SSHes to the server and restarts PocketBase). PocketBase's default CORS (`*`) is what lets the Judge call it from this origin; if COMPOSE ever restricts `--origins`, `https://dace.tstephen.com` must be in the list. See `CLAUDE.md` → *The Judge*.
+
+## Verify
 
 ```sh
 curl -sI https://dace.tstephen.com | head -1                                  # HTTP/2 200
 curl -s -o /dev/null -w '%{http_code}\n' https://dace.tstephen.com/.git/HEAD   # 404: only site/ is served
+curl -s https://compose.tstephen.com/api/dace/judges                         # {"error":"sign in first"}
 ```
 
-and open https://dace.tstephen.com and https://dace.tstephen.com/judge/.
+## Server housekeeping still open
 
-## 5. Link it from www.tstephen.com
-
-In the site repo (`Vrier/vrier.github.io`, `index.html`), turn the DACE research card ("In development · Online resource") into a link to https://dace.tstephen.com, like COMPOSE's "Full version ↗". Pushing deploys www.
-
-## 6. Server housekeeping (found while setting this up)
-
-- **www and slides serve their whole clone**, `.git` included (`https://www.tstephen.com/.git/HEAD` and `https://slides.tstephen.com/.git/HEAD` return 200). Low stakes while both repos are public, but worth closing — in both site blocks replace `file_server` with:
-
-  ```
-  	file_server {
-  		hide .git .github
-  	}
-  ```
-
-- **`compose/deploy/Caddyfile` has no slides block.** COMPOSE's DEPLOY.md (§9) says to copy that file over `/etc/caddy/Caddyfile` after changes; as written, that would take slides — and now DACE — offline. Add both blocks to that copy so it matches the live file.
-
-## Ongoing workflow
-
-Edit in Cowork / Claude Code → `npm run build` → `npm test` → commit (sources + `site/`) → push to `main` → Actions deploys. Nothing to restart.
+- **www and slides serve their whole clone**, `.git` included (`https://www.tstephen.com/.git/HEAD` returns 200). In both site blocks replace `file_server` with `file_server { hide .git .github }`.
+- **`compose/deploy/Caddyfile` has no slides or dace block.** COMPOSE's DEPLOY.md (§9) says to copy that file over `/etc/caddy/Caddyfile` after changes; as written, that would take slides and DACE offline. Add both blocks there so it matches the live file.
 
 ## Troubleshooting
 
-- **Red run at "Checks"** — read the ✗ lines. *"site/ … out of date"* means the sources changed without a rebuild: run `npm run build` and commit `site/`.
-- **Red run at "Set up SSH key" / "Update served files"** — almost always the `DEPLOY_SSH_KEY` secret, or `/srv/dace` doesn't exist yet (step 3).
-- **Site looks stale after a green run** — hard-refresh; assets are cache-busted by content hash, but the page itself may be cached briefly.
-- **Certificate errors on first visit** — the DNS record wasn't live when Caddy first tried; check `journalctl -u caddy` and reload.
+- **Red run at "Checks"** — read the ✗ lines. *"site/ … out of date"* means the sources changed without a rebuild: `npm run build`, commit `site/`, push.
+- **Green run but the site is stale after 5 minutes** — hard-refresh first (assets are cache-busted, the page itself may be cached briefly). If it's still stale, the cron job isn't running: re-run `deploy/setup-server.sh` from the console.
+- **Judge can't sign in** — check `https://compose.tstephen.com/api/health` and the COMPOSE Actions run; the Judge is only as up as PocketBase.

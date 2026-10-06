@@ -18,7 +18,7 @@ import { buildDocs } from './docs.mjs';
 export const LEXICON = ['src/glossary.js', 'src/ahg.js', 'src/levin_classes.js', 'src/annotations.js',
   'src/nominals.js', 'src/frames.js', 'src/csv-export.js'];
 export const EXPLORER = ['src/settings.jsx', 'src/engine.jsx', 'src/detail.jsx', 'src/views.jsx', 'src/app.jsx'];
-export const JUDGE = ['src/judge-app.jsx'];
+export const JUDGE = ['src/judge-sync.js', 'src/judge-app.jsx'];
 
 const read = (root, rel) => fs.readFileSync(path.join(root, rel), 'utf8').replace(/\r\n?/g, '\n');
 const hash = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 10);
@@ -52,10 +52,12 @@ export async function buildSite(root) {
   const umd = (m) => fs.readFileSync(path.join(root, 'node_modules', m), 'utf8').trimEnd() + '\n';
 
   files['assets/react.js'] = umd('react/umd/react.production.min.js') + umd('react-dom/umd/react-dom.production.min.js');
+  // Judge only: sign-in + judgement sync (the .map isn't shipped, so drop the pointer to it)
+  files['assets/pocketbase.js'] = umd('pocketbase/dist/pocketbase.umd.js').replace(/\n\/\/# sourceMappingURL=\S*\n?$/, '\n');
   files['assets/data.js'] = renderDataJs(data);
   files['assets/lexicon.js'] = banner('lexicon modules', 'src/*.js') + concat(root, LEXICON);
   files['assets/explorer.js'] = banner('Explorer', 'src/*.jsx') + await compileJsx(root, EXPLORER);
-  files['assets/judge.js'] = banner('Judge', 'src/judge-app.jsx') + await compileJsx(root, JUDGE);
+  files['assets/judge.js'] = banner('Judge', 'src/judge-sync.js + src/judge-app.jsx') + await compileJsx(root, JUDGE);
   Object.assign(files, buildDocs(root, data.stats));
   files['data/predicates.csv'] = read(root, 'data/predicates.csv');
   files['favicon.svg'] = read(root, 'src/favicon.svg');
@@ -64,7 +66,7 @@ export async function buildSite(root) {
   // ?v=<content hash> so browsers pick up new assets as soon as the page changes
   const tags = (prefix, names) => names.map((n) => `<script src="${prefix}assets/${n}?v=${hash(files['assets/' + n])}"></script>`).join('\n');
   files['index.html'] = page(root, 'src/explorer.html', 'src/explorer.css', tags('', ['react.js', 'data.js', 'lexicon.js', 'explorer.js']));
-  files['judge/index.html'] = page(root, 'src/judge.html', 'src/judge.css', tags('../', ['react.js', 'data.js', 'lexicon.js', 'judge.js']));
+  files['judge/index.html'] = page(root, 'src/judge.html', 'src/judge.css', tags('../', ['react.js', 'pocketbase.js', 'data.js', 'lexicon.js', 'judge.js']));
   return { files, data };
 }
 
