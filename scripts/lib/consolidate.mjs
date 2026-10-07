@@ -14,7 +14,10 @@
 // A usable response is each judge's latest `judge` event for the cell that is not
 // a repeat, not `clear`, not Can't judge (which counts in `cant` only), on the
 // current version of its frame (or a pre-versioning `legacy` item, if allowed),
-// from a judge who isn't excluded (author, or failing the gold cells).
+// from a judge who isn't excluded (author, an LLM — register variety "LLM: …" —
+// or listed in `exclude`, or failing the gold cells). Excluded judges' gold
+// accuracy, retest agreement and agreement with the others' majority are still
+// reported.
 import { krippendorffAlpha, pairwiseAgreement } from './agreement.mjs';
 
 export const STATUSES = ['adjudicated', 'consensus', 'provisional', 'contested', 'estimated', 'coded', 'lexical', 'na'];
@@ -23,6 +26,7 @@ export const RANK = { unacceptable: 0, marginal: 1, acceptable: 2 };
 export const DEFAULT_CONFIG = {
   min_judges: 3, majority: 0.75, current_frames_only: true, use_legacy: true,
   min_gold_accuracy: 0.8, min_gold_seen: 10, author: [], exclude_author: false,
+  exclude: [], include_llm: false,
 };
 
 /** The feature value a sentence response stands for ("1" / "0" / "5"), or null. */
@@ -42,13 +46,16 @@ const round2 = (x) => Math.round(x * 100) / 100;
  * events:    rows of events.csv (strings), oldest first
  * adjudications: rows of data/adjudications.csv
  * config:    data/consolidation.json, over DEFAULT_CONFIG
+ * register:  rows of judges.csv (judge, variety, …), optional
  * writeCsv:  (predicates, judgementsMap) → predicates.csv text (src/csv-export.js)
  */
-export function consolidate({ data, frames, events, adjudications, config, writeCsv }) {
+export function consolidate({ data, frames, events, adjudications, config, writeCsv, register }) {
   const cfg = { ...DEFAULT_CONFIG, ...(config || {}) };
   const { predicates, binaryCols } = data;
   const key = (v, f) => v + '|' + f;
   const authors = new Set(cfg.author || []);
+  const listed = new Set(cfg.exclude || []);
+  const llms = new Set((register || []).filter((j) => /^LLM\b/i.test(j.variety || '')).map((j) => j.judge));
 
   // ---- latest non-repeat judge event per (judge, cell); repeats kept aside ----
   const latest = new Map(); // judge -> Map(cell -> event)
@@ -83,7 +90,9 @@ export function consolidate({ data, frames, events, adjudications, config, write
       if (e.response === exp) goldRight++;
     }
     judgeInfo[j] = { judge: j, goldSeen, goldAccuracy: goldSeen ? goldRight / goldSeen : null, retest: 0, retestAgree: 0, excluded: null, used: 0 };
-    if (authors.has(j) && cfg.exclude_author) judgeInfo[j].excluded = 'author';
+    if (listed.has(j)) judgeInfo[j].excluded = 'listed';
+    else if (llms.has(j) && !cfg.include_llm) judgeInfo[j].excluded = 'LLM';
+    else if (authors.has(j) && cfg.exclude_author) judgeInfo[j].excluded = 'author';
     else if (goldSeen >= cfg.min_gold_seen && goldRight / goldSeen < cfg.min_gold_accuracy) judgeInfo[j].excluded = 'gold';
   }
   for (const r of repeats) {
@@ -98,6 +107,14 @@ export function consolidate({ data, frames, events, adjudications, config, write
   // ---- usable responses per cell ----
   const usable = new Map(); // cell -> [{judge, response, frame_v, sentence}]
   let droppedFrames = 0, legacyUsed = 0;
+  // null if the event counts, else why not ('frame')
+  const current = (fk, p, e) => {
+    const legacy = Number(e.frame_v) === 0;
+    if (legacy) return cfg.use_legacy ? null : 'frame';
+    if (!cfg.current_frames_only) return null;
+    const item = frames.item(fk, p);
+    return e.item !== item || Number(e.frame_v) !== frames.version(item) ? 'frame' : null;
+  };
   for (const [j, cells] of latest) {
     if (judgeInfo[j].excluded) continue;
     for (const [cell, e] of cells) {
@@ -106,18 +123,14 @@ export function consolidate({ data, frames, events, adjudications, config, write
       const p = data.byVerb.get(verb);
       if (!p) continue;
       const legacy = Number(e.frame_v) === 0;
-      if (legacy && !cfg.use_legacy) { droppedFrames++; continue; }
-      if (!legacy && cfg.current_frames_only) {
-        const item = frames.item(fk, p);
-        if (e.item !== item || Number(e.frame_v) !== frames.version(item)) { droppedFrames++; continue; }
-      }
-      if (legacy) legacyUsed++;
+      if (current(fk, p, e)) { droppedFrames++; continue; }
       if (!usable.has(cell)) usable.set(cell, []);
       usable.get(cell).push({ judge: j, response: e.response, sentence: e.sentence });
       judgeInfo[j].used++;
     }
   }
 
+  const majority = new Map(); // cell -> the included judges' most common value
   const adj = new Map(adjudications.map((a) => [key(a.verb, a.feature), a]));
   const rows = [], contested = [], decided = {}, changed = [];
   const counts = Object.fromEntries(STATUSES.map((s) => [s, 0]));
@@ -144,7 +157,7 @@ export function consolidate({ data, frames, events, adjudications, config, write
         for (const v of votes) tally[v.value] = (tally[v.value] || 0) + 1;
         const top = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
         const share = n ? top[1] / n : 0;
-        if (n) agreement = round2(share);
+        if (n) { agreement = round2(share); majority.set(cell, top[0]); }
         if (n >= 2) alphaUnits.push(votes.map((v) => RANK[v.response]));
         for (const v of votes) (byJudge[v.judge] = byJudge[v.judge] || {})[cell] = v.response;
         const authorVote = votes.find((v) => authors.has(v.judge));
@@ -173,6 +186,23 @@ export function consolidate({ data, frames, events, adjudications, config, write
       if (['adjudicated', 'consensus', 'provisional'].includes(status)) decided[cell] = value;
       if (value !== current) changed.push({ verb: p.verb, feature: fk, from: current, to: value, status });
       rows.push({ verb: p.verb, feature: fk, value, status, n, agreement, frame_v: frameV });
+    }
+  }
+
+  // excluded judges against the included judges' majority (cells both answered)
+  for (const [j, cells] of latest) {
+    const info = judgeInfo[j];
+    if (!info.excluded) continue;
+    info.vsMajority = { overlap: 0, agree: 0 };
+    for (const [cell, e] of cells) {
+      if (!majority.has(cell) || e.response === 'clear') continue;
+      const [verb, fk] = cell.split('|');
+      const p = data.byVerb.get(verb);
+      if (!p || current(fk, p, e)) continue;
+      const v = responseValue(fk, e.response, frames.inverted);
+      if (v === null) continue;
+      info.vsMajority.overlap++;
+      if (v === majority.get(cell)) info.vsMajority.agree++;
     }
   }
 

@@ -187,6 +187,15 @@ Every judged frame was rendered for one predicate of each class and checked for 
 - Prepositions are deliberately left out of the frames (*inform him the news*, not *of the news*): the test is the bare construction.
 - [x] *disappoint*, *dissatisfy*, *relieve* moved from Confess (4.3) to Amuse (3.1): they are psych-causatives (*It relieved her that…*) and now get the psych frames.
 
+### LLM judge (8 Oct 2026)
+
+- [x] In-chat pilot (26 cells, one context): useful for finding frame problems, not as data (answers drift once a pattern is spotted). Led to the object-taking-verb frame fixes above.
+- [x] `scripts/llm-judge.mjs` + `.github/workflows/llm-judge.yml`: Message Batches, one request per cell and sample (3 by default), unanswered cells only; answers posted to the event log as an LLM judge account (first sample = judgement, the rest = repeats, so retest agreement = stability). Card text moved to `src/judge-card.js` so the Judge and the prompt share it.
+- [x] Consolidation leaves LLM judges out (register variety "LLM: …"; `include_llm`, `exclude` in `data/consolidation.json`) and reports their agreement with the human majority.
+- [x] Tested against a local PocketBase and a mock batch API: submit → collect → re-collect (no duplicates) → in-progress guard → wrong password; consolidation on the resulting log (LLM excluded, retest reported, no values changed); the Judge's cards render as before.
+- [ ] Thomas: register the LLM account, add the three secrets, run 200 cells, read the job summary and some flagged notes before a full run.
+- Cost check (Oct 2026 batch prices for Claude Opus 5.5: $2 / MTok input, $10 / MTok output, cache reads at 5 %): roughly 250 input tokens per card plus a ~700-token cached system prompt and ~70 output tokens, so a full 22,400 × 3 run is on the order of $90–170 depending on cache hits; a 200-cell trial well under $2.
+
 ### Later
 
 - Second lexicalisations (`…:b` items) for contested cells only.

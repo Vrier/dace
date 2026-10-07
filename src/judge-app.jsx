@@ -18,12 +18,7 @@ const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
 const SYNC = window.DACE_SYNC;
 // responses, their keys and colour classes (judge.css)
-const RESP = {
-  acceptable:   { label: "Acceptable",   key: "1", cls: "v1",  sub: "the sentence is fine" },
-  unacceptable: { label: "Unacceptable", key: "0", cls: "v0",  sub: "the sentence is out" },
-  marginal:     { label: "Marginal",     key: "5", cls: "v5",  sub: "?  degraded" },
-  cant_judge:   { label: "Can't judge",  key: "9", cls: "vcj", sub: "no clear reading" },
-};
+const RESP = window.DACE_RESPONSE_BUTTONS; // src/judge-card.js
 const KEY_TO_RESP = Object.fromEntries(Object.entries(RESP).map(([r, o]) => [o.key, r]));
 const GOLD = window.DACE_GOLD || {};       // "verb|feature" -> expected response (data/gold.csv)
 const GOLD_EVERY = 25;                      // one gold cell per this many items, until they run out
@@ -208,18 +203,9 @@ function MinimalPair({ fk }) {
 // repeat: a test–retest item — the judge's earlier response is not shown
 // the nominal forms a judge typed, stored as one comma-separated string
 const splitNoms = (s) => (s || "").split(/\s*[,;]\s*/).filter(Boolean);
-// Question types. Most cards ask whether a sentence is acceptable (RESP). Two ask
-// something else, with their own buttons, logged with the same response values so
-// the server and consolidation need nothing new (Yes = acceptable = feature 1):
-//   nominal  derived_nominal — Yes / No, then the noun(s);
-//   meaning  neg_raising — can the first sentence mean the second? (≈ in the frame)
-const QTYPE = { derived_nominal: "nominal", neg_raising: "meaning" };
-const QBTNS = {
-  nominal: { acceptable: { label: "Yes", key: "1", cls: "v1", sub: "it has one" }, unacceptable: { label: "No", key: "0", cls: "v0", sub: "no such noun" } },
-  meaning: { acceptable: { label: "Yes", key: "1", cls: "v1", sub: "it can mean that" }, unacceptable: { label: "No", key: "0", cls: "v0", sub: "it can't" },
-             cant_judge: { label: "Can't tell", key: "9", cls: "vcj", sub: "no clear intuition" } },
-};
-const buttonsFor = (fk) => QBTNS[QTYPE[fk]] || RESP;
+// question types and their buttons: src/judge-card.js (shared with the LLM judge)
+const QTYPE = window.DACE_QUESTION_TYPE;
+const buttonsFor = (fk) => window.daceCardButtons(fk);
 
 function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudge, onFlag, onNote, onSentence, onNominal, onNext }) {
   const f = DACE_FEATURES[item.feature];
@@ -267,19 +253,7 @@ function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudg
         </div>
       </div>
 
-      {item.feature === "derived_nominal" ? (
-        <div className="card-q">Does <b>{item.display}</b> have a nominalisation that takes the same complement — either a noun it is derived from (<i>hope</i> → <i>her hope that…</i>) or one formed with a suffix?
-          <ul className="card-suffixes">{window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => <li key={suf}><b>{suf}</b> <span>{eg}</span></li>)}</ul>
-        </div>
-      ) : item.feature === "neg_raising" ? (
-        <div className="card-q">Read the first sentence with ordinary, unstressed negation. Can it mean what the second sentence says, with the negation understood inside the clause? (<b>Yes</b> = neg-raising.)</div>
-      ) : item.feature === "weak_island" ? (
-        <div className="card-q">Can a <i>wh</i>-phrase be extracted out of <b>{item.display}</b>'s complement? Judge the sentence: <b>Acceptable</b> = bridge verb (feature value 0), <b>Unacceptable</b> = weak island (feature value 1).</div>
-      ) : item.feature === "stative" ? (
-        <div className="card-q">Is <b>{item.display}</b> stative? Judge the progressive: <b>Acceptable</b> = eventive (feature value 0), <b>Unacceptable</b> = stative (feature value 1).</div>
-      ) : (
-        <div className="card-q">Does <b>{item.display}</b> license the <b>{f ? f.label : item.feature}</b> construction?</div>
-      )}
+      <div className="card-q" dangerouslySetInnerHTML={{ __html: window.daceCardQuestion(item.feature, item.display) }} />
       <MinimalPair fk={item.feature} />
 
       <TestSentence item={item} />

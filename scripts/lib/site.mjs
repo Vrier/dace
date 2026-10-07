@@ -16,7 +16,7 @@ import { buildDocs } from './docs.mjs';
 
 // plain-JS modules shared by both apps, in load order
 export const LEXICON = ['src/glossary.js', 'src/ahg.js', 'src/levin_classes.js', 'src/annotations.js',
-  'src/nominals.js', 'src/frames.js', 'src/csv-export.js'];
+  'src/nominals.js', 'src/frames.js', 'src/judge-card.js', 'src/csv-export.js'];
 export const EXPLORER = ['src/settings.jsx', 'src/engine.jsx', 'src/detail.jsx', 'src/views.jsx', 'src/app.jsx'];
 export const JUDGE = ['src/judge-sync.js', 'src/judge-app.jsx'];
 

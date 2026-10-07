@@ -1,0 +1,59 @@
+# ===========================================================================
+# DACE — the LLM judge. Actions tab → "LLM judge" → Run workflow.
+#
+# Each run first COLLECTS every finished batch (posting the model's answers to
+# the Judge's event log as the LLM judge account), then SUBMITS up to `cells`
+# cells that account hasn't answered, `samples` independent requests each, as
+# one Message Batches job. Batches usually finish within the hour: run again
+# with cells 0 to collect, or with more cells to collect and carry on.
+# A new batch is refused while one is still in progress.
+#
+# Secrets (Settings → Secrets and variables → Actions):
+#   ANTHROPIC_API_KEY   from the Claude Console
+#   DACE_LLM_EMAIL      the LLM judge's account on the Judge
+#   DACE_LLM_PASSWORD
+# The model is fixed below. Changing it means a new judge account (one model
+# per judge code), so the two models' answers never mix.
+# Judgements go to the server only: nothing is committed to this public repo.
+# See scripts/llm-judge.mjs and CLAUDE.md, "The LLM judge".
+# ===========================================================================
+name: LLM judge
+
+on:
+  workflow_dispatch:
+    inputs:
+      cells:
+        description: "Cells to send this run (0 = only collect finished batches)"
+        default: "200"
+        required: true
+      samples:
+        description: "Independent answers per cell (the first counts; the rest measure stability)"
+        default: "3"
+        required: true
+
+concurrency:
+  group: llm-judge
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      DACE_LLM_MODEL: claude-opus-5-5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Collect finished batches, submit new cells
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DACE_LLM_EMAIL: ${{ secrets.DACE_LLM_EMAIL }}
+          DACE_LLM_PASSWORD: ${{ secrets.DACE_LLM_PASSWORD }}
+          CELLS: ${{ inputs.cells }}
+          SAMPLES: ${{ inputs.samples }}
+        run: node scripts/llm-judge.mjs --cells "$CELLS" --samples "$SAMPLES"

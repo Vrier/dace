@@ -13,7 +13,8 @@
     "test": "node scripts/check.mjs",
     "serve": "node scripts/serve.mjs",
     "frames:lock": "node scripts/frames-lock.mjs",
-    "consolidate": "node scripts/consolidate.mjs"
+    "consolidate": "node scripts/consolidate.mjs",
+    "llm-judge": "node scripts/llm-judge.mjs"
   },
   "devDependencies": {
     "esbuild": "0.23.0",

@@ -35,7 +35,7 @@ const judgesCsv = readCsvIf(opt('--judges', 'judgements/judges.csv')) || [];
 const config = fs.existsSync(rel('data/consolidation.json')) ? JSON.parse(read('data/consolidation.json')) : {};
 const res = consolidate({
   data, frames: frameRules(ROOT, data.frameV), events: events || [],
-  adjudications: readCsvIf('data/adjudications.csv') || [], config,
+  adjudications: readCsvIf('data/adjudications.csv') || [], config, register: judgesCsv,
   writeCsv: csvWriter(ROOT, data.binaryCols, data.header),
 });
 
@@ -47,7 +47,8 @@ for (const j of s.judges) {
   console.log(`  ${j.judge}${variety[j.judge] ? ' (' + variety[j.judge] + ')' : ''}: ${j.used} responses used` +
     ` · gold ${j.goldSeen ? pct(j.goldAccuracy * j.goldSeen, j.goldSeen) + ' of ' + j.goldSeen : 'none seen'}` +
     ` · retest ${j.retest ? pct(j.retestAgree, j.retest) + ' of ' + j.retest : 'none'}` +
-    (j.excluded ? `  — EXCLUDED (${j.excluded})` : ''));
+    (j.excluded ? `  — EXCLUDED (${j.excluded})` : '') +
+    (j.vsMajority && j.vsMajority.overlap ? ` · vs the others' majority ${pct(j.vsMajority.agree, j.vsMajority.overlap)} of ${j.vsMajority.overlap}` : ''));
 }
 if (s.droppedFrames) console.log(`  ${s.droppedFrames} response(s) on superseded frame versions left out.`);
 if (s.legacyUsed) console.log(`  ${s.legacyUsed} pre-versioning (legacy) response(s) used.`);

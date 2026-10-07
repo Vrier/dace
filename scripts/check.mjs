@@ -10,6 +10,7 @@ import { buildSite, listFiles } from './lib/site.mjs';
 import { frameTemplates, readLock, nextLock, frameRules, csvWriter } from './lib/frames.mjs';
 import { krippendorffAlpha } from './lib/agreement.mjs';
 import { consolidate, STATUSES } from './lib/consolidate.mjs';
+import { loadSite, judgeQueue, cardPrompt, parseAnswer } from './llm-judge.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8').replace(/\r\n?/g, '\n');
@@ -187,6 +188,26 @@ check('every judgeable cell has a frame item, a version and a plain sentence (da
   return P;
 });
 
+check('LLM judge (scripts/llm-judge.mjs) — a prompt for every judgeable cell, same sentence and buttons as the Judge', () => {
+  const P = [];
+  const W = loadSite(files);
+  const q = judgeQueue(W);
+  if (q.length !== 22400) P.push(`${q.length} cells in the LLM judge's queue, expected 22,400`);
+  for (const c of q) {
+    const pr = cardPrompt(W, c);
+    const allowed = Object.keys(W.daceCardButtons(c.feature));
+    const shown = [...pr.matchAll(/^  ([a-z_]+) = /gm)].map((m) => m[1]);
+    if (shown.join() !== allowed.join()) { P.push(`${c.verb}.${c.feature}: prompt offers ${shown}, the Judge ${allowed}`); continue; }
+    for (const part of c.sentence.split(' \u2248 ')) if (!pr.includes(part)) P.push(`${c.verb}.${c.feature}: prompt lacks the sentence "${part}"`);
+    if (/<[a-z\/][^>]*>/.test(pr)) P.push(`${c.verb}.${c.feature}: HTML left in the prompt`);
+    if (`dace-${c.verb}-${c.feature}-${c.frame_v}-1`.length > 64) P.push(`${c.verb}.${c.feature}: custom_id too long`);
+  }
+  const a = parseAnswer('{"reason":"x","response":"marginal","flag":true,"note":"needs an object","nominals":[]}', ['acceptable', 'marginal']);
+  if (!a || a.response !== 'marginal' || !a.flag || a.note !== 'needs an object') P.push('parseAnswer misread a valid answer');
+  if (parseAnswer('{"response":"yes"}', ['acceptable'])) P.push('parseAnswer accepted a response the card does not offer');
+  return P;
+});
+
 check('data/gold.csv — gold cells are judgeable cells with a valid expected response', () => {
   const P = [];
   const byVerb = new Map(predicates.map((p) => [p.verb, p]));
@@ -310,6 +331,19 @@ check('consolidation rules (scripts/lib/consolidate.mjs) on a fixture log', () =
   const b = run({ author: ['J03'], exclude_author: true, use_legacy: false });
   want(b, 'know', 'comp_inf', 'provisional', '1', 'author excluded leaves 2 judges');
   want(b, 'know', 'comp_gerund', 'coded', String(know.comp_gerund), 'legacy not used');
+  // an LLM judge (register variety "LLM: …") or a listed judge is left out, but still measured
+  const llm = consolidate({ data: { ...base, gold: {} }, frames: rules, events, adjudications, config: { min_gold_seen: 1 }, writeCsv,
+    register: [{ judge: 'J02', variety: 'LLM: claude-opus-5-5' }] });
+  want(llm, 'know', 'comp_inf', 'provisional', '1', 'LLM judge excluded leaves 2 judges');
+  want(llm, 'know', 'ecm', 'contested', String(know.ecm), 'J01 + J03 split once the LLM is out');
+  const j2 = llm.summary.judges.find((j) => j.judge === 'J02');
+  if (!j2 || j2.excluded !== 'LLM') P.push('J02 should be excluded as an LLM judge');
+  else if (!j2.vsMajority || j2.vsMajority.overlap < 1) P.push("an excluded judge's agreement with the others should be reported");
+  const listed = run({ exclude: ['J02'] });
+  want(listed, 'know', 'comp_inf', 'provisional', '1', 'listed judge excluded');
+  const incl = consolidate({ data: { ...base, gold: {} }, frames: rules, events, adjudications, config: { include_llm: true }, writeCsv,
+    register: [{ judge: 'J02', variety: 'LLM: x' }] });
+  want(incl, 'know', 'comp_inf', 'consensus', '1', 'include_llm counts the LLM again');
   const none = consolidate({ data: base, frames: rules, events: [], adjudications: [], config: {}, writeCsv });
   if (none.csv !== read('data/predicates.csv')) P.push('with no judgements, consolidation must reproduce data/predicates.csv exactly');
   return P;
