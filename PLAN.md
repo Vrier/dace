@@ -200,6 +200,7 @@ Every judged frame was rendered for one predicate of each class and checked for 
 - [x] Page tested in headless Chromium against a stubbed runtime: run, unreadable answer, rate limit, resume, export; consolidation on the export (LLM excluded, retest reported, nothing changed). The Judge's cards render as before.
 - [x] First 3 blocks (90 cells) run 7 Oct: all three passes agreed on 73; flags found the psych-frame problem above.
 - [x] Page storage made independent of the build (8 Oct): answers keyed by verb|feature with the item and version they were given on, a per-feature index of finished cells, so a frame change re-asks only the changed cells. The first 90 answers were migrated (82 still current, 8 to be asked again).
+- [x] 8 Oct: the page never requests the most capable (`complex`) tier any more; it uses `default`, as judge `LLM02`. The 90 complex-tier answers stay as `LLM01`.
 - [ ] Thomas: carry on in blocks; read the flagged notes now and then.
 - Pace: a request on the most capable tier takes up to a minute or two and judges ten cells once, so the whole grid (747 blocks × 9 requests) is a long, intermittent job bounded by plan limits.
 - [ ] The `claude@dace.com` judge account made for the API plan is unused: delete it in the PocketBase dashboard.

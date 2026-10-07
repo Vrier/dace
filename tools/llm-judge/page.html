@@ -103,7 +103,7 @@ details p{font-size:13.5px;color:var(--ink-soft);max-width:68ch}
   <details class="panel">
     <summary>How this works</summary>
     <p>The cells are the Judge's 22,400, in a fixed random order, taken in blocks of 30. When a test sentence changes, its cell is asked again; answers on the old sentence stay on record. Each block gets three passes; in every pass the 30 cells are split into three requests of ten, grouped differently each time, so a cell's three answers come from three different contexts. The first answer counts as the LLM judge's judgement, the other two as repeats, which consolidation reports as its stability. The prompt shows each card as a person sees it: the question, the minimal pair, the sentence and the buttons.</p>
-    <p>Requests use the most capable model tier and take up to a minute or two each. A stopped or failed run picks up where it left off next time.</p>
+    <p>Requests use Claude's balanced default tier, never the most capable one, and take up to a minute each; the tier that answered is shown above each request. Answers from the first runs, on the most capable tier, are kept as a separate judge. A stopped or failed run picks up where it left off next time.</p>
   </details>
 </main>
 
@@ -111,7 +111,12 @@ details p{font-size:13.5px;color:var(--ink-soft);max-width:68ch}
 const DATA = /*DATA*/null;
 const SNAP = "/*SNAP*/";
 const PROMPT_VERSION = "chat-1";
-const BLOCK = 30, PER_CALL = 10, SAMPLES = 3, TIER = "complex";
+const BLOCK = 30, PER_CALL = 10, SAMPLES = 3;
+// The page can only ask for a model tier, not a named model. "default" is the
+// balanced everyday tier: the "complex" (most capable) tier is never requested.
+// Each tier is its own judge, so answers from different models never mix:
+const TIER = "default";
+const JUDGE = { complex: "LLM01", default: "LLM02", quick: "LLM03" };
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -174,7 +179,9 @@ let state = { next: 0, current: null };
 const session = { flags: 0, pairs: 0, same: 0 };
 const stateRef = () => db.doc("state/run");
 const blockRef = (n) => db.collection("blocks").doc(String(n).padStart(5, "0"));
-const indexRef = (fk) => db.collection("index").doc(fk);   // index/<feature>: { e: { verb: "item@version" } }
+// index/<feature> (complex tier, the first runs) or index-<tier>/<feature>: { e: { verb: "item@version" } }
+const INDEX = TIER === "complex" ? "index" : "index-" + TIER;
+const indexRef = (fk) => db.collection(INDEX).doc(fk);
 
 function render() {
   const n = done.size;
@@ -187,7 +194,7 @@ function render() {
 function say(text, err) { $("status").textContent = text; $("status").className = "status" + (err ? " err" : ""); }
 
 async function loadDone() {
-  const q = await db.collection("index").get();
+  const q = await db.collection(INDEX).get();
   done = new Set();
   for (const d of q.docs) {
     const fk = d.id, e = (d.data() || {}).e || {};
@@ -213,11 +220,11 @@ function showCall(n, call, answers, tier) {
 async function currentBlock() {
   if (state.current !== null) {
     const s = await blockRef(state.current).get();
-    if (s.exists) {
+    if (s.exists && (s.data().tier || "complex") === TIER) {
       const d = s.data();
       const cells = (d.order || []).map((k) => BYKEY.get(k)).filter((ci) => ci !== undefined && (d.cells[KEY(ci)] || {}).iv === ITEMV(ci));
       if (cells.length === (d.order || []).length) return { n: state.current, cells, calls: d.calls || {} };
-      // a frame changed under an unfinished block: keep its answers on record, start afresh
+      // a frame (or the tier) changed under an unfinished block: keep its answers on record, start afresh
     }
   }
   const cells = [];
@@ -226,7 +233,7 @@ async function currentBlock() {
   const n = state.next;
   const meta = {};
   for (const ci of cells) { const [it, fv] = DATA.i[DATA.c[ci][2]]; meta[KEY(ci)] = { iv: it + "@" + fv, sentence: DATA.c[ci][3] }; }
-  await blockRef(n).set({ n, prompt: PROMPT_VERSION, page: SNAP, order: cells.map(KEY), cells: meta, calls: {} });
+  await blockRef(n).set({ n, prompt: PROMPT_VERSION, page: SNAP, tier: TIER, order: cells.map(KEY), cells: meta, calls: {} });
   state = { next: n + 1, current: n };
   await stateRef().set(state);
   return { n, cells, calls: {} };
@@ -242,7 +249,7 @@ async function runOne() {
     if (stored[call.key]) continue;
     if (stopAsked) return "stopped";
     showCall(n, call, null);
-    say(`Asking Claude about ${call.cells.length} cards… (the most capable tier thinks first; this can take a minute or two)`);
+    say(`Asking Claude about ${call.cells.length} cards… (this can take up to a minute)`);
     let reply, tier;
     try {
       const res = await sample(prompt(call.cells), { modelTier: TIER, cache: false });
@@ -330,37 +337,38 @@ async function exportCsv() {
     const rows = [["event_id", "judge", "verb", "feature", "kind", "response", "item", "frame_v", "sentence", "gold", "repeat", "at"]];
     const q = (s) => /[",\n]/.test(String(s)) ? '"' + String(s).replace(/"/g, '""') + '"' : String(s);
     let id = 0;
-    const ev = (key, meta, kind, response, at, repeat) => {
+    const ev = (judge, key, meta, kind, response, at, repeat) => {
       const [verb, fk] = key.split("|");
       const at2 = meta.iv.lastIndexOf("@"), item = meta.iv.slice(0, at2), fv = meta.iv.slice(at2 + 1);
       const j = kind === "judge";
-      rows.push(["llm-" + (++id), "LLM01", verb, kind === "nominal" ? "" : fk, kind, response, j ? item : "", j ? fv : "", j ? meta.sentence : "",
+      rows.push(["llm-" + (++id), judge, verb, kind === "nominal" ? "" : fk, kind, response, j ? item : "", j ? fv : "", j ? meta.sentence : "",
         gold.has(key) ? 1 : 0, repeat ? 1 : 0, at]);
     };
     for (let lo = 0; lo <= state.next; lo += 250) {
       const snapq = await db.collection("blocks").where("n", ">=", lo).where("n", "<", lo + 250).limit(250).get();
       const docs = snapq.docs.map((d) => d.data()).sort((a, b) => a.n - b.n);
       for (const d of docs) {
-        const per = {}; // cell -> [{s, at, a}]
+        const per = {}; // judge|cell -> [{s, at, a}]: each tier that answered is its own judge
         for (const [k, c] of Object.entries(d.calls || {})) {
-          const s = +k.split("_")[0];
-          for (const [key, a] of Object.entries(c.a || {})) (per[key] = per[key] || []).push({ s, at: c.at, a });
+          const s = +k.split("_")[0], judge = JUDGE[c.tier] || "LLM0x";
+          for (const [key, a] of Object.entries(c.a || {})) (per[judge + "|" + key] = per[judge + "|" + key] || []).push({ s, at: c.at, a });
         }
-        for (const [key, list] of Object.entries(per)) {
+        for (const [jk, list] of Object.entries(per)) {
+          const judge = jk.slice(0, jk.indexOf("|")), key = jk.slice(jk.indexOf("|") + 1);
           const meta = (d.cells || {})[key];
           if (!meta) continue;
           list.sort((x, y) => x.s - y.s);
           const [first, ...rest] = list;
-          ev(key, meta, "judge", first.a.r, first.at, false);
-          if (first.a.f) { ev(key, meta, "flag", "", first.at, false); if (first.a.note) ev(key, meta, "note", first.a.note, first.at, false); }
-          if (key.endsWith("|derived_nominal") && first.a.r === "acceptable" && (first.a.nom || []).length) ev(key, meta, "nominal", first.a.nom.join(", "), first.at, false);
-          for (const r of rest) ev(key, meta, "judge", r.a.r, r.at, true);
+          ev(judge, key, meta, "judge", first.a.r, first.at, false);
+          if (first.a.f) { ev(judge, key, meta, "flag", "", first.at, false); if (first.a.note) ev(judge, key, meta, "note", first.a.note, first.at, false); }
+          if (key.endsWith("|derived_nominal") && first.a.r === "acceptable" && (first.a.nom || []).length) ev(judge, key, meta, "nominal", first.a.nom.join(", "), first.at, false);
+          for (const r of rest) ev(judge, key, meta, "judge", r.a.r, r.at, true);
         }
       }
     }
     const csv = rows.map((r) => r.map(q).join(",")).join("\n") + "\n";
     await downloads.save({ filename: "llm-events.csv", data: csv });
-    say(`Saved llm-events.csv (${(rows.length - 1).toLocaleString()} events). Use it with judges.csv listing LLM01 as "LLM: claude.ai ${TIER} tier, prompt ${PROMPT_VERSION}".`);
+    say(`Saved llm-events.csv (${(rows.length - 1).toLocaleString()} events). In judges.csv, list LLM01 as "LLM: claude.ai complex tier" and LLM02 as "LLM: claude.ai default tier".`);
   } catch (e) {
     if (!(e && e.code === "cancelled")) say("The download didn't complete (" + ((e && e.code) || "error") + ").", true);
   }
