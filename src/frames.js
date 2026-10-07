@@ -44,10 +44,17 @@ window.DACE_OBJECT_REQUIRED = new Set([
 ]);
 // Not here: Order-class verbs that need an object (force, exhort) keep the dir table,
 // whose clausal frames are infinitival with the object already in place.
-// The frame type a predicate's sentences come from: its class's, or tell for the
-// object-taking verbs above.
+// The converse: Tell-class (4.2) verbs that take no bare object before their clause
+// (*She swore him that…; confide and get across/through want to/through, which the
+// frames leave out). They take the say table, with no recipient. Verbs whose object
+// is optional (promise, signal, threaten, warn, advise, caution) stay on tell.
+window.DACE_NO_BARE_OBJECT = new Set(["confide", "demonstrate", "get_across", "get_through", "pledge", "swear", "vow"]);
+// The frame type a predicate's sentences come from: its class's, tell for the
+// object-taking verbs above, say for the Tell verbs without one.
 window.daceFrameType = function (levinClass, display) {
-  if (DACE_OBJECT_REQUIRED.has(display.replace(/ /g, "_"))) return "tell";
+  const key = display.replace(/ /g, "_");
+  if (DACE_OBJECT_REQUIRED.has(key)) return "tell";
+  if (DACE_NO_BARE_OBJECT.has(key)) return "say";
   return DACE_FRAME_TYPE[levinClass] || "base";
 };
 

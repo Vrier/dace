@@ -183,9 +183,9 @@ Every judged frame was rendered for one predicate of each class and checked for 
 
 - [x] Verbs that need a direct object before the clause got object-less frames wherever their class table had no recipient version, so the sentence failed for the wrong reason (*What did she fool that he bought?*, *She reminded that anyone left*). Found in the LLM pilot. Fixed in two parts: the tell table now covers `weak_island`, `npi_licenser`, `comp_exclamative`, `stative` and `content_noun_fact` with the object in place; and `DACE_OBJECT_REQUIRED` (18 verbs from Say, Confess and Lie) moves those verbs onto the tell table for every feature. New items at v1; 444 Judge cells changed sentence, and judgements on their old items drop out of consolidation as usual.
 - Left alone on purpose: `ecm`, `comp_small_clause`, `comp_bare_inf` (the object slot is the construction), `raising` (expletive subject), `comp_for_to`, `comp_poss_ing`; Order-class *force* / *exhort* (the dir table's infinitival frames already have the object).
-- [ ] The converse: tell-class verbs that take no bare object (*swear*, *vow*, *pledge*, *confide*, *demonstrate*, *get across*; *signal* and *promise* optional) get one in every tell frame (*She swore him the meeting was cancelled*). Thomas to decide.
-- [ ] Preposition-selecting verbs (*inform/remind/convince/assure/warn … of*) still get a bare NP in `np_comp_alt` and `content_noun_fact` (*She informed him the news*).
-- [ ] *disappoint*, *dissatisfy*, *relieve* are in Confess (4.3) but behave like psych verbs (*It relieved her that…*): probably belong in 3.1.
+- [x] The converse: Tell-class verbs that take no bare object (*swear*, *vow*, *pledge*, *confide*, *demonstrate*, *get across*, *get through*) got one in every tell frame (*She swore him the meeting was cancelled*). `DACE_NO_BARE_OBJECT` moves them to the say table. Verbs with an optional object (*promise*, *signal*, *threaten*, *warn*, *advise*, *caution*) stay on tell.
+- Prepositions are deliberately left out of the frames (*inform him the news*, not *of the news*): the test is the bare construction.
+- [x] *disappoint*, *dissatisfy*, *relieve* moved from Confess (4.3) to Amuse (3.1): they are psych-causatives (*It relieved her that…*) and now get the psych frames.
 
 ### Later
 
