@@ -146,12 +146,9 @@ function TestSentence({ item }) {
   const f = DACE_FEATURES[item.feature];
   const nomInfo = window.daceNominal ? window.daceNominal(item.verb, item.display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
-  // the Judge shows the sentence unstarred: the judge decides (daceTestSentence stars
-  // inverted features when on, so pass on=0 for those)
-  const unstarred = window.DACE_INVERTED.includes(item.feature) ? 0 : 1;
-  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, unstarred, item.levin, item.display, nominal) : null;
-  // the that-omission test is the sentence WITHOUT "that"; the examples keep "(that)"
-  if (html && item.feature === "that_omission") html = html.replace(/\(that\) /g, "");
+  // judge mode: never starred (the judge decides) and the that-omission test without
+  // "(that)" — the same rendering daceTestItem logs as the sentence judged (frames.js)
+  const html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal, { judge: true }) : null;
   return (
     <div className="ts">
       <div className="ts-def" dangerouslySetInnerHTML={{ __html: f ? f.def : "" }} />

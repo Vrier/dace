@@ -11,7 +11,8 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node scripts/check.mjs",
-    "serve": "node scripts/serve.mjs"
+    "serve": "node scripts/serve.mjs",
+    "frames:lock": "node scripts/frames-lock.mjs"
   },
   "devDependencies": {
     "esbuild": "0.23.0",

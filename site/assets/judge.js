@@ -333,9 +333,7 @@ function TestSentence({ item }) {
   const f = DACE_FEATURES[item.feature];
   const nomInfo = window.daceNominal ? window.daceNominal(item.verb, item.display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
-  const unstarred = window.DACE_INVERTED.includes(item.feature) ? 0 : 1;
-  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, unstarred, item.levin, item.display, nominal) : null;
-  if (html && item.feature === "that_omission") html = html.replace(/\(that\) /g, "");
+  const html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal, { judge: true }) : null;
   return /* @__PURE__ */ React.createElement("div", { className: "ts" }, /* @__PURE__ */ React.createElement("div", { className: "ts-def", dangerouslySetInnerHTML: { __html: f ? f.def : "" } }), /* @__PURE__ */ React.createElement("div", { className: "ts-sentence", dangerouslySetInnerHTML: { __html: html || "<em>No frame for this feature.</em>" } }));
 }
 function MinimalPair({ fk }) {

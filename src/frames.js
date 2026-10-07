@@ -260,18 +260,54 @@ window.DACE_FRAMES.copular = {
   ditransitive:     null,
 };
 
-// --- build a test sentence (HTML) for a feature on a given predicate ---
-window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored) {
+// --- frame items and versions ---
+// A frame ITEM is one template: "<feature>:<table>", where <table> is the frame type
+// the template comes from ("base", "psych", "copular", …). Judgements are logged with
+// the item and its version (window.DACE_FRAME_VERSIONS, generated into data.js from
+// data/frames.lock.json), so a judgement always says which sentence was judged.
+// Change a template → `npm test` fails until `npm run frames:lock` bumps its version.
+
+// Where a feature's template comes from for a predicate: { item, tmpl } — tmpl is
+// null for a copular n/a cell; the result is null if no table has a frame.
+window.daceFrameSource = function (fk, levinClass, display) {
+  if (display.startsWith("be ") && fk in DACE_FRAMES.copular) {
+    return { item: fk + ":copular", tmpl: DACE_FRAMES.copular[fk] };
+  }
   const frameType = DACE_FRAME_TYPE[levinClass] || "base";
   const frames = DACE_FRAMES[frameType] || {};
-  let tmpl = frames[fk];
-  if (display.startsWith("be ") && fk in DACE_FRAMES.copular) {
-    tmpl = DACE_FRAMES.copular[fk];
-    if (tmpl === null) return `<div class="test-line na">Not applicable to a copular predicate: this is a verbal construction.</div>`;
-  }
-  if (tmpl === undefined) tmpl = DACE_FRAMES.base[fk];
-  if (tmpl === undefined) return null;
+  if (frames[fk] !== undefined) return { item: fk + ":" + frameType, tmpl: frames[fk] };
+  if (DACE_FRAMES.base[fk] !== undefined) return { item: fk + ":base", tmpl: DACE_FRAMES.base[fk] };
+  return null;
+};
 
+// Every template, keyed by item (n/a entries skipped) — what data/frames.lock.json hashes.
+window.daceFrameTemplates = function () {
+  const out = {};
+  for (const [table, frames] of Object.entries(DACE_FRAMES)) {
+    for (const [fk, tmpl] of Object.entries(frames)) if (tmpl !== null) out[fk + ":" + table] = tmpl;
+  }
+  return out;
+};
+
+// --- build a test sentence for a feature on a given predicate ---
+// Default: HTML for the Explorer, starred when the predicate lacks the feature.
+// opts.judge: as the Judge shows it — never starred (the judge decides), and the
+// that-omission test without "(that)". opts.plain: plain text, voice lines joined
+// with " | " (what the judgement log stores as the sentence judged).
+window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored, opts) {
+  const o = opts || {};
+  const src = window.daceFrameSource(fk, levinClass, display);
+  if (!src) return null;
+  if (src.tmpl === null) {
+    return o.plain ? null : `<div class="test-line na">Not applicable to a copular predicate: this is a verbal construction.</div>`;
+  }
+  let tmpl = src.tmpl;
+  if (o.judge && fk === "that_omission") {
+    const drop = (s) => s.replace(/\(that\) /g, "");
+    tmpl = typeof tmpl === "object" ? { active: drop(tmpl.active), passive: drop(tmpl.passive) } : drop(tmpl);
+  }
+
+  const frameType = DACE_FRAME_TYPE[levinClass] || "base";
   const forms = daceForms(display);
   const verbKey = display.replace(/ /g, "_");
   const passiveLeaning = frameType === "psych" && DACE_PASSIVE_LEANING.has(verbKey);
@@ -279,27 +315,42 @@ window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored
   const nominal = nomInfo ? nomInfo.nom : null;
   const nomCandidate = nomInfo ? nomInfo.candidate : false;
 
+  const b = (s, attrs) => o.plain ? s : `<strong${attrs || ""}>${s}</strong>`;
   function fill(s) {
     return s
-      .replace(/\[V3\]/g, `<strong>${forms.v3}</strong>`)
-      .replace(/\[VD\]/g, `<strong>${forms.ved}</strong>`)
-      .replace(/\[VN\]/g, `<strong>${forms.vn}</strong>`)
-      .replace(/\[VG\]/g, `<strong>${forms.ving}</strong>`)
-      .replace(/\[ADJ\]/g, `<strong>${forms.adj || forms.v}</strong>`)
-      .replace(/\[NOM\]/g, nominal ? `<strong${nomCandidate ? ' class="nom-candidate" title="candidate form"' : ''}>${nominal}</strong>` : "[nominal]")
-      .replace(/\[V\]/g, `<strong>${forms.v}</strong>`);
+      .replace(/\[V3\]/g, b(forms.v3))
+      .replace(/\[VD\]/g, b(forms.ved))
+      .replace(/\[VN\]/g, b(forms.vn))
+      .replace(/\[VG\]/g, b(forms.ving))
+      .replace(/\[ADJ\]/g, b(forms.adj || forms.v))
+      .replace(/\[NOM\]/g, nominal ? b(nominal, nomCandidate ? ' class="nom-candidate" title="candidate form"' : "") : "[nominal]")
+      .replace(/\[V\]/g, b(forms.v));
   }
-  const bad = DACE_INVERTED.includes(fk) ? !!on : !on;
-  const star = bad ? `<span class="bad">*</span>` : "";
+  const bad = !o.judge && (DACE_INVERTED.includes(fk) ? !!on : !on);
+  const star = bad ? (o.plain ? "*" : `<span class="bad">*</span>`) : "";
 
   if (typeof tmpl === "object") {
-    const aMark = passiveLeaning ? `<span class="marginal">(?)</span> ` : "";
+    const aMark = passiveLeaning ? (o.plain ? "(?) " : `<span class="marginal">(?)</span> `) : "";
+    if (o.plain) return `${star}${aMark}${fill(tmpl.active)} | ${star}${fill(tmpl.passive)}`;
     return (
       `<div class="test-line">${star}${aMark}${fill(tmpl.active)} <span class="voice">active</span></div>` +
       `<div class="test-line">${star}${fill(tmpl.passive)} <span class="voice">passive</span></div>`
     );
   }
-  return `<div class="test-line">${star}${fill(tmpl)}</div>`;
+  return o.plain ? `${star}${fill(tmpl)}` : `<div class="test-line">${star}${fill(tmpl)}</div>`;
+};
+
+// The Judge's item for a cell: { item, frame_v, text } — text is the plain sentence
+// exactly as the Judge shows it. Null for cells with no frame (copular n/a).
+window.daceTestItem = function (fk, levinClass, display) {
+  const src = window.daceFrameSource(fk, levinClass, display);
+  if (!src || src.tmpl === null) return null;
+  const versions = window.DACE_FRAME_VERSIONS || {};
+  return {
+    item: src.item,
+    frame_v: versions[src.item] || 0,
+    text: window.daceTestSentence(fk, 1, levinClass, display, null, { judge: true, plain: true }),
+  };
 };
 
 // Plain-text canonical example for a predicate (used as the editable default in the

@@ -103,7 +103,7 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 - `judge`: pseudonymous code (`J01`, `J02`, …) — never the email in any export.
 - `kind`: `judge` · `flag` · `unflag` · `sentence` · `nominal` · `note`.
 - `response` (kind `judge`): `acceptable` · `marginal` · `unacceptable` · `cant_judge` · `clear` (undo). For `sentence`/`nominal`/`note` it holds the text.
-- `item`: frame id, `<feature>:<frame type>` (e.g. `weak_island:cog`, `extraposition:copular`; a later second lexicalisation gets `…:b`). `frame_v`: that feature's frame version (0 = before versioning). `sentence`: the plain text shown.
+- `item`: frame id, `<feature>:<table>` (e.g. `weak_island:base`, `that_omission:psych`, `extraposition:copular`; a later second lexicalisation gets `…:b`). `frame_v`: that item's version from `data/frames.lock.json` (0 = before versioning). `sentence`: the plain text shown.
 - `gold` / `repeat`: the event was a gold cell or a test–retest repeat (phase 3).
 - A judge's current answer for a cell is their latest `judge` event for it; `clear` withdraws it.
 
@@ -126,10 +126,14 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
   - `GET /api/dace/events.csv` and `GET /api/dace/judges.csv` (`dace_admin`): all judges, pseudonymised, rendered on request. Keep the per-judge routes; switch their CSV to the event format.
 - [ ] Tests in COMPOSE's suite: append-only rules, a judge can't read another's events, the cache matches the latest events, backfill round-trip.
 
-### Phase 2 — Items and frame versions (this repo)
+### Phase 2 — Items and frame versions (this repo) — done 7 Oct 2026
 
-- [ ] `src/frames.js`: `window.DACE_FRAME_VERSIONS = { <feature>: n }` and `window.daceTestItem(fk, verb, levinClass, display)` → `{ item, frame_v, text }` (plain text; `daceTestSentence` keeps rendering the HTML).
-- [ ] `data/frames.lock.json`: per feature, its version and a hash of all its templates (every frame type, copular included). `npm test` fails if a template changes without its version being bumped — so no judgement is ever silently attached to a sentence nobody saw.
+- [x] Versions are **per item** (`<feature>:<table>`, 132 items), not per feature, so editing the psych `that_omission` frame doesn't retire the judgements on the base one. Event field `frame_v` is that item's version.
+- [x] `src/frames.js`: `daceFrameSource(fk, levinClass, display)` → `{ item, tmpl }` (the one lookup), `daceFrameTemplates()`, `daceTestSentence(…, opts)` with `judge` (unstarred, that-omission without "(that)") and `plain` (text; psych voice lines joined with " | ") modes, and `daceTestItem(fk, levinClass, display)` → `{ item, frame_v, text }`. The Judge renders with the same judge mode, so the logged sentence is what the judge saw. Explorer and Judge output unchanged (checked on all 52,976 Explorer and 24,596 Judge renderings).
+- [x] `data/frames.lock.json` (all items at v1) + `npm run frames:lock` (`scripts/frames-lock.mjs`, `scripts/lib/frames.mjs`): new item → v1, changed template → next version, removed item → `retired` (kept, since logged judgements name it). Versions baked into `data.js` as `DACE_FRAME_VERSIONS`.
+- [x] `npm test`: templates match the lock; every one of the 22,400 judgeable cells has an item, a version and a clean plain sentence.
+- Not covered by the lock: conjugation (`DACE_IRREGULAR`, doubling) and nominal forms can still change a sentence's text. The logged `sentence` field records the actual text, so consolidation can detect those changes if needed.
+- Judgements made before phase 3 ships have no item or version; the backfill gives them `frame_v` 0.
 
 ### Phase 3 — The Judge
 
@@ -171,7 +175,7 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 
 ### Order of work
 
-Phase 2 first (small, and it stops more unversioned judgements piling up), then 1 and 3 together (deploy the backend, then the Judge), then 4, then 5 and 6. Thomas can keep judging throughout: the backfill carries existing judgements across at `frame_v` 0.
+Phase 2 is done. Next, 1 and 3 together (deploy the backend, then the Judge), then 4, then 5 and 6. Thomas can keep judging throughout: the backfill carries existing judgements across at `frame_v` 0.
 
 ### Later
 

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { parseCSV } from './lib/csv.mjs';
 import { headingIds } from './lib/docs.mjs';
 import { buildSite, listFiles } from './lib/site.mjs';
+import { frameTemplates, readLock, nextLock } from './lib/frames.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8').replace(/\r\n?/g, '\n');
@@ -155,6 +156,32 @@ check('data/annotations — sidecar entries name known predicates', () => {
   const verbs = new Set(records.map((r) => r.verb));
   const P = [];
   for (const [type, map] of Object.entries(data.baked)) for (const v of Object.keys(map)) if (!verbs.has(v)) P.push(`${type}.json: unknown verb "${v}"`);
+  return P;
+});
+
+check('test-sentence frames match data/frames.lock.json (if not: npm run frames:lock, then npm run build)', () => {
+  // a template changed without a version bump would attach new judgements to an old
+  // version (or old judgements to a sentence nobody saw) — see scripts/lib/frames.mjs
+  const { changes } = nextLock(readLock(ROOT), frameTemplates(ROOT));
+  return changes;
+});
+
+check('every judgeable cell has a frame item, a version and a plain sentence (daceTestItem)', () => {
+  const P = [];
+  const sb = { console };
+  sb.window = sb;
+  vm.createContext(sb);
+  vm.runInContext(files['assets/data.js'] + '\n;\n' + files['assets/lexicon.js'], sb);
+  let n = 0;
+  for (const p of sb.DACE_PREDICATES) for (const fk of sb.DACE_BINARY_COLS) {
+    if (sb.DACE_UNJUDGED.includes(fk) || sb.daceInapplicable(p.verb, fk)) continue;
+    n++;
+    const it = sb.daceTestItem(fk, p.levin_class, p.display);
+    if (!it) { P.push(`${p.verb}.${fk}: no frame item`); continue; }
+    if (!(it.frame_v > 0)) P.push(`${p.verb}.${fk}: ${it.item} has no version in data/frames.lock.json`);
+    if (!it.text || /[<>]|\(that\)/.test(it.text) || it.text.startsWith('*')) P.push(`${p.verb}.${fk}: bad plain sentence "${it.text}"`);
+  }
+  if (n !== 22400) P.push(`expected 22,400 judgeable cells, found ${n.toLocaleString()} (update this check if the grid changed on purpose)`);
   return P;
 });
 
