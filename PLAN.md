@@ -21,10 +21,10 @@ Production build of the Claude Design handoff (30 Sept 2026): Explorer + Judge, 
 
 ## Interface
 
-- Marginal judgements (5) are stored, but the Explorer shows them as absent; give them their own mark.
+- Marginal judgements (5) are stored, but the Explorer shows them as absent; give them their own mark (now part of *Judgement data* phase 5).
 - Link each predicate to its line of `data/predicates.csv` on GitHub (the repo is public).
 - Optional: self-host the fonts.
-- Several annotators judging at once: see *Judge accounts* below.
+- Several annotators judging at once: see *Judge accounts* and *Judgement data* below.
 
 ## Licence
 
@@ -68,6 +68,113 @@ Put `/judge/` behind a login and store each judge's progress on the server, so s
 - [x] DACE: SDK in `site/assets/`, `src/judge-sync.js`, sign-in/register card, server-backed judgements, per-judge order, judged/remaining, Judges panel with per-judge downloads. Tested in headless Chrome against a throwaway PocketBase: register → judge → backtrack → reload (same order, same position) → outage (unsaved — retrying) → recovery → admin panel.
 - [x] Phone layout for the Judge (6 Oct 2026).
 - [ ] Thomas: register his judge account, tick `dace_admin` on it, judge a few cells on the live site.
-- [ ] Consolidation: how several judges' CSVs become `data/predicates.csv` (majority? Thomas adjudicates flags?). Not designed yet; the per-judge files have `judged_at`, so timing is available.
+- [ ] Consolidation: designed in *Judgement data* below (7 Oct 2026).
 - [ ] Aktionsart as a feature? `stative` is binary now; a categorical column (state / activity / achievement / accomplishment) like `factivity` would replace it and explain which frames sound off in the present tense. Thomas raised it 6 Oct 2026; not decided.
-- [ ] Nice to have: show inter-judge agreement in the Judges panel once two or more judges overlap.
+- [ ] Inter-judge agreement in the Judges panel: moved to *Judgement data* phase 3.
+
+## Judgement data (October 2026)
+
+Separate what judges *said* from what the dictionary *says*. Three layers:
+
+1. **Judgement log** — every act of judging, append-only, on the server. Raw sentence responses, never feature values.
+2. **Consolidation** — `npm run consolidate` turns the log, the judge register and Thomas's adjudications into cell values by a fixed rule.
+3. **Master** — `data/predicates.csv` stays the wide, hand-readable file the build reads; a generated `data/cells.csv` says where every cell's value came from.
+
+Why: today each judge has one overwritten record per predicate (history is lost), the sentence judged isn't stored although the frames keep changing (commits dd7289a, bd0f658), `weak_island`/`stative` store the flipped value rather than the response, and provenance (*est.*) is per row, not per cell.
+
+### Decisions (proposed — Thomas to confirm)
+
+- **Scale.** Keep Acceptable / Marginal / Unacceptable and add **Can't judge** (needs context, can't get a reading). Not a 7-point scale: 22,400 cells per judge and a categorical dictionary don't justify it.
+- **Thresholds.** A cell is *consensus* with ≥ 3 judges and ≥ 75 % of usable responses (Can't judge excluded) on one value. Set in `data/consolidation.json`, so they can change without code.
+- **Frame versions.** By default only responses to the current version of a feature's frame count; older ones are kept and reported but not used.
+- **Thomas as judge.** Counted like any other judge, but marked `author` in the register; consolidation reports author-vs-others agreement and can exclude the author (`exclude_author`, default false).
+- **Publication.** The raw log stays on the server and in a gitignored local snapshot; the public repo gets `cells.csv` and aggregate statistics only. Publishing pseudonymised raw judgements later needs each judge's consent (asked in the profile card, phase 3).
+- **Ethics.** If judges other than Thomas and named collaborators take part, check whether TCD needs ethics approval for collecting their judgements and profile data.
+- **Gold cells, not the minimal pairs, as attention checks.** The minimal pairs are shown under every question, so they can't test anyone. Thomas picks ~100 uncontroversial cells as gold instead.
+
+### Formats
+
+**Event (server collection `dace_events`, export `events.csv`):**
+
+```
+event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, repeat, created
+```
+
+- `judge`: pseudonymous code (`J01`, `J02`, …) — never the email in any export.
+- `kind`: `judge` · `flag` · `unflag` · `sentence` · `nominal` · `note`.
+- `response` (kind `judge`): `acceptable` · `marginal` · `unacceptable` · `cant_judge` · `clear` (undo). For `sentence`/`nominal`/`note` it holds the text.
+- `item`: frame id, `<feature>:<frame type>` (e.g. `weak_island:cog`, `extraposition:copular`; a later second lexicalisation gets `…:b`). `frame_v`: that feature's frame version (0 = before versioning). `sentence`: the plain text shown.
+- `gold` / `repeat`: the event was a gold cell or a test–retest repeat (phase 3).
+- A judge's current answer for a cell is their latest `judge` event for it; `clear` withdraws it.
+
+**Judge register (`judges.csv`):** `judge, variety, linguist, author, consent_publish, joined, anchor_accuracy, retest_agreement`.
+
+**Adjudications (`data/adjudications.csv`, committed, hand-edited):** `verb, feature, value, rationale, date`. Every by-hand decision, including overriding the judges.
+
+**Cell provenance (`data/cells.csv`, generated, committed):** `verb, feature, value, status, n, agreement, frame_v`.
+`status` ∈ `coded` (Thomas's pre-Judge coding) · `estimated` (imported, best guess) · `provisional` (judged, fewer than the minimum judges, unanimous) · `consensus` · `contested` (split; keeps its old value until adjudicated) · `adjudicated` · `lexical` (`phrasal`, `be_copula`) · `na` (copular n/a cells).
+
+### Phase 1 — Backend (in `Vrier/compose`, `server/`)
+
+- [ ] Migration `1751700009_dace_events.js`:
+  - New collection `dace_events` with the fields above (`user` relation → users instead of the judge code; `created` autodate). Rules: list/view own events (`user = @request.auth.id && @request.auth.judge = true`); create own only; **no update or delete rules** (append-only; superusers only). Index `(user, verb, feature, created)`.
+  - `users` += `judge_code` (text, unique; assigned by the hook, pinned in `users_guard.pb.js`), `variety` (text), `linguist` (bool), `consent_publish` (bool), `profile_done` (bool) — the last four editable by the user.
+  - Backfill: one `judge` event per existing `dace_judgements.f` entry (`frame_v` 0, `item` = `<feature>:legacy`, empty `sentence`; un-flip `weak_island`/`stative` back to the response), plus `flag` / `sentence` / `nominal` events. Assign `judge_code`s to existing judges in sign-up order.
+- [ ] `dace.pb.js`:
+  - `onRecordAfterCreateSuccess` on `dace_events`: upsert the judge's `dace_judgements` record (the Judge's fast-loading cache of current state). The client no longer writes `dace_judgements` directly; make its create/update rules superuser-only once the new Judge is live.
+  - Register hook: assign the next `judge_code`.
+  - `GET /api/dace/events.csv` and `GET /api/dace/judges.csv` (`dace_admin`): all judges, pseudonymised, rendered on request. Keep the per-judge routes; switch their CSV to the event format.
+- [ ] Tests in COMPOSE's suite: append-only rules, a judge can't read another's events, the cache matches the latest events, backfill round-trip.
+
+### Phase 2 — Items and frame versions (this repo)
+
+- [ ] `src/frames.js`: `window.DACE_FRAME_VERSIONS = { <feature>: n }` and `window.daceTestItem(fk, verb, levinClass, display)` → `{ item, frame_v, text }` (plain text; `daceTestSentence` keeps rendering the HTML).
+- [ ] `data/frames.lock.json`: per feature, its version and a hash of all its templates (every frame type, copular included). `npm test` fails if a template changes without its version being bumped — so no judgement is ever silently attached to a sentence nobody saw.
+
+### Phase 3 — The Judge
+
+- [ ] `src/judge-sync.js`: replace `update(verb, mutate)` with `record(event)` — optimistic local state, an ordered queue of event creates with the existing retry/back-off and *unsaved* indicator. Loading stays one read of the `dace_judgements` cache.
+- [ ] `src/judge-app.jsx`:
+  - Store the raw response; derive the displayed feature value with `DACE_INVERTED` only for the *Recorded* line. Remove `FLIP` from storage.
+  - **Can't judge** button (key `9`), in the 2×2 phone grid as a fifth, smaller button.
+  - Optional one-line note with a flag (`note` event).
+  - **Gold cells:** `data/gold.csv` (`verb, feature, expected`), baked into the build. In random order, gold cells are moved forward so one appears every ~25 items until exhausted. A gold cell is an ordinary cell (it counts towards coverage), its event is marked `gold`.
+  - **Test–retest:** about 1 in 100 items re-shows a cell the judge answered more than a day earlier, without showing the earlier answer; logged as `repeat`, doesn't replace the original.
+  - **Profile card** on first sign-in (and in the Menu): variety of English, linguist yes/no, consent to publish pseudonymised judgements.
+  - Exports: *My judgements* in the event format; drop *Merged predicates.csv* (superseded by consolidation — a single judge's file must not become the master by hand).
+- [ ] Judges panel: judge code, cells, gold accuracy, retest agreement, and pairwise agreement once judges overlap; buttons for `events.csv` and `judges.csv`.
+
+### Phase 4 — Consolidation (this repo)
+
+- [ ] `judgements/` (gitignored): `events.csv` and `judges.csv` downloaded from the Judges panel.
+- [ ] `data/consolidation.json`: `min_judges` 3, `majority` 0.75, `current_frames_only` true, `min_gold_accuracy` 0.8, `exclude_author` false.
+- [ ] `scripts/consolidate.mjs` (`npm run consolidate`):
+  1. Latest `judge` response per (judge, cell); drop `clear`, `repeat` and excluded judges (below gold accuracy, or the author if excluded); drop superseded frame versions if configured.
+  2. Map responses to values: acceptable → 1, unacceptable → 0 (inverted for `DACE_INVERTED`), marginal → 5; `cant_judge` counts towards `n` but not the majority.
+  3. Decide each cell: adjudication › consensus › provisional › contested (keep current value) › unjudged (keep `coded` / `estimated`). `lexical` and `na` cells are never touched.
+  4. Rewrite only feature cells of `data/predicates.csv` (using `src/csv-export.js`, so quoting and notes stay byte-identical; drop *features estimated* once no cell in the row is `estimated`). Regenerate `data/cells.csv`.
+  5. Write `judgements/contested.md` — each contested cell with its sentence(s), the response counts and any notes — for Thomas to adjudicate.
+  6. Print a summary: cells changed by status, ordinal Krippendorff's α over all judged cells (0 < 5 < 1), author-vs-others agreement, per-judge gold accuracy.
+- [ ] `scripts/lib/agreement.mjs`: Krippendorff's α (ordinal) and pairwise agreement, with unit tests on a textbook example.
+- [ ] First run, before any judging: generate `data/cells.csv` with every cell `coded`, `estimated` (the 245 rows with *features estimated*), `lexical` or `na`.
+
+### Phase 5 — Build and Explorer
+
+- [ ] `scripts/lib/data.mjs`: read `data/cells.csv`; add a compact per-predicate status string to `data.js` (one letter per binary column, e.g. `c e p k x a l n`), so the file stays one line per predicate.
+- [ ] Explorer: per-cell marks for marginal (the open *Interface* item), estimated, provisional and contested; the detail panel shows *n* judges and agreement per feature. `isEstimated` becomes "any cell estimated".
+- [ ] `npm test`: `cells.csv` has exactly one row per (predicate, binary column); its values equal `predicates.csv`; `lexical`/`na` statuses match `DACE_UNJUDGED`/`DACE_COPULAR_NA`; every adjudication names an existing cell and a legal value; the frames lock (phase 2); replace the *Merged predicates.csv* test with a consolidate round-trip on a fixture log.
+- [ ] `docs-src/about.md`: a methodology paragraph (how a value is decided, what the marks mean) with `{{judges}}`, `{{consensus}}`, `{{contested}}`, `{{alpha}}` placeholders.
+
+### Phase 6 — Docs
+
+- [ ] `CLAUDE.md`: layout table (`cells.csv`, `adjudications.csv`, `gold.csv`, `consolidation.json`, `judgements/`), golden rule "never edit feature cells of `predicates.csv` by hand once a cell has judgements — add an adjudication", and the *Bring in judgements* task rewritten as download → `npm run consolidate` → adjudicate → rebuild → commit.
+
+### Order of work
+
+Phase 2 first (small, and it stops more unversioned judgements piling up), then 1 and 3 together (deploy the backend, then the Judge), then 4, then 5 and 6. Thomas can keep judging throughout: the backfill carries existing judgements across at `frame_v` 0.
+
+### Later
+
+- Second lexicalisations (`…:b` items) for contested cells only.
+- Context sentences before the test sentence for `factivity`- and `veridicality`-type diagnostics.
+- A pseudonymised release of the event log, for judges who consented.
