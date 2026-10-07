@@ -12,7 +12,8 @@
     "build": "node scripts/build.mjs",
     "test": "node scripts/check.mjs",
     "serve": "node scripts/serve.mjs",
-    "frames:lock": "node scripts/frames-lock.mjs"
+    "frames:lock": "node scripts/frames-lock.mjs",
+    "consolidate": "node scripts/consolidate.mjs"
   },
   "devDependencies": {
     "esbuild": "0.23.0",

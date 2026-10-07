@@ -1,0 +1,10 @@
+{
+  "min_judges": 3,
+  "majority": 0.75,
+  "current_frames_only": true,
+  "use_legacy": true,
+  "min_gold_accuracy": 0.8,
+  "min_gold_seen": 10,
+  "author": [],
+  "exclude_author": false
+}

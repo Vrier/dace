@@ -60,6 +60,7 @@ export async function buildSite(root) {
   files['assets/judge.js'] = banner('Judge', 'src/judge-sync.js + src/judge-app.jsx') + await compileJsx(root, JUDGE);
   Object.assign(files, buildDocs(root, data.stats));
   files['data/predicates.csv'] = read(root, 'data/predicates.csv');
+  if (fs.existsSync(path.join(root, 'data/cells.csv'))) files['data/cells.csv'] = read(root, 'data/cells.csv');
   files['favicon.svg'] = read(root, 'src/favicon.svg');
   files['robots.txt'] = 'User-agent: *\nDisallow: /judge/\n';
 

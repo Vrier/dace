@@ -64,7 +64,7 @@ function WiktionarySenses({ lemma, display }) {
   );
 }
 
-function FlagRow({ fk, on, accent, verb, display, levinClass, onFeatureClick }) {
+function FlagRow({ fk, on, value, p, accent, verb, display, levinClass, onFeatureClick }) {
   const f = DACE_FEATURES[fk];
   const t = useTip();
   const na = window.daceInapplicable(verb, fk);
@@ -80,6 +80,7 @@ function FlagRow({ fk, on, accent, verb, display, levinClass, onFeatureClick }) 
       </div>
       <div className="ftip-def" dangerouslySetInnerHTML={{ __html: f.def }} />
       {testHtml && <div className="ftip-test" dangerouslySetInnerHTML={{ __html: testHtml }} />}
+      {!na && <div className={"ftip-st st-" + cellStatus(p, fk)}>{cellTitle(p, fk, value)}</div>}
       <div className="ftip-link">↗ open §{f.sec} in alternations · click ▸ to filter</div>
     </div>
   );
@@ -88,7 +89,7 @@ function FlagRow({ fk, on, accent, verb, display, levinClass, onFeatureClick }) 
       <a className="flag-doc" href={f.url} target="_blank" rel="noopener"
          onMouseEnter={(e) => t && t.show(e, tipContent)}
          onMouseLeave={() => t && t.hide()}>
-        <Dot on={on} accent={accent} na={na} />
+        <Dot on={on} value={value} status={cellStatus(p, fk)} accent={accent} na={na} />
         <span className="flag-label">
           {f.label}
           {nominal && <em className="flag-nominal"> → {nomCandidate ? <span className="nom-candidate" title="candidate form — not an established nominal">?{nominal}</span> : nominal}</em>}
@@ -145,7 +146,7 @@ function DetailBody({ p, accent, onFeatureClick }) {
               <span className="fgh-label">{g.label}</span>
             </div>
             <div className="flag-grid">
-              {keys.map((k) => <FlagRow key={k} fk={k} on={p[k] === 1} accent={accent} verb={p.verb} display={p.display} levinClass={p.levin_class} onFeatureClick={onFeatureClick} />)}
+              {keys.map((k) => <FlagRow key={k} fk={k} on={p[k] === 1} value={p[k]} p={p} accent={accent} verb={p.verb} display={p.display} levinClass={p.levin_class} onFeatureClick={onFeatureClick} />)}
               {g.key === "D" && (
                 <React.Fragment>
                   <div className="flag cat-flag">

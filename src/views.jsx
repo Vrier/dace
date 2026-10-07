@@ -42,7 +42,7 @@ const TableRow = React.memo(function TableRow({ p, accent, onOpen }) {
       <td className="col-cat"><CatTag kind="veridicality" value={p.veridicality} /></td>
       {window.DACE_BINARY_COLS.map((k) => (
         <td key={k} className={"col-feat" + (p[k] ? " y" : "")}>
-          <Dot on={p[k] === 1} accent={accent} na={window.daceInapplicable(p.verb, k)} />
+          <Dot on={p[k] === 1} value={p[k]} status={cellStatus(p, k)} title={cellTitle(p, k, p[k])} accent={accent} na={window.daceInapplicable(p.verb, k)} />
         </td>
       ))}
     </tr>

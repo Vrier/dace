@@ -11,6 +11,10 @@
 //   data/frames.lock.json      version of every test-sentence template (scripts/lib/frames.mjs).
 //   data/gold.csv              gold cells for the Judge: verb, feature, expected response
 //                              (uncontroversial cells, spread through each judge's queue).
+//   data/cells.csv             where every cell's value came from (npm run consolidate):
+//                              baked in as a status letter per binary column (CELL_CODE)
+//                              plus judge count and agreement for judged cells.
+//   data/consolidation.json    the consolidation thresholds (for the About page).
 //
 // Derived fields (never stored): display, lemma, levin_class, ahg[], notesClean.
 // (MegaVeridicality scores were joined in here until Oct 2026; removed so DACE
@@ -20,6 +24,9 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { parseCSV } from './csv.mjs';
 import { readLock, frameVersions } from './frames.mjs';
+
+// cells.csv status → one letter in a predicate's `st` string (src/engine.jsx reads it)
+export const CELL_CODE = { adjudicated: 'a', consensus: 'k', provisional: 'p', contested: 'x', estimated: 'e', coded: 'c', lexical: 'l', na: 'n' };
 
 export const META_COLS = ['verb', 'semantic_class', 'ahg_class', 'ahg_rofi', 'ahg_factive',
   'ahg_alt_classes', 'ahg_subclass', 'factivity', 'veridicality', 'notes'];
@@ -103,6 +110,24 @@ export function buildData(root) {
     ahgTagged: predicates.filter((p) => p.ahg_class).length,
     semanticClasses: Object.keys(lex.DACE_CLASSES).length,
   };
+  // per-cell provenance (data/cells.csv, from npm run consolidate)
+  const cellRows = fs.existsSync(path.join(root, 'data/cells.csv')) ? parseCSV(read(root, 'data/cells.csv')).records : [];
+  const cellOf = new Map(cellRows.map((c) => [c.verb + '|' + c.feature, c]));
+  const cellCount = {};
+  for (const c of cellRows) cellCount[c.status] = (cellCount[c.status] || 0) + 1;
+  for (const p of predicates) {
+    p.st = binaryCols.map((k) => { const c = cellOf.get(p.verb + '|' + k); return c ? (CELL_CODE[c.status] || '?') : '?'; }).join('');
+    const judged = {};
+    for (const k of binaryCols) { const c = cellOf.get(p.verb + '|' + k); if (c && Number(c.n) > 0) judged[k] = [Number(c.n), Number(c.agreement)]; }
+    if (Object.keys(judged).length) p.jn = judged;
+  }
+  const cons = fs.existsSync(path.join(root, 'data/consolidation.json')) ? JSON.parse(read(root, 'data/consolidation.json')) : {};
+  Object.assign(stats, {
+    cellsJudgeable: cellRows.filter((c) => !['lexical', 'na'].includes(c.status)).length,
+    cellsConsensus: cellCount.consensus || 0, cellsProvisional: cellCount.provisional || 0,
+    cellsAdjudicated: cellCount.adjudicated || 0, cellsContested: cellCount.contested || 0,
+    minJudges: cons.min_judges ?? 3, majorityPct: Math.round((cons.majority ?? 0.75) * 100),
+  });
   const frameV = frameVersions(readLock(root));
   const goldRows = fs.existsSync(path.join(root, 'data/gold.csv')) ? parseCSV(read(root, 'data/gold.csv')).records : [];
   const gold = Object.fromEntries(goldRows.map((g) => [g.verb + '|' + g.feature, g.expected]));

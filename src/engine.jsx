@@ -107,9 +107,33 @@ function FeatureTipCard({ fk }) {
 }
 
 // ---------- atoms ----------
-function Dot({ on, accent, na }) {
+// where a cell's value came from: p.st holds one letter per binary column
+// (scripts/lib/data.mjs CELL_CODE, from data/cells.csv); p.jn[fk] = [judges, agreement]
+const CELL_STATUS = { a: "adjudicated", k: "consensus", p: "provisional", x: "contested", e: "estimated", c: "coded", l: "lexical", n: "na" };
+function cellStatus(p, fk) {
+  const i = window.DACE_BINARY_COLS.indexOf(fk);
+  return (p && p.st && CELL_STATUS[p.st[i]]) || "coded";
+}
+const CELL_STATUS_TEXT = {
+  consensus: "judged: judges agree", provisional: "judged: fewer judges than needed so far, all agreeing",
+  contested: "judges disagree: awaiting a decision", adjudicated: "decided by the editor after judging",
+  estimated: "estimate, not yet judged", coded: "editor's coding, not yet judged",
+};
+function cellTitle(p, fk, value) {
+  const st = cellStatus(p, fk);
+  const jn = p && p.jn && p.jn[fk];
+  let t = (value === 5 ? "marginal · " : "") + (CELL_STATUS_TEXT[st] || "");
+  if (jn) t += ` (${jn[0]} judge${jn[0] === 1 ? "" : "s"}, ${Math.round(jn[1] * 100)}% agree)`;
+  return t;
+}
+
+// value 1 = filled, 5 = marginal (half), 0 = empty; status adds a ring style
+function Dot({ on, accent, na, value, status, title }) {
   if (na) return <span className="fdot na" title="not applicable to a copular predicate" />;
-  return <span className={"fdot" + (on ? " on" : "")} style={on ? { background: accent, borderColor: accent } : null} />;
+  const marg = value === 5;
+  const cls = "fdot" + (on ? " on" : "") + (marg ? " marg" : "") + (status ? " st-" + status : "");
+  const style = on ? { background: accent, borderColor: accent } : marg ? { borderColor: accent, "--acc": accent } : null;
+  return <span className={cls} style={style} title={title} />;
 }
 
 
@@ -201,6 +225,7 @@ function LevinChip({ code, small = false }) {
 
 Object.assign(window, {
   CLASS_COLORS, CLASS_ORDER, AhgChip, SUBCLASS_LABEL, isEstimated, predicateMatches, sortPredicates,
+  cellStatus, cellTitle,
   TooltipLayer, useTip, Tip, FeatureTipCard,
   Dot, ClassChip, CatTag, LevinChip,
 });

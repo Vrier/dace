@@ -21,7 +21,7 @@ Production build of the Claude Design handoff (30 Sept 2026): Explorer + Judge, 
 
 ## Interface
 
-- Marginal judgements (5) are stored, but the Explorer shows them as absent; give them their own mark (now part of *Judgement data* phase 5).
+- [x] Marginal judgements (5) have their own mark: a half-filled dot (*Judgement data* phase 5).
 - Link each predicate to its line of `data/predicates.csv` on GitHub (the repo is public).
 - Optional: self-host the fonts.
 - Several annotators judging at once: see *Judge accounts* and *Judgement data* below.
@@ -140,34 +140,29 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 - Gold accuracy and retest agreement are computed in phase 4 (they need `data/gold.csv` and the whole log), not in the panel.
 - **Thomas:** pick the gold cells (`data/gold.csv`: `verb,feature,expected`). Avoid predicates used in the minimal pairs.
 
-### Phase 4 — Consolidation (this repo)
+### Phase 4 — Consolidation (this repo) — done 7 Oct 2026
 
-- [x] `judgements/` gitignored (7 Oct 2026). `events.csv` and `judges.csv` are downloaded there from the Judges panel.
-- [ ] `data/consolidation.json`: `min_judges` 3, `majority` 0.75, `current_frames_only` true, `min_gold_accuracy` 0.8, `exclude_author` false.
-- [ ] `scripts/consolidate.mjs` (`npm run consolidate`):
-  1. Latest `judge` response per (judge, cell); drop `clear`, `repeat` and excluded judges (below gold accuracy, or the author if excluded); drop superseded frame versions if configured.
-  2. Map responses to values: acceptable → 1, unacceptable → 0 (inverted for `DACE_INVERTED`), marginal → 5; `cant_judge` counts towards `n` but not the majority.
-  3. Decide each cell: adjudication › consensus › provisional › contested (keep current value) › unjudged (keep `coded` / `estimated`). `lexical` and `na` cells are never touched.
-  4. Rewrite only feature cells of `data/predicates.csv` (using `src/csv-export.js`, so quoting and notes stay byte-identical; drop *features estimated* once no cell in the row is `estimated`). Regenerate `data/cells.csv`.
-  5. Write `judgements/contested.md` — each contested cell with its sentence(s), the response counts and any notes — for Thomas to adjudicate.
-  6. Print a summary: cells changed by status, ordinal Krippendorff's α over all judged cells (0 < 5 < 1), author-vs-others agreement, per-judge gold accuracy.
-- [ ] `scripts/lib/agreement.mjs`: Krippendorff's α (ordinal) and pairwise agreement, with unit tests on a textbook example.
-- [ ] First run, before any judging: generate `data/cells.csv` with every cell `coded`, `estimated` (the 245 rows with *features estimated*), `lexical` or `na`.
+- [x] `judgements/` gitignored; `data/consolidation.json` (`min_judges` 3, `majority` 0.75, `current_frames_only`, `use_legacy` true, `min_gold_accuracy` 0.8 once `min_gold_seen` 10 gold cells are answered, `author` [], `exclude_author` false); `data/adjudications.csv` (empty).
+- [x] `scripts/lib/consolidate.mjs` (pure; the rules) and `scripts/consolidate.mjs` (`npm run consolidate [-- --dry-run] [--events path]`): latest non-repeat response per judge and cell; Can't judge counts in `cant` only; superseded frame versions dropped, legacy items kept unless `use_legacy` is false; judges excluded as author (if set) or on gold accuracy; decides adjudicated › consensus › provisional › contested (keeps value) › estimated / coded; rewrites feature cells through `src/csv-export.js` (byte-identical otherwise; *features estimated* dropped once no cell of the row is estimated); writes `data/cells.csv` and `judgements/contested.md`; prints per-judge gold accuracy and retest agreement, ordinal α, pairwise and author-vs-others agreement, and every changed value.
+- [x] `scripts/lib/agreement.mjs`: Krippendorff's α (nominal / ordinal / interval) and pairwise agreement; `npm test` checks α against Krippendorff (2011)'s worked example (0.743 / 0.815 / 0.849, as in the `krippendorff` Python package).
+- [x] First run with no judgements: `data/cells.csv` = 16,752 coded, 5,648 estimated, 1,892 lexical, 304 n/a; `predicates.csv` unchanged.
+- [x] `npm test`: the rules on a fixture log (consensus, contested, inverted provisional, clear, Can't judge only, superseded vs legacy frames, repeat ignored, adjudication, gold exclusion, author exclusion, estimated note dropped), plus with no judgements the output reproduces `predicates.csv` byte for byte. A deliberate rule change (majority 0.6) makes it fail.
+- Checked on a real event log from the end-to-end test run.
 
-### Phase 5 — Build and Explorer
+### Phase 5 — Build and Explorer — done 7 Oct 2026
 
-- [ ] `scripts/lib/data.mjs`: read `data/cells.csv`; add a compact per-predicate status string to `data.js` (one letter per binary column, e.g. `c e p k x a l n`), so the file stays one line per predicate.
-- [ ] Explorer: per-cell marks for marginal (the open *Interface* item), estimated, provisional and contested; the detail panel shows *n* judges and agreement per feature. `isEstimated` becomes "any cell estimated".
-- [ ] `npm test`: `cells.csv` has exactly one row per (predicate, binary column); its values equal `predicates.csv`; `lexical`/`na` statuses match `DACE_UNJUDGED`/`DACE_COPULAR_NA`; every adjudication names an existing cell and a legal value; the frames lock (phase 2); replace the *Merged predicates.csv* test with a consolidate round-trip on a fixture log.
-- [ ] `docs-src/about.md`: a methodology paragraph (how a value is decided, what the marks mean) with `{{judges}}`, `{{consensus}}`, `{{contested}}`, `{{alpha}}` placeholders.
+- [x] `scripts/lib/data.mjs` reads `data/cells.csv`: `p.st` (one letter per binary column: a k p x e c l n) and `p.jn` (`{ feature: [judges, agreement] }` for judged cells); counts and the thresholds become About-page placeholders. `/data/cells.csv` is published beside `predicates.csv`.
+- [x] Explorer: a marginal value (5) is a half-filled dot (the open *Interface* item); provisional cells get a dotted ring, contested a red ring, adjudicated a thin ring; the dot's title (matrix) or the feature tooltip (reader) says where the value came from, with judges and agreement. Unjudged cells look as before, and the row-level *est.* marker stays.
+- [x] `npm test`: `cells.csv` row-for-row against `predicates.csv`, lexical / n/a statuses, estimated only on *features estimated* rows; `adjudications.csv` names judged cells with 0/1/5 and a rationale.
+- [x] `docs-src/about.md`: *How values are decided*, with the thresholds and counts filled from the data.
 
-### Phase 6 — Docs
+### Phase 6 — Docs — done 7 Oct 2026
 
-- [ ] `CLAUDE.md`: layout table (`cells.csv`, `adjudications.csv`, `gold.csv`, `consolidation.json`, `judgements/`), golden rule "never edit feature cells of `predicates.csv` by hand once a cell has judgements — add an adjudication", and the *Bring in judgements* task rewritten as download → `npm run consolidate` → adjudicate → rebuild → commit.
+- [x] `CLAUDE.md`: layout rows for `cells.csv`, `adjudications.csv`, `consolidation.json`, `gold.csv`, `judgements/`; the *Bring in judgements* task is now download → `npm run consolidate` → adjudicate → rebuild → commit; never edit a judged cell by hand.
 
 ### Order of work
 
-Phases 1–3 are done (7 Oct 2026). Next is 4, then 5 and 6. Judgements made before phase 1 were carried across by the backfill at `frame_v` 0.
+All six phases are done (7 Oct 2026). What's left is Thomas's: pick the gold cells, set `author` in `data/consolidation.json` to his judge code, fix the frames below, and start judging.
 
 ### Frames to look at (found while building phase 3)
 

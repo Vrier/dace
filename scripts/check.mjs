@@ -7,7 +7,9 @@ import { fileURLToPath } from 'node:url';
 import { parseCSV } from './lib/csv.mjs';
 import { headingIds } from './lib/docs.mjs';
 import { buildSite, listFiles } from './lib/site.mjs';
-import { frameTemplates, readLock, nextLock } from './lib/frames.mjs';
+import { frameTemplates, readLock, nextLock, frameRules, csvWriter } from './lib/frames.mjs';
+import { krippendorffAlpha } from './lib/agreement.mjs';
+import { consolidate, STATUSES } from './lib/consolidate.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8').replace(/\r\n?/g, '\n');
@@ -199,6 +201,117 @@ check('data/gold.csv — gold cells are judgeable cells with a valid expected re
     if (seen.has(k)) P.push(`${at}: listed twice`);
     seen.add(k);
   });
+  return P;
+});
+
+check("agreement — Krippendorff's alpha matches the published example", () => {
+  // Krippendorff (2011), 4 coders × 12 units with missing values; reference values
+  // from the paper and the `krippendorff` Python package
+  const N = null;
+  const d = [[1, 2, 3, 3, 2, 1, 4, 1, 2, N, N, N], [1, 2, 3, 3, 2, 2, 4, 1, 2, 5, N, 3],
+    [N, 3, 3, 3, 2, 3, 4, 2, 2, 5, 1, N], [1, 2, 3, 3, 2, 4, 4, 1, 2, 5, 1, N]];
+  const units = d[0].map((_, u) => d.map((r) => r[u]).filter((x) => x !== N));
+  const P = [];
+  for (const [level, want] of [['nominal', 0.743421], ['ordinal', 0.815388], ['interval', 0.849107]]) {
+    const got = krippendorffAlpha(units, level);
+    if (Math.abs(got - want) > 1e-6) P.push(`${level}: ${got} ≠ ${want}`);
+  }
+  return P;
+});
+
+const cellsRows = fs.existsSync(path.join(ROOT, 'data/cells.csv')) ? parseCSV(read('data/cells.csv')).records : null;
+check('data/cells.csv — one row per cell, agreeing with predicates.csv (if not: npm run consolidate)', () => {
+  if (!cellsRows) return ['data/cells.csv is missing — run npm run consolidate'];
+  const P = [];
+  const rules = frameRules(ROOT, data.frameV);
+  let i = 0;
+  for (const p of predicates) for (const fk of binaryCols) {
+    const r = cellsRows[i++];
+    const at = `${p.verb}.${fk}`;
+    if (!r || r.verb !== p.verb || r.feature !== fk) { P.push(`row ${i + 1}: expected ${at}, found ${r ? r.verb + '.' + r.feature : 'nothing'}`); return P; }
+    if (r.value !== String(p[fk])) P.push(`${at}: cells.csv says ${r.value}, predicates.csv ${p[fk]}`);
+    if (!STATUSES.includes(r.status)) P.push(`${at}: unknown status ${r.status}`);
+    const lexical = rules.unjudged.includes(fk), na = rules.inapplicable(p.verb, fk);
+    if (lexical !== (r.status === 'lexical')) P.push(`${at}: status ${r.status}, but the cell is ${lexical ? '' : 'not '}lexical`);
+    if (na !== (r.status === 'na')) P.push(`${at}: status ${r.status}, but the cell is ${na ? '' : 'not '}n/a`);
+    if (r.status === 'estimated' && !/features estimated/i.test(p.notes)) P.push(`${at}: estimated, but the row isn't marked "features estimated"`);
+  }
+  if (cellsRows.length !== i) P.push(`${cellsRows.length - i} extra row(s) at the end`);
+  return P;
+});
+
+check('data/adjudications.csv — names judged cells with legal values', () => {
+  const P = [];
+  const rows = parseCSV(read('data/adjudications.csv')).records;
+  const rules = frameRules(ROOT, data.frameV);
+  const verbs = new Set(predicates.map((p) => p.verb));
+  const seen = new Set();
+  rows.forEach((a, i) => {
+    const at = `line ${i + 2} (${a.verb}.${a.feature})`;
+    if (!verbs.has(a.verb) || !binaryCols.includes(a.feature)) P.push(`${at}: no such cell`);
+    else if (rules.unjudged.includes(a.feature) || rules.inapplicable(a.verb, a.feature)) P.push(`${at}: not a judged cell`);
+    if (!['0', '1', '5'].includes(a.value)) P.push(`${at}: value must be 0, 1 or 5`);
+    if (!a.rationale) P.push(`${at}: give a rationale`);
+    if (seen.has(a.verb + '|' + a.feature)) P.push(`${at}: listed twice`);
+    seen.add(a.verb + '|' + a.feature);
+  });
+  return P;
+});
+
+check('consolidation rules (scripts/lib/consolidate.mjs) on a fixture log', () => {
+  const P = [];
+  const rules = frameRules(ROOT, data.frameV);
+  const writeCsv = csvWriter(ROOT, binaryCols, header);
+  const byVerb = new Map(predicates.map((p) => [p.verb, p]));
+  const base = { ...data, byVerb, gold: {} };
+  const know = byVerb.get('know');
+  const est = predicates.find((p) => /features estimated/i.test(p.notes));
+  const J = (judge, verb, fk, response, extra = {}) => {
+    const item = rules.item(fk, byVerb.get(verb));
+    return { judge, verb, feature: fk, kind: 'judge', response, item, frame_v: String(rules.version(item)), sentence: 's', gold: '0', repeat: '0', ...extra };
+  };
+  const events = [
+    J('J01', 'know', 'comp_inf', 'acceptable'), J('J02', 'know', 'comp_inf', 'acceptable'), J('J03', 'know', 'comp_inf', 'acceptable'),
+    J('J01', 'know', 'ecm', 'acceptable'), J('J02', 'know', 'ecm', 'unacceptable'), J('J03', 'know', 'ecm', 'unacceptable'),
+    J('J01', 'know', 'weak_island', 'acceptable'),
+    J('J01', 'know', 'stative', 'acceptable'), J('J01', 'know', 'stative', 'clear'),
+    J('J01', 'know', 'raising', 'cant_judge'),
+    J('J01', 'know', 'comp_gerund', 'acceptable', { frame_v: '99' }),
+    J('J02', 'know', 'comp_gerund', 'marginal', { item: 'comp_gerund:legacy', frame_v: '0' }),
+    J('J01', 'know', 'np_comp_alt', 'acceptable'), J('J01', 'know', 'np_comp_alt', 'unacceptable', { repeat: '1' }),
+    J('J01', 'know', 'extraposition', 'unacceptable'),
+    J('J04', 'know', 'that_omission', 'unacceptable'), J('J04', 'know', 'ecm', 'acceptable'),
+    ...binaryCols.filter((fk) => !rules.unjudged.includes(fk) && !rules.inapplicable(est.verb, fk)).map((fk) => J('J01', est.verb, fk, 'marginal')),
+  ];
+  const adjudications = [{ verb: 'know', feature: 'extraposition', value: '1', rationale: 'fixture', date: '2026-10-07' }];
+  const run = (config, gold = {}) => consolidate({ data: { ...base, gold }, frames: rules, events, adjudications, config: { min_gold_seen: 1, ...config }, writeCsv });
+  const cell = (res, verb, fk) => res.rows.find((r) => r.verb === verb && r.feature === fk) || {};
+  const want = (res, verb, fk, status, value, label) => {
+    const r = cell(res, verb, fk);
+    if (r.status !== status || (value !== undefined && r.value !== value)) P.push(`${label}: ${verb}.${fk} is ${r.status} ${r.value}, expected ${status} ${value ?? ''}`);
+  };
+  const a = run({}, { 'know|that_omission': 'acceptable' });
+  want(a, 'know', 'comp_inf', 'consensus', '1', '3 of 3 agree');
+  want(a, 'know', 'ecm', 'contested', String(know.ecm), '2 of 3, below 75 %; J04 excluded on gold');
+  want(a, 'know', 'weak_island', 'provisional', '0', 'inverted feature, one judge');
+  want(a, 'know', 'stative', 'coded', String(know.stative), 'cleared judgement');
+  want(a, 'know', 'raising', 'coded', String(know.raising), "can't judge only");
+  want(a, 'know', 'comp_gerund', 'provisional', '5', 'superseded frame dropped, legacy kept');
+  want(a, 'know', 'np_comp_alt', 'provisional', '1', 'repeat ignored');
+  want(a, 'know', 'extraposition', 'adjudicated', '1', 'adjudication wins');
+  want(a, 'know', 'phrasal', 'lexical', String(know.phrasal), 'lexical');
+  if (!a.summary.judges.find((j) => j.judge === 'J04' && j.excluded === 'gold')) P.push('J04 should be excluded for failing the gold cell');
+  const j1 = a.summary.judges.find((j) => j.judge === 'J01');
+  if (!j1 || j1.retest !== 1 || j1.retestAgree !== 0) P.push('J01 retest should be 1 repeat, 0 agreeing');
+  if (a.contested.length !== 1 || a.contested[0].feature !== 'ecm') P.push('exactly know.ecm should be contested');
+  const estLine = a.csv.split('\n').find((l) => l.startsWith(est.verb + ','));
+  if (/features estimated/i.test(estLine)) P.push(`${est.verb}: fully judged, but "features estimated" was kept`);
+  if (cell(a, est.verb, binaryCols.find((fk) => !rules.unjudged.includes(fk))).value !== '5') P.push(`${est.verb}: marginal responses should give 5`);
+  const b = run({ author: ['J03'], exclude_author: true, use_legacy: false });
+  want(b, 'know', 'comp_inf', 'provisional', '1', 'author excluded leaves 2 judges');
+  want(b, 'know', 'comp_gerund', 'coded', String(know.comp_gerund), 'legacy not used');
+  const none = consolidate({ data: base, frames: rules, events: [], adjudications: [], config: {}, writeCsv });
+  if (none.csv !== read('data/predicates.csv')) P.push('with no judgements, consolidation must reproduce data/predicates.csv exactly');
   return P;
 });
 
