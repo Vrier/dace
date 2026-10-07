@@ -118,7 +118,7 @@ check('documentation deep links resolve to headings', () => {
   return P;
 });
 
-check('Judge export (src/csv-export.js) reproduces data/predicates.csv exactly', () => {
+check('CSV writer (src/csv-export.js) reproduces data/predicates.csv exactly', () => {
   const P = [];
   const sb = {};
   sb.window = sb;
@@ -182,6 +182,23 @@ check('every judgeable cell has a frame item, a version and a plain sentence (da
     if (!it.text || /[<>]|\(that\)/.test(it.text) || it.text.startsWith('*')) P.push(`${p.verb}.${fk}: bad plain sentence "${it.text}"`);
   }
   if (n !== 22400) P.push(`expected 22,400 judgeable cells, found ${n.toLocaleString()} (update this check if the grid changed on purpose)`);
+  return P;
+});
+
+check('data/gold.csv — gold cells are judgeable cells with a valid expected response', () => {
+  const P = [];
+  const byVerb = new Map(predicates.map((p) => [p.verb, p]));
+  const seen = new Set();
+  data.goldRows.forEach((g, i) => {
+    const at = `line ${i + 2} (${g.verb}.${g.feature})`;
+    if (!byVerb.has(g.verb)) P.push(`${at}: unknown verb`);
+    if (!binaryCols.includes(g.feature)) P.push(`${at}: unknown feature`);
+    if (['phrasal', 'be_copula'].includes(g.feature) || (g.verb.startsWith('be_') && ['factive_passive', 'ditransitive'].includes(g.feature))) P.push(`${at}: not a judged cell`);
+    if (!['acceptable', 'marginal', 'unacceptable'].includes(g.expected)) P.push(`${at}: expected must be acceptable, marginal or unacceptable`);
+    const k = g.verb + '|' + g.feature;
+    if (seen.has(k)) P.push(`${at}: listed twice`);
+    seen.add(k);
+  });
   return P;
 });
 

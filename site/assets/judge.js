@@ -5,13 +5,13 @@ window.DACE_SYNC = function() {
   const base = new URLSearchParams(window.location.search).get("pb") || DEFAULT_BASE;
   const pb = new PocketBase(base);
   pb.autoCancellation(false);
-  const COLL = "dace_judgements";
+  const RESPONSES = ["acceptable", "marginal", "unacceptable", "cant_judge"];
   const records = {};
-  const dirty = /* @__PURE__ */ new Set();
-  let flushing = false, failed = false, attempt = 0, timer = null;
+  const queue = [];
+  let flushing = false, failed = false, rejected = 0, attempt = 0, timer = null;
   const listeners = /* @__PURE__ */ new Set();
   function status() {
-    return { pending: dirty.size, failed, online: navigator.onLine !== false };
+    return { pending: queue.length, failed, rejected, online: navigator.onLine !== false };
   }
   function emit() {
     for (const l of listeners) {
@@ -23,7 +23,17 @@ window.DACE_SYNC = function() {
   }
   function user() {
     const r = pb.authStore.isValid && pb.authStore.record;
-    return r ? { id: r.id, email: r.email, judge: !!r.judge, admin: !!r.dace_admin } : null;
+    return r ? {
+      id: r.id,
+      email: r.email,
+      judge: !!r.judge,
+      admin: !!r.dace_admin,
+      code: r.judge_code || "",
+      variety: r.variety || "",
+      linguist: !!r.linguist,
+      consent: !!r.consent_publish,
+      profileDone: !!r.profile_done
+    } : null;
   }
   async function refresh() {
     if (!pb.authStore.isValid) return null;
@@ -51,10 +61,23 @@ window.DACE_SYNC = function() {
   function logout() {
     pb.authStore.clear();
     for (const k of Object.keys(records)) delete records[k];
-    dirty.clear();
+    queue.length = 0;
     failed = false;
+    rejected = 0;
     attempt = 0;
     emit();
+  }
+  async function saveProfile(fields) {
+    const u = user();
+    if (!u) throw new Error("not signed in");
+    const rec = await pb.collection("users").update(u.id, {
+      variety: fields.variety,
+      linguist: !!fields.linguist,
+      consent_publish: !!fields.consent,
+      profile_done: true
+    });
+    pb.authStore.save(pb.authStore.token, rec);
+    return user();
   }
   function errorMessage(e) {
     if (e && e.response && e.response.message) return e.response.message;
@@ -64,29 +87,62 @@ window.DACE_SYNC = function() {
   async function loadAll() {
     const u = user();
     if (!u) throw new Error("not signed in");
-    const list = await pb.collection(COLL).getFullList({ filter: pb.filter("user = {:u}", { u: u.id }), batch: 1e3 });
+    const list = await pb.collection("dace_judgements").getFullList({ filter: pb.filter("user = {:u}", { u: u.id }), batch: 1e3 });
     for (const k of Object.keys(records)) delete records[k];
-    for (const r of list) records[r.verb] = { id: r.id, data: r.data && typeof r.data === "object" ? r.data : {}, v: 0 };
+    for (const r of list) records[r.verb] = r.data && typeof r.data === "object" ? r.data : {};
     return records;
   }
   function get(verb) {
-    return records[verb] ? records[verb].data : null;
+    return records[verb] || null;
   }
   function all() {
     return records;
   }
-  function update(verb, mutate) {
-    if (!records[verb]) records[verb] = { id: null, data: {}, v: 0 };
-    records[verb].v = (records[verb].v || 0) + 1;
-    const d = records[verb].data;
-    d.f = d.f || {};
+  function apply(ev, at) {
+    if (ev.repeat) return;
+    const d = records[ev.verb] = records[ev.verb] || {};
+    d.v = 2;
+    d.r = d.r || {};
     d.flags = d.flags || {};
     d.t = d.t || {};
-    mutate(d);
-    dirty.add(verb);
+    d.notes = d.notes || {};
+    const fk = ev.feature, resp = ev.response;
+    switch (ev.kind) {
+      case "judge":
+        if (resp === "clear") {
+          delete d.r[fk];
+          delete d.t[fk];
+        } else {
+          d.r[fk] = resp;
+          d.t[fk] = at;
+        }
+        break;
+      case "flag":
+        d.flags[fk] = true;
+        break;
+      case "unflag":
+        delete d.flags[fk];
+        break;
+      case "note":
+        if (resp) d.notes[fk] = resp;
+        else delete d.notes[fk];
+        break;
+      case "sentence":
+        if (resp) d.sentence = resp;
+        else delete d.sentence;
+        break;
+      case "nominal":
+        if (resp) d.nominal = resp;
+        else delete d.nominal;
+        break;
+    }
+  }
+  function record(ev) {
+    if (ev.kind === "judge" && ev.response !== "clear" && !RESPONSES.includes(ev.response)) throw new Error("bad response " + ev.response);
+    apply(ev, (/* @__PURE__ */ new Date()).toISOString());
+    queue.push(Object.assign({ feature: "", response: "", item: "", frame_v: 0, sentence: "", gold: false, repeat: false }, ev));
     emit();
     schedule(0);
-    return d;
   }
   function schedule(ms) {
     if (timer) clearTimeout(timer);
@@ -94,61 +150,65 @@ window.DACE_SYNC = function() {
   }
   async function flush() {
     timer = null;
-    if (flushing || dirty.size === 0) return;
+    if (flushing || queue.length === 0) return;
     const u = user();
     if (!u) return;
     flushing = true;
     try {
-      while (dirty.size) {
-        const verb = dirty.values().next().value;
-        const rec = records[verb];
-        const v = rec.v;
-        const payload = { user: u.id, verb, data: rec.data };
-        const saved = rec.id ? await pb.collection(COLL).update(rec.id, { data: rec.data }) : await pb.collection(COLL).create(payload);
-        rec.id = saved.id;
-        if (rec.v === v) dirty.delete(verb);
+      while (queue.length) {
+        try {
+          await pb.collection("dace_events").create(Object.assign({ user: u.id }, queue[0]));
+        } catch (e) {
+          if (e && e.status === 400) {
+            console.error("DACE: event refused", queue[0], e.response);
+            rejected++;
+          } else throw e;
+        }
+        queue.shift();
         failed = false;
         attempt = 0;
         emit();
       }
     } catch (e) {
-      if (e && e.status === 400 && e.response && e.response.data && e.response.data.verb) {
-        try {
-          await loadAll();
-        } catch (e2) {
-        }
-      }
       failed = true;
       attempt++;
       emit();
       schedule(Math.min(3e4, 1500 * Math.pow(2, attempt - 1)));
     } finally {
       flushing = false;
-      if (dirty.size && !timer && !failed) schedule(0);
+      if (queue.length && !timer && !failed) schedule(0);
     }
   }
   window.addEventListener("online", () => {
-    if (dirty.size) schedule(0);
+    if (queue.length) schedule(0);
   });
   window.addEventListener("beforeunload", (e) => {
-    if (dirty.size) {
+    if (queue.length) {
       e.preventDefault();
       e.returnValue = "";
     }
   });
-  async function adminJudges() {
-    const r = await fetch(base + "/api/dace/judges", { headers: { Authorization: pb.authStore.token } });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(j.error || "Could not list judges");
-    return j.judges || [];
+  async function myEvents() {
+    const u = user();
+    if (!u) throw new Error("not signed in");
+    return pb.collection("dace_events").getFullList({ filter: pb.filter("user = {:u}", { u: u.id }), sort: "at,created", batch: 1e3 });
   }
-  async function adminDownload(id, file, filename) {
-    const r = await fetch(base + "/api/dace/judges/" + id + "/" + file, { headers: { Authorization: pb.authStore.token } });
+  async function adminGet(path) {
+    const r = await fetch(base + path, { headers: { Authorization: pb.authStore.token } });
     if (!r.ok) {
       const j = await r.json().catch(() => ({}));
-      throw new Error(j.error || "Download failed");
+      throw new Error(j.error || "Request failed");
     }
-    const blob = await r.blob();
+    return r;
+  }
+  async function adminJudges() {
+    return (await (await adminGet("/api/dace/judges")).json()).judges || [];
+  }
+  async function adminAgreement() {
+    return (await adminGet("/api/dace/agreement")).json();
+  }
+  async function adminDownload(path, filename) {
+    const blob = await (await adminGet(path)).blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -159,22 +219,26 @@ window.DACE_SYNC = function() {
   return {
     base,
     pb,
+    RESPONSES,
     user,
     refresh,
     login,
     register,
     logout,
+    saveProfile,
     errorMessage,
     loadAll,
     get,
     all,
-    update,
+    record,
+    myEvents,
     status,
     onStatus: (l) => {
       listeners.add(l);
       return () => listeners.delete(l);
     },
     adminJudges,
+    adminAgreement,
     adminDownload
   };
 }();
@@ -182,7 +246,17 @@ window.DACE_SYNC = function() {
 // ---- src/judge-app.jsx
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 const SYNC = window.DACE_SYNC;
-const VALUES = { "1": "acceptable", "0": "unacceptable", "5": "marginal" };
+const RESP = {
+  acceptable: { label: "Acceptable", key: "1", cls: "v1", sub: "the sentence is fine" },
+  unacceptable: { label: "Unacceptable", key: "0", cls: "v0", sub: "the sentence is out" },
+  marginal: { label: "Marginal", key: "5", cls: "v5", sub: "?  degraded" },
+  cant_judge: { label: "Can't judge", key: "9", cls: "vcj", sub: "no clear reading" }
+};
+const KEY_TO_RESP = Object.fromEntries(Object.entries(RESP).map(([r, o]) => [o.key, r]));
+const GOLD = window.DACE_GOLD || {};
+const GOLD_EVERY = 25;
+const RETEST_EVERY = 100;
+const RETEST_MIN_AGE = 24 * 3600 * 1e3;
 const FEATURES = window.DACE_BINARY_COLS;
 const PREDS = window.DACE_PREDICATES;
 const CLASS_COLORS = {
@@ -199,12 +273,11 @@ const CLASS_COLORS = {
 function jkey(verb, feature) {
   return verb + "|" + feature;
 }
-const FLIP = { "1": "0", "0": "1", "5": "5" };
-function toStored(fk, verdict) {
-  return window.DACE_INVERTED.includes(fk) ? FLIP[verdict] : verdict;
-}
-function toVerdict(fk, stored) {
-  return stored === void 0 ? void 0 : window.DACE_INVERTED.includes(fk) ? FLIP[stored] : stored;
+function featureValue(fk, resp) {
+  if (resp === "marginal") return "5";
+  if (resp !== "acceptable" && resp !== "unacceptable") return null;
+  const has = resp === "acceptable";
+  return (window.DACE_INVERTED.includes(fk) ? !has : has) ? "1" : "0";
 }
 const NARROW_MQ = "(max-width: 700px)";
 function useNarrow() {
@@ -265,16 +338,34 @@ function judgeOrder(seedText) {
   }
   return order;
 }
+function withGold(order) {
+  const isGold = (qi) => GOLD[jkey(QUEUE[qi].verb, QUEUE[qi].feature)] !== void 0;
+  const gold = order.filter(isGold), rest = order.filter((qi) => !isGold(qi));
+  const out = [];
+  let g = 0;
+  for (const qi of rest) {
+    out.push(qi);
+    if (g < gold.length && out.length % GOLD_EVERY === GOLD_EVERY - 1) out.push(gold[g++]);
+  }
+  while (g < gold.length) out.push(gold[g++]);
+  return out;
+}
+function makeOrder(mode, userId) {
+  return mode === "csv" ? QUEUE.map((_, i) => i) : withGold(judgeOrder(userId));
+}
 function flatten(records) {
-  const judgements = {}, flags = {}, sentences = {}, nominals = {};
-  for (const [verb, rec] of Object.entries(records)) {
-    const d = rec.data || {};
-    for (const [fk, v] of Object.entries(d.f || {})) if (VALUES[v]) judgements[jkey(verb, fk)] = v;
+  const judgements = {}, times = {}, flags = {}, notes = {}, sentences = {}, nominals = {};
+  for (const [verb, d] of Object.entries(records)) {
+    for (const [fk, v] of Object.entries(d.r || {})) if (RESP[v]) {
+      judgements[jkey(verb, fk)] = v;
+      times[jkey(verb, fk)] = (d.t || {})[fk];
+    }
     for (const fk of Object.keys(d.flags || {})) flags[jkey(verb, fk)] = true;
+    for (const [fk, n] of Object.entries(d.notes || {})) notes[jkey(verb, fk)] = n;
     if (d.sentence) sentences[verb] = d.sentence;
     if (d.nominal) nominals[verb] = d.nominal;
   }
-  return { judgements, flags, sentences, nominals };
+  return { judgements, times, flags, notes, sentences, nominals };
 }
 function downloadBlob(text, filename, type) {
   const blob = new Blob([text], { type });
@@ -289,17 +380,28 @@ function csvq(s) {
   s = String(s == null ? "" : s);
   return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
-function exportOwnCSV() {
-  const rows = ["verb,feature,judgement,flagged,judged_at"];
-  const recs = SYNC.all();
-  for (const verb of Object.keys(recs).sort()) {
-    const d = recs[verb].data || {}, f = d.f || {}, fl = d.flags || {}, t = d.t || {};
-    for (const fk of Object.keys({ ...f, ...fl }).sort()) rows.push([csvq(verb), csvq(fk), csvq(f[fk] === void 0 ? "" : f[fk]), fl[fk] ? "1" : "0", csvq(t[fk] || "")].join(","));
+async function exportOwnCSV(code) {
+  try {
+    const evs = await SYNC.myEvents();
+    const rows = ["event_id,judge,verb,feature,kind,response,item,frame_v,sentence,gold,repeat,at"];
+    for (const e of evs) rows.push([
+      e.id,
+      code,
+      e.verb,
+      e.feature,
+      e.kind,
+      e.response,
+      e.item,
+      e.frame_v,
+      e.sentence,
+      e.gold ? 1 : 0,
+      e.repeat ? 1 : 0,
+      String(e.at || "").replace(" ", "T")
+    ].map(csvq).join(","));
+    downloadBlob(rows.join("\n") + "\n", "dace_events_" + (code || "mine") + ".csv", "text/csv");
+  } catch (e) {
+    alert(SYNC.errorMessage(e));
   }
-  downloadBlob(rows.join("\n") + "\n", "dace_judgements.csv", "text/csv");
-}
-function exportMergedCSV(judgements) {
-  downloadBlob(window.daceMergedCSV(PREDS, judgements, FEATURES, window.DACE_CSV_HEADER), "predicates_judged.csv", "text/csv");
 }
 function exportOwnAnnotations(type, map) {
   const payload = { _dace: type, version: 1, exported: (/* @__PURE__ */ new Date()).toISOString(), data: map };
@@ -341,9 +443,10 @@ function MinimalPair({ fk }) {
   if (!pr) return null;
   return /* @__PURE__ */ React.createElement("div", { className: "card-pair" }, /* @__PURE__ */ React.createElement("span", { className: "pair-ok" }, /* @__PURE__ */ React.createElement("i", null, "\u2713"), " ", pr.good), /* @__PURE__ */ React.createElement("span", { className: "pair-bad" }, /* @__PURE__ */ React.createElement("i", null, "\u2717"), " ", pr.bad));
 }
-function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, onFlag, onSentence, onNominal }) {
+function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudge, onFlag, onNote, onSentence, onNominal }) {
   const f = DACE_FEATURES[item.feature];
-  const judgement = toVerdict(item.feature, stored);
+  const shown = repeat ? void 0 : response;
+  const fv = shown ? featureValue(item.feature, shown) : null;
   const inverted = window.DACE_INVERTED.includes(item.feature);
   const defaultEx = useMemo(() => {
     const baked = window.DACE_BAKED_ANNOTATIONS && window.DACE_BAKED_ANNOTATIONS.sentences && window.DACE_BAKED_ANNOTATIONS.sentences[item.verb];
@@ -351,23 +454,33 @@ function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, on
   }, [item.verb]);
   const [sentVal, setSentVal] = useState(sentence || "");
   const [nomVal, setNomVal] = useState(nominal || "");
+  const [noteVal, setNoteVal] = useState(note || "");
   useEffect(() => {
     setSentVal(sentence || "");
     setNomVal(nominal || "");
   }, [item.verb]);
-  return /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { className: "card-top" }, /* @__PURE__ */ React.createElement("div", { className: "card-left" }, /* @__PURE__ */ React.createElement("div", { className: "card-verb" }, item.display, flagged && /* @__PURE__ */ React.createElement("span", { className: "flag-badge", title: "Flagged for review" }, "\u2691")), /* @__PURE__ */ React.createElement("div", { className: "card-chips" }, /* @__PURE__ */ React.createElement(AhgChip, { cls: item.ahg }), item.levin && /* @__PURE__ */ React.createElement(LevinChip2, { code: item.levin }))), /* @__PURE__ */ React.createElement("div", { className: "card-right" }, /* @__PURE__ */ React.createElement("div", { className: "card-feat" }, f ? f.label : item.feature), /* @__PURE__ */ React.createElement("div", { className: "card-feat-sec" }, f ? "\xA7" + f.sec : ""), /* @__PURE__ */ React.createElement("div", { className: "card-csv " + (item.originalValue ? "v1" : "v0") }, "current CSV: ", item.originalValue))), item.feature === "derived_nominal" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " have a nominalisation that takes the same complement \u2014 either a noun it is derived from (", /* @__PURE__ */ React.createElement("i", null, "hope"), " \u2192 ", /* @__PURE__ */ React.createElement("i", null, "her hope that\u2026"), ") or one formed with a suffix?", /* @__PURE__ */ React.createElement("ul", { className: "card-suffixes" }, window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => /* @__PURE__ */ React.createElement("li", { key: suf }, /* @__PURE__ */ React.createElement("b", null, suf), " ", /* @__PURE__ */ React.createElement("span", null, eg))))) : item.feature === "weak_island" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Can a ", /* @__PURE__ */ React.createElement("i", null, "wh"), "-phrase be extracted out of ", /* @__PURE__ */ React.createElement("b", null, item.display), "'s complement? Judge the sentence: ", /* @__PURE__ */ React.createElement("b", null, "Acceptable"), " = bridge verb (recorded as 0), ", /* @__PURE__ */ React.createElement("b", null, "Unacceptable"), " = weak island (recorded as 1).") : item.feature === "stative" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Is ", /* @__PURE__ */ React.createElement("b", null, item.display), " stative? Judge the progressive: ", /* @__PURE__ */ React.createElement("b", null, "Acceptable"), " = eventive (recorded as 0), ", /* @__PURE__ */ React.createElement("b", null, "Unacceptable"), " = stative (recorded as 1).") : /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " license the ", /* @__PURE__ */ React.createElement("b", null, f ? f.label : item.feature), " construction?"), /* @__PURE__ */ React.createElement(MinimalPair, { fk: item.feature }), /* @__PURE__ */ React.createElement(TestSentence, { item }), /* @__PURE__ */ React.createElement("div", { className: "judge-btns" }, /* @__PURE__ */ React.createElement("button", { className: "jb v1" + (judgement === "1" ? " on" : ""), onClick: (e) => {
+  useEffect(() => {
+    setNoteVal(note || "");
+  }, [item.verb, item.feature]);
+  return /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { className: "card-top" }, /* @__PURE__ */ React.createElement("div", { className: "card-left" }, /* @__PURE__ */ React.createElement("div", { className: "card-verb" }, item.display, flagged && /* @__PURE__ */ React.createElement("span", { className: "flag-badge", title: "Flagged for review" }, "\u2691")), /* @__PURE__ */ React.createElement("div", { className: "card-chips" }, /* @__PURE__ */ React.createElement(AhgChip, { cls: item.ahg }), item.levin && /* @__PURE__ */ React.createElement(LevinChip2, { code: item.levin }))), /* @__PURE__ */ React.createElement("div", { className: "card-right" }, /* @__PURE__ */ React.createElement("div", { className: "card-feat" }, f ? f.label : item.feature), /* @__PURE__ */ React.createElement("div", { className: "card-feat-sec" }, f ? "\xA7" + f.sec : ""))), item.feature === "derived_nominal" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " have a nominalisation that takes the same complement \u2014 either a noun it is derived from (", /* @__PURE__ */ React.createElement("i", null, "hope"), " \u2192 ", /* @__PURE__ */ React.createElement("i", null, "her hope that\u2026"), ") or one formed with a suffix?", /* @__PURE__ */ React.createElement("ul", { className: "card-suffixes" }, window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => /* @__PURE__ */ React.createElement("li", { key: suf }, /* @__PURE__ */ React.createElement("b", null, suf), " ", /* @__PURE__ */ React.createElement("span", null, eg))))) : item.feature === "weak_island" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Can a ", /* @__PURE__ */ React.createElement("i", null, "wh"), "-phrase be extracted out of ", /* @__PURE__ */ React.createElement("b", null, item.display), "'s complement? Judge the sentence: ", /* @__PURE__ */ React.createElement("b", null, "Acceptable"), " = bridge verb (feature value 0), ", /* @__PURE__ */ React.createElement("b", null, "Unacceptable"), " = weak island (feature value 1).") : item.feature === "stative" ? /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Is ", /* @__PURE__ */ React.createElement("b", null, item.display), " stative? Judge the progressive: ", /* @__PURE__ */ React.createElement("b", null, "Acceptable"), " = eventive (feature value 0), ", /* @__PURE__ */ React.createElement("b", null, "Unacceptable"), " = stative (feature value 1).") : /* @__PURE__ */ React.createElement("div", { className: "card-q" }, "Does ", /* @__PURE__ */ React.createElement("b", null, item.display), " license the ", /* @__PURE__ */ React.createElement("b", null, f ? f.label : item.feature), " construction?"), /* @__PURE__ */ React.createElement(MinimalPair, { fk: item.feature }), /* @__PURE__ */ React.createElement(TestSentence, { item }), /* @__PURE__ */ React.createElement("div", { className: "judge-btns" }, Object.entries(RESP).map(([r, o]) => /* @__PURE__ */ React.createElement("button", { key: r, className: "jb " + o.cls + (shown === r ? " on" : ""), onClick: (e) => {
     e.currentTarget.blur();
-    onJudge("1");
-  } }, /* @__PURE__ */ React.createElement("kbd", null, "1"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, "Acceptable"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "the sentence is fine")), /* @__PURE__ */ React.createElement("button", { className: "jb v0" + (judgement === "0" ? " on" : ""), onClick: (e) => {
-    e.currentTarget.blur();
-    onJudge("0");
-  } }, /* @__PURE__ */ React.createElement("kbd", null, "0"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, "Unacceptable"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "the sentence is out")), /* @__PURE__ */ React.createElement("button", { className: "jb v5" + (judgement === "5" ? " on" : ""), onClick: (e) => {
-    e.currentTarget.blur();
-    onJudge("5");
-  } }, /* @__PURE__ */ React.createElement("kbd", null, "5"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, "Marginal"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "?  degraded")), /* @__PURE__ */ React.createElement("button", { className: "jb vflag" + (flagged ? " on" : ""), onClick: (e) => {
+    onJudge(r);
+  } }, /* @__PURE__ */ React.createElement("kbd", null, o.key), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, o.label), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, o.sub))), /* @__PURE__ */ React.createElement("button", { className: "jb vflag" + (flagged ? " on" : ""), onClick: (e) => {
     e.currentTarget.blur();
     onFlag();
-  } }, /* @__PURE__ */ React.createElement("kbd", null, "7"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, flagged ? "Flagged" : "Flag"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "review later"))), judgement !== void 0 && /* @__PURE__ */ React.createElement("div", { className: "card-current" }, "Recorded: ", /* @__PURE__ */ React.createElement("b", { className: "v" + judgement }, VALUES[judgement]), inverted && stored !== "5" ? ` (CSV value ${stored})` : "", flagged ? " \xB7 \u2691 flagged" : "", " \u2014 press a key or button to change"), /* @__PURE__ */ React.createElement("div", { className: "card-anno" }, /* @__PURE__ */ React.createElement("label", { className: "anno-field" }, /* @__PURE__ */ React.createElement("span", { className: "anno-label" }, "Example sentence for ", /* @__PURE__ */ React.createElement("i", null, item.display), " ", /* @__PURE__ */ React.createElement("span", { className: "anno-hint" }, "(your own; optional)")), /* @__PURE__ */ React.createElement(
+  } }, /* @__PURE__ */ React.createElement("kbd", null, "7"), /* @__PURE__ */ React.createElement("span", { className: "jb-l" }, flagged ? "Flagged" : "Flag"), /* @__PURE__ */ React.createElement("span", { className: "jb-s" }, "review later"))), shown !== void 0 && /* @__PURE__ */ React.createElement("div", { className: "card-current" }, "Recorded: ", /* @__PURE__ */ React.createElement("b", { className: RESP[shown].cls }, RESP[shown].label.toLowerCase()), inverted && fv !== null && fv !== "5" ? ` (feature value ${fv})` : "", flagged ? " \xB7 \u2691 flagged" : "", " \u2014 press a key or button to change"), flagged && /* @__PURE__ */ React.createElement("label", { className: "anno-field card-note" }, /* @__PURE__ */ React.createElement("span", { className: "anno-label" }, "Note on this cell ", /* @__PURE__ */ React.createElement("span", { className: "anno-hint" }, "(why you flagged it; optional)")), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      className: "anno-input",
+      type: "text",
+      value: noteVal,
+      maxLength: 1e3,
+      onChange: (e) => setNoteVal(e.target.value),
+      onBlur: () => {
+        if ((noteVal || "").trim() !== (note || "")) onNote(item, noteVal);
+      }
+    }
+  )), /* @__PURE__ */ React.createElement("div", { className: "card-anno" }, /* @__PURE__ */ React.createElement("label", { className: "anno-field" }, /* @__PURE__ */ React.createElement("span", { className: "anno-label" }, "Example sentence for ", /* @__PURE__ */ React.createElement("i", null, item.display), " ", /* @__PURE__ */ React.createElement("span", { className: "anno-hint" }, "(your own; optional)")), /* @__PURE__ */ React.createElement(
     "textarea",
     {
       className: "anno-input",
@@ -390,12 +503,12 @@ function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, on
   ))));
 }
 function Overview({ judgements, flags, onJump, onClose }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "ov-scrim", onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "ov", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "ov-head" }, /* @__PURE__ */ React.createElement("span", null, "Coverage map \u2014 ", Object.keys(judgements).length.toLocaleString(), " / ", TOTAL.toLocaleString(), " judged \xB7 ", Object.keys(flags).length, " flagged"), /* @__PURE__ */ React.createElement("button", { className: "ov-close", onClick: onClose }, "\u2715")), /* @__PURE__ */ React.createElement("div", { className: "ov-legend" }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v1" }), " acceptable"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v0" }), " unacceptable"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v5" }), " marginal"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vu" }), " unjudged"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vna" }), " n/a"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw flag" }), " flagged \u2691")), /* @__PURE__ */ React.createElement("div", { className: "ov-grid-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "ov-grid" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", { className: "ov-corner" }), FEATURES.filter((fk) => !window.DACE_UNJUDGED.includes(fk)).map((fk) => /* @__PURE__ */ React.createElement("th", { key: fk, className: "ov-fh", title: DACE_FEATURES[fk]?.label }, fk.slice(0, 4))))), /* @__PURE__ */ React.createElement("tbody", null, PREDS.map((p, pi) => /* @__PURE__ */ React.createElement("tr", { key: p.verb }, /* @__PURE__ */ React.createElement("td", { className: "ov-vh" }, p.display), FEATURES.map((fk) => {
+  return /* @__PURE__ */ React.createElement("div", { className: "ov-scrim", onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "ov", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "ov-head" }, /* @__PURE__ */ React.createElement("span", null, "Coverage map \u2014 ", Object.keys(judgements).length.toLocaleString(), " / ", TOTAL.toLocaleString(), " judged \xB7 ", Object.keys(flags).length, " flagged"), /* @__PURE__ */ React.createElement("button", { className: "ov-close", onClick: onClose }, "\u2715")), /* @__PURE__ */ React.createElement("div", { className: "ov-legend" }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v1" }), " acceptable"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v0" }), " unacceptable"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw v5" }), " marginal"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vcj" }), " can't judge"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vu" }), " unjudged"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw vna" }), " n/a"), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("i", { className: "sw flag" }), " flagged \u2691")), /* @__PURE__ */ React.createElement("div", { className: "ov-grid-wrap" }, /* @__PURE__ */ React.createElement("table", { className: "ov-grid" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", { className: "ov-corner" }), FEATURES.filter((fk) => !window.DACE_UNJUDGED.includes(fk)).map((fk) => /* @__PURE__ */ React.createElement("th", { key: fk, className: "ov-fh", title: DACE_FEATURES[fk]?.label }, fk.slice(0, 4))))), /* @__PURE__ */ React.createElement("tbody", null, PREDS.map((p, pi) => /* @__PURE__ */ React.createElement("tr", { key: p.verb }, /* @__PURE__ */ React.createElement("td", { className: "ov-vh" }, p.display), FEATURES.map((fk) => {
     const j = judgements[jkey(p.verb, fk)];
     const fl = flags[jkey(p.verb, fk)];
     if (window.DACE_UNJUDGED.includes(fk)) return null;
     if (window.daceInapplicable(p.verb, fk)) return /* @__PURE__ */ React.createElement("td", { key: fk, className: "ov-c vna", title: "not applicable" });
-    const cls = j === "1" ? "v1" : j === "0" ? "v0" : j === "5" ? "v5" : "vu";
+    const cls = j && RESP[j] ? RESP[j].cls : "vu";
     return /* @__PURE__ */ React.createElement("td", { key: fk, className: "ov-c " + cls + (fl ? " flagged" : ""), onClick: () => onJump(QUEUE_INDEX[jkey(p.verb, fk)]) });
   }))))))));
 }
@@ -443,22 +556,50 @@ function Loading({ text }) {
 }
 function JudgesPanel({ onClose }) {
   const [list, setList] = useState(null);
+  const [agree, setAgree] = useState(null);
   const [err, setErr] = useState(null);
   useEffect(() => {
     SYNC.adminJudges().then(setList).catch((e) => setErr(SYNC.errorMessage(e)));
+    SYNC.adminAgreement().then(setAgree).catch(() => {
+    });
   }, []);
-  const fname = (email) => email.replace(/[^a-z0-9]+/gi, "_");
-  return /* @__PURE__ */ React.createElement("div", { className: "ov-scrim", onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "ov ov-narrow", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "ov-head" }, /* @__PURE__ */ React.createElement("span", null, "Judges"), /* @__PURE__ */ React.createElement("button", { className: "ov-close", onClick: onClose }, "\u2715")), /* @__PURE__ */ React.createElement("div", { className: "jp-body" }, err && /* @__PURE__ */ React.createElement("div", { className: "auth-err" }, err), !err && !list && /* @__PURE__ */ React.createElement("div", { className: "jp-empty" }, "Loading\u2026"), list && list.length === 0 && /* @__PURE__ */ React.createElement("div", { className: "jp-empty" }, "No judge accounts yet."), list && list.length > 0 && /* @__PURE__ */ React.createElement("table", { className: "jp-table" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Judge"), /* @__PURE__ */ React.createElement("th", null, "Judged"), /* @__PURE__ */ React.createElement("th", null, "Flagged"), /* @__PURE__ */ React.createElement("th", null, "Last activity"), /* @__PURE__ */ React.createElement("th", null, "Files"))), /* @__PURE__ */ React.createElement("tbody", null, list.map((j) => /* @__PURE__ */ React.createElement("tr", { key: j.id }, /* @__PURE__ */ React.createElement("td", { className: "jp-email" }, j.email), /* @__PURE__ */ React.createElement("td", { className: "num" }, j.cells.toLocaleString(), " ", /* @__PURE__ */ React.createElement("span", { className: "jp-pct" }, "(", Math.round(j.cells / TOTAL * 100), "%)")), /* @__PURE__ */ React.createElement("td", { className: "num" }, j.flagged), /* @__PURE__ */ React.createElement("td", null, j.last_activity ? j.last_activity.slice(0, 16).replace("T", " ").replace(" ", " \xB7 ") : "\u2014"), /* @__PURE__ */ React.createElement("td", { className: "jp-files" }, /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => SYNC.adminDownload(j.id, "judgements.csv", "dace_judgements_" + fname(j.email) + ".csv").catch((e) => alert(SYNC.errorMessage(e))) }, "judgements.csv"), /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => SYNC.adminDownload(j.id, "annotations.json", "dace_annotations_" + fname(j.email) + ".json").catch((e) => alert(SYNC.errorMessage(e))) }, "annotations.json")))))), /* @__PURE__ */ React.createElement("div", { className: "jp-foot" }, "Files are rendered from the database when you download them, so a judge's file is always current. Format: verb, feature, judgement (0/1/5), flagged, judged_at."))));
+  const dl = (path, name) => SYNC.adminDownload(path, name).catch((e) => alert(SYNC.errorMessage(e)));
+  const fname = (j) => j.judge_code || j.email.replace(/[^a-z0-9]+/gi, "_");
+  return /* @__PURE__ */ React.createElement("div", { className: "ov-scrim", onClick: onClose }, /* @__PURE__ */ React.createElement("div", { className: "ov ov-narrow", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "ov-head" }, /* @__PURE__ */ React.createElement("span", null, "Judges"), /* @__PURE__ */ React.createElement("button", { className: "ov-close", onClick: onClose }, "\u2715")), /* @__PURE__ */ React.createElement("div", { className: "jp-body" }, err && /* @__PURE__ */ React.createElement("div", { className: "auth-err" }, err), !err && !list && /* @__PURE__ */ React.createElement("div", { className: "jp-empty" }, "Loading\u2026"), list && list.length === 0 && /* @__PURE__ */ React.createElement("div", { className: "jp-empty" }, "No judge accounts yet."), list && list.length > 0 && /* @__PURE__ */ React.createElement("table", { className: "jp-table" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Code"), /* @__PURE__ */ React.createElement("th", null, "Judge"), /* @__PURE__ */ React.createElement("th", null, "Variety"), /* @__PURE__ */ React.createElement("th", null, "Judged"), /* @__PURE__ */ React.createElement("th", null, "Flagged"), /* @__PURE__ */ React.createElement("th", null, "Events"), /* @__PURE__ */ React.createElement("th", null, "Last activity"), /* @__PURE__ */ React.createElement("th", null, "Files"))), /* @__PURE__ */ React.createElement("tbody", null, list.map((j) => /* @__PURE__ */ React.createElement("tr", { key: j.id }, /* @__PURE__ */ React.createElement("td", { className: "mono" }, j.judge_code || "\u2014"), /* @__PURE__ */ React.createElement("td", { className: "jp-email" }, j.email, j.linguist ? /* @__PURE__ */ React.createElement("span", { className: "jp-tag", title: "linguist" }, "ling") : null), /* @__PURE__ */ React.createElement("td", null, j.variety || (j.profile_done ? "\u2014" : /* @__PURE__ */ React.createElement("i", null, "no profile yet"))), /* @__PURE__ */ React.createElement("td", { className: "num" }, j.cells.toLocaleString(), " ", /* @__PURE__ */ React.createElement("span", { className: "jp-pct" }, "(", Math.round(j.cells / TOTAL * 100), "%)")), /* @__PURE__ */ React.createElement("td", { className: "num" }, j.flagged), /* @__PURE__ */ React.createElement("td", { className: "num" }, (j.events || 0).toLocaleString()), /* @__PURE__ */ React.createElement("td", null, j.last_activity ? j.last_activity.slice(0, 16).replace("T", " ").replace(" ", " \xB7 ") : "\u2014"), /* @__PURE__ */ React.createElement("td", { className: "jp-files" }, /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => dl("/api/dace/judges/" + j.id + "/judgements.csv", "dace_events_" + fname(j) + ".csv") }, "events.csv"), /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => dl("/api/dace/judges/" + j.id + "/annotations.json", "dace_annotations_" + fname(j) + ".json") }, "annotations.json")))))), agree && agree.cells_multi > 0 && /* @__PURE__ */ React.createElement("div", { className: "jp-agree" }, agree.cells_multi.toLocaleString(), " cells judged by two or more judges: ", Math.round(agree.agree / agree.cells_multi * 100), "% agree (", agree.disagree.toLocaleString(), " disagreements; Can't judge left out).", agree.pairs.map((p) => /* @__PURE__ */ React.createElement("div", { key: p.a + p.b, className: "jp-pair" }, p.a, " \xD7 ", p.b, ": ", p.agree, "/", p.overlap))), /* @__PURE__ */ React.createElement("div", { className: "jp-all" }, /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => dl("/api/dace/events.csv", "dace_events.csv") }, "All events (events.csv)"), /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => dl("/api/dace/judges.csv", "dace_judges.csv") }, "Judge register (judges.csv)"), /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => dl("/api/dace/agreement.csv", "dace_agreement.csv") }, "Agreement (.csv)")), /* @__PURE__ */ React.createElement("div", { className: "jp-foot" }, "Files are rendered from the database when you download them, so they are always current. events.csv and judges.csv name judges by code only, never by email; save them in ", /* @__PURE__ */ React.createElement("code", null, "judgements/"), " (gitignored) for consolidation."))));
+}
+const VARIETIES = ["Irish English", "British English", "American English"];
+function ProfileCard({ user, onSaved, onCancel }) {
+  const known = VARIETIES.includes(user.variety);
+  const [variety, setVariety] = useState(user.variety ? known ? user.variety : "other" : "");
+  const [other, setOther] = useState(known ? "" : user.variety);
+  const [linguist, setLinguist] = useState(user.profileDone ? user.linguist ? "yes" : "no" : "");
+  const [consent, setConsent] = useState(user.consent);
+  const [err, setErr] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const v = variety === "other" ? other.trim() : variety;
+  async function submit(ev) {
+    ev.preventDefault();
+    setErr(null);
+    setBusy(true);
+    try {
+      onSaved(await SYNC.saveProfile({ variety: v, linguist: linguist === "yes", consent }));
+    } catch (e) {
+      setErr(SYNC.errorMessage(e));
+      setBusy(false);
+    }
+  }
+  return /* @__PURE__ */ React.createElement("div", { className: "auth-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "auth-brand" }, /* @__PURE__ */ React.createElement("span", { className: "brand-mark" }, "DACE"), /* @__PURE__ */ React.createElement("span", { className: "brand-sub" }, "Judgement Tool")), /* @__PURE__ */ React.createElement("div", { className: "auth-card" }, /* @__PURE__ */ React.createElement("div", { className: "auth-title" }, "About you as a judge"), /* @__PURE__ */ React.createElement("div", { className: "auth-note" }, "Three questions, asked once. They are stored with your judge code (", user.code || "assigned with your first judgement", "), never with your email, and help make sense of differences between judges."), /* @__PURE__ */ React.createElement("form", { onSubmit: submit }, /* @__PURE__ */ React.createElement("label", { className: "auth-label" }, "Your variety of English", /* @__PURE__ */ React.createElement("select", { className: "auth-input", value: variety, onChange: (e) => setVariety(e.target.value), required: true }, /* @__PURE__ */ React.createElement("option", { value: "", disabled: true }, "Choose\u2026"), VARIETIES.map((x) => /* @__PURE__ */ React.createElement("option", { key: x, value: x }, x)), /* @__PURE__ */ React.createElement("option", { value: "other" }, "Other\u2026"))), variety === "other" && /* @__PURE__ */ React.createElement("label", { className: "auth-label" }, "Which?", /* @__PURE__ */ React.createElement("input", { className: "auth-input", value: other, onChange: (e) => setOther(e.target.value), required: true, maxLength: 80 })), /* @__PURE__ */ React.createElement("fieldset", { className: "auth-label prof-radio" }, /* @__PURE__ */ React.createElement("legend", null, "Are you a linguist (studying or working in linguistics)?"), /* @__PURE__ */ React.createElement("label", null, /* @__PURE__ */ React.createElement("input", { type: "radio", name: "ling", checked: linguist === "yes", onChange: () => setLinguist("yes"), required: true }), " Yes"), /* @__PURE__ */ React.createElement("label", null, /* @__PURE__ */ React.createElement("input", { type: "radio", name: "ling", checked: linguist === "no", onChange: () => setLinguist("no") }), " No")), /* @__PURE__ */ React.createElement("label", { className: "prof-check" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: consent, onChange: (e) => setConsent(e.target.checked) }), /* @__PURE__ */ React.createElement("span", null, "My judgements may be published in a pseudonymised dataset (judge code only). Optional; DACE itself only publishes the consolidated values.")), err && /* @__PURE__ */ React.createElement("div", { className: "auth-err", role: "alert" }, err), /* @__PURE__ */ React.createElement("button", { className: "ta primary auth-submit", disabled: busy || !v || !linguist }, busy ? "\u2026" : "Save"), onCancel && /* @__PURE__ */ React.createElement("button", { type: "button", className: "ta auth-submit", onClick: onCancel }, "Cancel"))));
 }
 function SaveStatus({ st }) {
+  if (st.rejected) return /* @__PURE__ */ React.createElement("span", { className: "save-st err", title: "The server refused some judgements as invalid \u2014 see the browser console" }, /* @__PURE__ */ React.createElement("span", { className: "save-dot" }), "\u26A0 ", st.rejected, " refused");
   if (st.failed) return /* @__PURE__ */ React.createElement("span", { className: "save-st err", title: "Will keep retrying" }, /* @__PURE__ */ React.createElement("span", { className: "save-dot" }), "\u26A0 ", st.pending, " unsaved \u2014 retrying");
   if (st.pending) return /* @__PURE__ */ React.createElement("span", { className: "save-st busy" }, /* @__PURE__ */ React.createElement("span", { className: "save-dot" }), "saving\u2026");
   return /* @__PURE__ */ React.createElement("span", { className: "save-st ok" }, /* @__PURE__ */ React.createElement("span", { className: "save-dot" }), "saved");
 }
-function Judge({ user, onSignOut }) {
+function Judge({ user, onSignOut, onProfile }) {
   const narrow = useNarrow();
   const [orderMode, setOrderMode] = useState(() => loadOrderPref(user.id));
-  const ORDER = useMemo(() => orderMode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id), [user.id, orderMode]);
+  const ORDER = useMemo(() => makeOrder(orderMode, user.id), [user.id, orderMode]);
   const POS_OF = useMemo(() => {
     const m = new Array(ORDER.length);
     ORDER.forEach((qi, pos2) => {
@@ -467,7 +608,7 @@ function Judge({ user, onSignOut }) {
     return m;
   }, [ORDER]);
   const [state, setState] = useState(() => flatten(SYNC.all()));
-  const { judgements, flags, sentences, nominals } = state;
+  const { judgements, times, flags, notes, sentences, nominals } = state;
   const refreshState = useCallback(() => setState(flatten(SYNC.all())), []);
   const [pos, setPos] = useState(() => {
     const j = flatten(SYNC.all()).judgements;
@@ -476,17 +617,19 @@ function Judge({ user, onSignOut }) {
   });
   const [showOverview, setShowOverview] = useState(false);
   const [showJudges, setShowJudges] = useState(false);
+  const [repeatItem, setRepeatItem] = useState(null);
   const [saveSt, setSaveSt] = useState(SYNC.status());
   function switchOrder(mode) {
     if (mode === orderMode) return;
     const qi = ORDER[pos];
-    const nextOrder = mode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id);
+    const nextOrder = makeOrder(mode, user.id);
     saveOrderPref(user.id, mode);
     setOrderMode(mode);
     setPos(nextOrder.indexOf(qi));
   }
   useEffect(() => SYNC.onStatus(setSaveSt), []);
-  const item = QUEUE[ORDER[pos]];
+  const queued = QUEUE[ORDER[pos]];
+  const item = repeatItem || queued;
   const judgedCount = Object.keys(judgements).length;
   const remaining = TOTAL - judgedCount;
   const pct = Math.round(judgedCount / TOTAL * 100);
@@ -495,55 +638,74 @@ function Judge({ user, onSignOut }) {
     while (n < ORDER.length && j[jkey(QUEUE[ORDER[n]].verb, QUEUE[ORDER[n]].feature)] !== void 0) n++;
     return n < ORDER.length ? n : -1;
   }, [ORDER]);
-  const judge = useCallback((verdict) => {
+  const pickRepeat = useCallback((exceptKey) => {
+    const now = Date.now();
+    const keys = Object.keys(judgements).filter((k) => k !== exceptKey && times[k] && now - Date.parse(times[k]) >= RETEST_MIN_AGE);
+    if (!keys.length) return null;
+    const qi = QUEUE_INDEX[keys[Math.floor(Math.random() * keys.length)]];
+    return qi === void 0 ? null : QUEUE[qi];
+  }, [judgements, times]);
+  const judge = useCallback((resp) => {
     if (!item) return;
-    const val = toStored(item.feature, verdict);
-    const now = (/* @__PURE__ */ new Date()).toISOString();
-    SYNC.update(item.verb, (d) => {
-      d.f[item.feature] = val;
-      d.t[item.feature] = now;
+    const key = jkey(item.verb, item.feature);
+    const ti = window.daceTestItem(item.feature, item.levin, item.display);
+    SYNC.record({
+      verb: item.verb,
+      feature: item.feature,
+      kind: "judge",
+      response: resp,
+      item: ti ? ti.item : item.feature + ":none",
+      frame_v: ti ? ti.frame_v : 0,
+      sentence: ti ? ti.text || "" : "",
+      gold: GOLD[key] !== void 0,
+      repeat: !!repeatItem
     });
-    const next = { ...judgements, [jkey(item.verb, item.feature)]: val };
+    if (repeatItem) {
+      setRepeatItem(null);
+      return;
+    }
+    const next = { ...judgements, [key]: resp };
     refreshState();
     const n = nextUnjudgedFrom(pos, next);
     setPos(n !== -1 ? n : Math.min(pos + 1, ORDER.length - 1));
-  }, [item, judgements, pos, nextUnjudgedFrom, refreshState, ORDER.length]);
+    if (Math.random() < 1 / RETEST_EVERY) setRepeatItem(pickRepeat(key));
+  }, [item, repeatItem, judgements, pos, nextUnjudgedFrom, refreshState, ORDER.length, pickRepeat]);
   const flag = useCallback(() => {
     if (!item) return;
-    SYNC.update(item.verb, (d) => {
-      if (d.flags[item.feature]) delete d.flags[item.feature];
-      else d.flags[item.feature] = true;
-    });
+    const on = !!flags[jkey(item.verb, item.feature)];
+    SYNC.record({ verb: item.verb, feature: item.feature, kind: on ? "unflag" : "flag" });
     refreshState();
-    const n = nextUnjudgedFrom(pos, judgements);
-    setPos(n !== -1 ? n : Math.min(pos + 1, ORDER.length - 1));
-  }, [item, judgements, pos, nextUnjudgedFrom, refreshState, ORDER.length]);
-  const go = useCallback((d) => setPos((p) => Math.max(0, Math.min(ORDER.length - 1, p + d))), [ORDER.length]);
+  }, [item, flags, refreshState]);
+  const setNote = useCallback((it, val) => {
+    SYNC.record({ verb: it.verb, feature: it.feature, kind: "note", response: (val || "").trim() });
+    refreshState();
+  }, [refreshState]);
+  const go = useCallback((d) => {
+    setRepeatItem(null);
+    setPos((p) => Math.max(0, Math.min(ORDER.length - 1, p + d)));
+  }, [ORDER.length]);
   const nextUnjudged = useCallback(() => {
+    setRepeatItem(null);
     const n = nextUnjudgedFrom(pos, judgements);
     if (n !== -1) setPos(n);
   }, [pos, judgements, nextUnjudgedFrom]);
   const setSentence = useCallback((verb, val) => {
-    SYNC.update(verb, (d) => {
-      if (val && val.trim()) d.sentence = val.trim();
-      else delete d.sentence;
-    });
+    const v = (val || "").trim();
+    if (v === (sentences[verb] || "")) return;
+    SYNC.record({ verb, kind: "sentence", response: v });
     refreshState();
-  }, [refreshState]);
+  }, [sentences, refreshState]);
   const setNominal = useCallback((verb, val) => {
-    SYNC.update(verb, (d) => {
-      if (val && val.trim()) d.nominal = val.trim();
-      else delete d.nominal;
-    });
+    const v = (val || "").trim();
+    if (v === (nominals[verb] || "")) return;
+    SYNC.record({ verb, kind: "nominal", response: v });
     refreshState();
-  }, [refreshState]);
+  }, [nominals, refreshState]);
   useEffect(() => {
     function onKey(e) {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (showOverview || showJudges) return;
-      if (e.key === "1") judge("1");
-      else if (e.key === "0") judge("0");
-      else if (e.key === "5") judge("5");
+      if (KEY_TO_RESP[e.key]) judge(KEY_TO_RESP[e.key]);
       else if (e.key === "7") flag();
       else if (e.key === "ArrowRight" || e.key === "ArrowDown") go(1);
       else if (e.key === "ArrowLeft" || e.key === "ArrowUp") go(-1);
@@ -557,8 +719,7 @@ function Judge({ user, onSignOut }) {
     onSignOut();
   }
   const exportItems = [
-    { label: "My judgements (.csv)", fn: exportOwnCSV },
-    { label: "Merged predicates.csv", fn: () => exportMergedCSV(judgements) },
+    { label: "My judgements (.csv)", fn: () => exportOwnCSV(user.code) },
     { label: "My example sentences (.json)", fn: () => exportOwnAnnotations("sentences", sentences) },
     { label: "My derived nominals (.json)", fn: () => exportOwnAnnotations("nominals", nominals) }
   ];
@@ -573,23 +734,28 @@ function Judge({ user, onSignOut }) {
     ...user.admin ? [{ label: "Judges", fn: () => setShowJudges(true) }] : [],
     { heading: "Export" },
     ...exportItems,
-    { heading: user.email },
+    { heading: user.email + (user.code ? " \xB7 " + user.code : "") },
+    { label: "Your profile", fn: onProfile },
     { label: "Sign out", fn: signOut }
   ];
-  return /* @__PURE__ */ React.createElement("div", { className: "app" + (narrow ? " narrow" : "") }, /* @__PURE__ */ React.createElement("header", { className: "top" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement("span", { className: "brand-mark" }, "DACE"), !narrow && /* @__PURE__ */ React.createElement("span", { className: "brand-sub" }, "Judgement Tool")), /* @__PURE__ */ React.createElement("div", { className: "prog" }, /* @__PURE__ */ React.createElement("div", { className: "prog-bar" }, /* @__PURE__ */ React.createElement("div", { className: "prog-fill", style: { width: pct + "%" } })), /* @__PURE__ */ React.createElement("span", { className: "prog-label" }, narrow ? /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " \xB7 ", /* @__PURE__ */ React.createElement("b", null, remaining.toLocaleString()), " left") : /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " judged \xB7 ", remaining.toLocaleString(), " remaining (", pct, "%)"))), /* @__PURE__ */ React.createElement("div", { className: "top-actions" }, /* @__PURE__ */ React.createElement(SaveStatus, { st: saveSt }), narrow ? /* @__PURE__ */ React.createElement(Menu, { label: "Menu", items: menuItems }) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowOverview(true) }, "Coverage map"), /* @__PURE__ */ React.createElement(Menu, { label: orderMode === "random" ? "Random order" : "CSV order", items: orderItems }), /* @__PURE__ */ React.createElement(Menu, { label: "Export", items: exportItems }), user.admin && /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowJudges(true) }, "Judges"), /* @__PURE__ */ React.createElement(Menu, { label: user.email, items: [{ label: "Sign out", fn: signOut }] })))), /* @__PURE__ */ React.createElement("div", { className: "stage" }, /* @__PURE__ */ React.createElement("button", { className: "nav", onClick: () => go(-1), disabled: pos === 0, title: "Previous in your queue (\u2190)" }, "\u2039"), /* @__PURE__ */ React.createElement("div", { className: "stage-mid" }, /* @__PURE__ */ React.createElement("div", { className: "pos" }, "Item ", pos + 1, " of ", ORDER.length.toLocaleString(), " \xB7 ", orderMode === "random" ? "your random order" : "CSV order"), item && /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { className: "app" + (narrow ? " narrow" : "") }, /* @__PURE__ */ React.createElement("header", { className: "top" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement("span", { className: "brand-mark" }, "DACE"), !narrow && /* @__PURE__ */ React.createElement("span", { className: "brand-sub" }, "Judgement Tool")), /* @__PURE__ */ React.createElement("div", { className: "prog" }, /* @__PURE__ */ React.createElement("div", { className: "prog-bar" }, /* @__PURE__ */ React.createElement("div", { className: "prog-fill", style: { width: pct + "%" } })), /* @__PURE__ */ React.createElement("span", { className: "prog-label" }, narrow ? /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " \xB7 ", /* @__PURE__ */ React.createElement("b", null, remaining.toLocaleString()), " left") : /* @__PURE__ */ React.createElement(React.Fragment, null, judgedCount.toLocaleString(), " judged \xB7 ", remaining.toLocaleString(), " remaining (", pct, "%)"))), /* @__PURE__ */ React.createElement("div", { className: "top-actions" }, /* @__PURE__ */ React.createElement(SaveStatus, { st: saveSt }), narrow ? /* @__PURE__ */ React.createElement(Menu, { label: "Menu", items: menuItems }) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowOverview(true) }, "Coverage map"), /* @__PURE__ */ React.createElement(Menu, { label: orderMode === "random" ? "Random order" : "CSV order", items: orderItems }), /* @__PURE__ */ React.createElement(Menu, { label: "Export", items: exportItems }), user.admin && /* @__PURE__ */ React.createElement("button", { className: "ta", onClick: () => setShowJudges(true) }, "Judges"), /* @__PURE__ */ React.createElement(Menu, { label: user.email, items: [...user.code ? [{ heading: "Judge " + user.code }] : [], { label: "Your profile", fn: onProfile }, { label: "Sign out", fn: signOut }] })))), /* @__PURE__ */ React.createElement("div", { className: "stage" }, /* @__PURE__ */ React.createElement("button", { className: "nav", onClick: () => go(-1), disabled: pos === 0, title: "Previous in your queue (\u2190)" }, "\u2039"), /* @__PURE__ */ React.createElement("div", { className: "stage-mid" }, /* @__PURE__ */ React.createElement("div", { className: "pos" + (repeatItem ? " pos-repeat" : "") }, repeatItem ? /* @__PURE__ */ React.createElement(React.Fragment, null, "Check item \xB7 then back to item ", pos + 1) : /* @__PURE__ */ React.createElement(React.Fragment, null, "Item ", pos + 1, " of ", ORDER.length.toLocaleString(), " \xB7 ", orderMode === "random" ? "your random order" : "CSV order")), item && /* @__PURE__ */ React.createElement(
     Card,
     {
       item,
-      judgement: judgements[jkey(item.verb, item.feature)],
+      repeat: !!repeatItem,
+      response: judgements[jkey(item.verb, item.feature)],
       flagged: !!flags[jkey(item.verb, item.feature)],
+      note: notes[jkey(item.verb, item.feature)],
       sentence: sentences[item.verb],
       nominal: nominals[item.verb],
       onJudge: judge,
       onFlag: flag,
+      onNote: setNote,
       onSentence: setSentence,
       onNominal: setNominal
     }
-  ), /* @__PURE__ */ React.createElement("button", { className: "next-unjudged", onClick: nextUnjudged }, "Skip to next unjudged \u2192  ", /* @__PURE__ */ React.createElement("kbd", null, "U"))), /* @__PURE__ */ React.createElement("button", { className: "nav", onClick: () => go(1), disabled: pos >= ORDER.length - 1, title: "Next in your queue (\u2192)" }, "\u203A")), narrow && /* @__PURE__ */ React.createElement("nav", { className: "mnav" }, /* @__PURE__ */ React.createElement("button", { className: "mnav-btn", onClick: () => go(-1), disabled: pos === 0 }, "\u2039 Back"), /* @__PURE__ */ React.createElement("span", { className: "mnav-pos" }, pos + 1, " / ", ORDER.length.toLocaleString()), /* @__PURE__ */ React.createElement("button", { className: "mnav-btn", onClick: nextUnjudged, title: "Next unjudged" }, "Unjudged \u21B7"), /* @__PURE__ */ React.createElement("button", { className: "mnav-btn", onClick: () => go(1), disabled: pos >= ORDER.length - 1 }, "Next \u203A")), /* @__PURE__ */ React.createElement("footer", { className: "foot" }, /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "1"), " Acceptable"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "0"), " Unacceptable"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "5"), " Marginal"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "7"), " Flag"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "\u2190"), /* @__PURE__ */ React.createElement("kbd", null, "\u2192"), " Back / forward"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "U"), " Next unjudged"), /* @__PURE__ */ React.createElement("span", { className: "foot-note" }, "Saved to your account as you go.")), showOverview && /* @__PURE__ */ React.createElement(Overview, { judgements, flags, onClose: () => setShowOverview(false), onJump: (qi) => {
+  ), /* @__PURE__ */ React.createElement("button", { className: "next-unjudged", onClick: nextUnjudged }, "Skip to next unjudged \u2192  ", /* @__PURE__ */ React.createElement("kbd", null, "U"))), /* @__PURE__ */ React.createElement("button", { className: "nav", onClick: () => go(1), disabled: pos >= ORDER.length - 1, title: "Next in your queue (\u2192)" }, "\u203A")), narrow && /* @__PURE__ */ React.createElement("nav", { className: "mnav" }, /* @__PURE__ */ React.createElement("button", { className: "mnav-btn", onClick: () => go(-1), disabled: pos === 0 }, "\u2039 Back"), /* @__PURE__ */ React.createElement("span", { className: "mnav-pos" }, pos + 1, " / ", ORDER.length.toLocaleString()), /* @__PURE__ */ React.createElement("button", { className: "mnav-btn", onClick: nextUnjudged, title: "Next unjudged" }, "Unjudged \u21B7"), /* @__PURE__ */ React.createElement("button", { className: "mnav-btn", onClick: () => go(1), disabled: pos >= ORDER.length - 1 }, "Next \u203A")), /* @__PURE__ */ React.createElement("footer", { className: "foot" }, /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "1"), " Acceptable"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "0"), " Unacceptable"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "5"), " Marginal"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "9"), " Can't judge"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "7"), " Flag"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "\u2190"), /* @__PURE__ */ React.createElement("kbd", null, "\u2192"), " Back / forward"), /* @__PURE__ */ React.createElement("span", { className: "kb" }, /* @__PURE__ */ React.createElement("kbd", null, "U"), " Next unjudged"), /* @__PURE__ */ React.createElement("span", { className: "foot-note" }, "Saved to your account as you go.")), showOverview && /* @__PURE__ */ React.createElement(Overview, { judgements, flags, onClose: () => setShowOverview(false), onJump: (qi) => {
+    setRepeatItem(null);
     setPos(POS_OF[qi]);
     setShowOverview(false);
   } }), showJudges && /* @__PURE__ */ React.createElement(JudgesPanel, { onClose: () => setShowJudges(false) }));
@@ -604,6 +770,8 @@ function App() {
       else setPhase("out");
     }).catch(() => setPhase("out"));
   }, []);
+  const [attempt, setAttempt] = useState(0);
+  const uid = user && user.judge ? user.id : null;
   useEffect(() => {
     if (!user) return;
     if (!user.judge) {
@@ -616,19 +784,31 @@ function App() {
       setErr(SYNC.errorMessage(e));
       setPhase("error");
     });
-  }, [user]);
+  }, [uid, attempt]);
   function signOut() {
     SYNC.logout();
     setUser(null);
     setPhase("out");
   }
+  const [editProfile, setEditProfile] = useState(false);
   if (phase === "checking") return /* @__PURE__ */ React.createElement(Loading, { text: "Checking your sign-in\u2026" });
   if (phase === "out" || !user) return /* @__PURE__ */ React.createElement(AuthCard, { onAuthed: (u) => {
     setUser(u);
   } });
   if (!user.judge) return /* @__PURE__ */ React.createElement(NotJudge, { user, onSignOut: signOut });
   if (phase === "loading") return /* @__PURE__ */ React.createElement(Loading, { text: "Loading your judgements\u2026" });
-  if (phase === "error") return /* @__PURE__ */ React.createElement("div", { className: "auth-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "auth-card" }, /* @__PURE__ */ React.createElement("div", { className: "auth-title" }, "Couldn't load your judgements"), /* @__PURE__ */ React.createElement("div", { className: "auth-err" }, err), /* @__PURE__ */ React.createElement("button", { type: "button", className: "ta auth-submit", onClick: () => setUser({ ...user }) }, "Try again"), /* @__PURE__ */ React.createElement("button", { type: "button", className: "ta auth-submit", onClick: signOut }, "Sign out")));
-  return /* @__PURE__ */ React.createElement(Judge, { user, onSignOut: signOut });
+  if (phase === "error") return /* @__PURE__ */ React.createElement("div", { className: "auth-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "auth-card" }, /* @__PURE__ */ React.createElement("div", { className: "auth-title" }, "Couldn't load your judgements"), /* @__PURE__ */ React.createElement("div", { className: "auth-err" }, err), /* @__PURE__ */ React.createElement("button", { type: "button", className: "ta auth-submit", onClick: () => setAttempt((a) => a + 1) }, "Try again"), /* @__PURE__ */ React.createElement("button", { type: "button", className: "ta auth-submit", onClick: signOut }, "Sign out")));
+  if (!user.profileDone || editProfile) return /* @__PURE__ */ React.createElement(
+    ProfileCard,
+    {
+      user,
+      onCancel: user.profileDone ? () => setEditProfile(false) : null,
+      onSaved: (u) => {
+        setEditProfile(false);
+        setUser((old) => ({ ...old, ...u }));
+      }
+    }
+  );
+  return /* @__PURE__ */ React.createElement(Judge, { user, onSignOut: signOut, onProfile: () => setEditProfile(true) });
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));

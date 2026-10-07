@@ -12,6 +12,9 @@ provenance/
 .deploy-key
 .deploy-key.pub
 
+# raw judgements downloaded from the Judge (events.csv, judges.csv) — not published
+judgements/
+
 # misc
 .DS_Store
 Thumbs.db

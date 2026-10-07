@@ -1,14 +1,31 @@
 // judge-app.jsx — the DACE judgement tool, behind a login.
-// Judgements: 1 = has feature, 0 = no feature, 5 = marginal.  7 = flag for review.
+// The judge rates the test SENTENCE: 1 acceptable, 0 unacceptable, 5 marginal,
+// 9 can't judge; 7 flags the cell for review (with an optional note). Responses are
+// logged raw, with the frame item and version and the exact sentence shown
+// (daceTestItem, frames.js); turning them into feature values — inverting
+// weak_island and stative — happens at consolidation (PLAN.md, "Judgement data").
 // Plus per-predicate editable example sentence + derived nominal.
-// Every change is written to the judge's own records on the server through
+// Every change is appended to the judge's event log on the server through
 // judge-sync.js (window.DACE_SYNC); nothing is kept in this browser. Each judge
-// works through the cells in their own fixed random order (seeded by account).
+// works through the cells in their own fixed random order (seeded by account),
+// with the gold cells (data/gold.csv) spread through it, and about one judgement
+// in RETEST_EVERY is followed by a test–retest repeat of an older cell.
 
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
 const SYNC = window.DACE_SYNC;
-const VALUES = { "1": "acceptable", "0": "unacceptable", "5": "marginal" };
+// responses, their keys and colour classes (judge.css)
+const RESP = {
+  acceptable:   { label: "Acceptable",   key: "1", cls: "v1",  sub: "the sentence is fine" },
+  unacceptable: { label: "Unacceptable", key: "0", cls: "v0",  sub: "the sentence is out" },
+  marginal:     { label: "Marginal",     key: "5", cls: "v5",  sub: "?  degraded" },
+  cant_judge:   { label: "Can't judge",  key: "9", cls: "vcj", sub: "no clear reading" },
+};
+const KEY_TO_RESP = Object.fromEntries(Object.entries(RESP).map(([r, o]) => [o.key, r]));
+const GOLD = window.DACE_GOLD || {};       // "verb|feature" -> expected response (data/gold.csv)
+const GOLD_EVERY = 25;                      // one gold cell per this many items, until they run out
+const RETEST_EVERY = 100;                   // about one repeat per this many judgements
+const RETEST_MIN_AGE = 24 * 3600 * 1000;    // only cells judged at least a day ago
 const FEATURES = window.DACE_BINARY_COLS;
 const PREDS = window.DACE_PREDICATES;
 
@@ -20,12 +37,15 @@ const CLASS_COLORS = {
 
 function jkey(verb, feature) { return verb + "|" + feature; }
 
-// Buttons judge the SENTENCE (acceptable / unacceptable); for weak_island and stative
-// (DACE_INVERTED) an acceptable sentence means the feature is absent, so the stored
-// value is flipped. toStored: verdict → CSV value; toVerdict: CSV value → verdict.
-const FLIP = { "1": "0", "0": "1", "5": "5" };
-function toStored(fk, verdict) { return window.DACE_INVERTED.includes(fk) ? FLIP[verdict] : verdict; }
-function toVerdict(fk, stored) { return stored === undefined ? undefined : window.DACE_INVERTED.includes(fk) ? FLIP[stored] : stored; }
+// The feature value a response stands for (shown on the card only; consolidation
+// does this for real): for weak_island and stative (DACE_INVERTED) an acceptable
+// sentence means the feature is absent.
+function featureValue(fk, resp) {
+  if (resp === "marginal") return "5";
+  if (resp !== "acceptable" && resp !== "unacceptable") return null;
+  const has = resp === "acceptable";
+  return (window.DACE_INVERTED.includes(fk) ? !has : has) ? "1" : "0";
+}
 
 // phone layout below 700px: one-row header with a menu, 2×2 judgement buttons,
 // a bottom bar for moving through the queue (judge.css, @media (max-width: 700px))
@@ -72,17 +92,32 @@ function judgeOrder(seedText) {
   return order;
 }
 
-// the judge's records (verb -> data) flattened to the maps the UI works with
+// random order with the gold cells moved forward: one every GOLD_EVERY items
+function withGold(order) {
+  const isGold = (qi) => GOLD[jkey(QUEUE[qi].verb, QUEUE[qi].feature)] !== undefined;
+  const gold = order.filter(isGold), rest = order.filter((qi) => !isGold(qi));
+  const out = [];
+  let g = 0;
+  for (const qi of rest) {
+    out.push(qi);
+    if (g < gold.length && out.length % GOLD_EVERY === GOLD_EVERY - 1) out.push(gold[g++]);
+  }
+  while (g < gold.length) out.push(gold[g++]);
+  return out;
+}
+function makeOrder(mode, userId) { return mode === "csv" ? QUEUE.map((_, i) => i) : withGold(judgeOrder(userId)); }
+
+// the judge's cache (verb -> data, format v2) flattened to the maps the UI works with
 function flatten(records) {
-  const judgements = {}, flags = {}, sentences = {}, nominals = {};
-  for (const [verb, rec] of Object.entries(records)) {
-    const d = rec.data || {};
-    for (const [fk, v] of Object.entries(d.f || {})) if (VALUES[v]) judgements[jkey(verb, fk)] = v;
+  const judgements = {}, times = {}, flags = {}, notes = {}, sentences = {}, nominals = {};
+  for (const [verb, d] of Object.entries(records)) {
+    for (const [fk, v] of Object.entries(d.r || {})) if (RESP[v]) { judgements[jkey(verb, fk)] = v; times[jkey(verb, fk)] = (d.t || {})[fk]; }
     for (const fk of Object.keys(d.flags || {})) flags[jkey(verb, fk)] = true;
+    for (const [fk, n] of Object.entries(d.notes || {})) notes[jkey(verb, fk)] = n;
     if (d.sentence) sentences[verb] = d.sentence;
     if (d.nominal) nominals[verb] = d.nominal;
   }
-  return { judgements, flags, sentences, nominals };
+  return { judgements, times, flags, notes, sentences, nominals };
 }
 
 function downloadBlob(text, filename, type) {
@@ -93,20 +128,16 @@ function downloadBlob(text, filename, type) {
   URL.revokeObjectURL(url);
 }
 function csvq(s) { s = String(s == null ? "" : s); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
-// same long format as the server's per-judge file (/api/dace/judges/{id}/judgements.csv)
-function exportOwnCSV() {
-  const rows = ["verb,feature,judgement,flagged,judged_at"];
-  const recs = SYNC.all();
-  for (const verb of Object.keys(recs).sort()) {
-    const d = recs[verb].data || {}, f = d.f || {}, fl = d.flags || {}, t = d.t || {};
-    for (const fk of Object.keys({ ...f, ...fl }).sort()) rows.push([csvq(verb), csvq(fk), csvq(f[fk] === undefined ? "" : f[fk]), fl[fk] ? "1" : "0", csvq(t[fk] || "")].join(","));
-  }
-  downloadBlob(rows.join("\n") + "\n", "dace_judgements.csv", "text/csv");
-}
-function exportMergedCSV(judgements) {
-  // src/csv-export.js — same columns, quoting and notes as data/predicates.csv, so
-  // replacing that file with this export changes only what was judged.
-  downloadBlob(window.daceMergedCSV(PREDS, judgements, FEATURES, window.DACE_CSV_HEADER), "predicates_judged.csv", "text/csv");
+// the judge's own event log, in the server's events.csv format
+// (/api/dace/judges/{id}/judgements.csv)
+async function exportOwnCSV(code) {
+  try {
+    const evs = await SYNC.myEvents();
+    const rows = ["event_id,judge,verb,feature,kind,response,item,frame_v,sentence,gold,repeat,at"];
+    for (const e of evs) rows.push([e.id, code, e.verb, e.feature, e.kind, e.response, e.item, e.frame_v, e.sentence,
+      e.gold ? 1 : 0, e.repeat ? 1 : 0, String(e.at || "").replace(" ", "T")].map(csvq).join(","));
+    downloadBlob(rows.join("\n") + "\n", "dace_events_" + (code || "mine") + ".csv", "text/csv");
+  } catch (e) { alert(SYNC.errorMessage(e)); }
 }
 function exportOwnAnnotations(type, map) {
   const payload = { _dace: type, version: 1, exported: new Date().toISOString(), data: map };
@@ -169,9 +200,11 @@ function MinimalPair({ fk }) {
   );
 }
 
-function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, onFlag, onSentence, onNominal }) {
+// repeat: a test–retest item — the judge's earlier response is not shown
+function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudge, onFlag, onNote, onSentence, onNominal }) {
   const f = DACE_FEATURES[item.feature];
-  const judgement = toVerdict(item.feature, stored); // what the buttons show
+  const shown = repeat ? undefined : response;
+  const fv = shown ? featureValue(item.feature, shown) : null;
   const inverted = window.DACE_INVERTED.includes(item.feature);
   const defaultEx = useMemo(() => {
     const baked = window.DACE_BAKED_ANNOTATIONS && window.DACE_BAKED_ANNOTATIONS.sentences && window.DACE_BAKED_ANNOTATIONS.sentences[item.verb];
@@ -179,7 +212,9 @@ function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, on
   }, [item.verb]);
   const [sentVal, setSentVal] = useState(sentence || "");
   const [nomVal, setNomVal] = useState(nominal || "");
+  const [noteVal, setNoteVal] = useState(note || "");
   useEffect(() => { setSentVal(sentence || ""); setNomVal(nominal || ""); }, [item.verb]);
+  useEffect(() => { setNoteVal(note || ""); }, [item.verb, item.feature]);
 
   return (
     <div className="card">
@@ -194,7 +229,6 @@ function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, on
         <div className="card-right">
           <div className="card-feat">{f ? f.label : item.feature}</div>
           <div className="card-feat-sec">{f ? "§" + f.sec : ""}</div>
-          <div className={"card-csv " + (item.originalValue ? "v1" : "v0")}>current CSV: {item.originalValue}</div>
         </div>
       </div>
 
@@ -203,9 +237,9 @@ function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, on
           <ul className="card-suffixes">{window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => <li key={suf}><b>{suf}</b> <span>{eg}</span></li>)}</ul>
         </div>
       ) : item.feature === "weak_island" ? (
-        <div className="card-q">Can a <i>wh</i>-phrase be extracted out of <b>{item.display}</b>'s complement? Judge the sentence: <b>Acceptable</b> = bridge verb (recorded as 0), <b>Unacceptable</b> = weak island (recorded as 1).</div>
+        <div className="card-q">Can a <i>wh</i>-phrase be extracted out of <b>{item.display}</b>'s complement? Judge the sentence: <b>Acceptable</b> = bridge verb (feature value 0), <b>Unacceptable</b> = weak island (feature value 1).</div>
       ) : item.feature === "stative" ? (
-        <div className="card-q">Is <b>{item.display}</b> stative? Judge the progressive: <b>Acceptable</b> = eventive (recorded as 0), <b>Unacceptable</b> = stative (recorded as 1).</div>
+        <div className="card-q">Is <b>{item.display}</b> stative? Judge the progressive: <b>Acceptable</b> = eventive (feature value 0), <b>Unacceptable</b> = stative (feature value 1).</div>
       ) : (
         <div className="card-q">Does <b>{item.display}</b> license the <b>{f ? f.label : item.feature}</b> construction?</div>
       )}
@@ -214,21 +248,25 @@ function Card({ item, judgement: stored, flagged, sentence, nominal, onJudge, on
       <TestSentence item={item} />
 
       <div className="judge-btns">
-        <button className={"jb v1" + (judgement === "1" ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge("1"); }}>
-          <kbd>1</kbd><span className="jb-l">Acceptable</span><span className="jb-s">the sentence is fine</span>
-        </button>
-        <button className={"jb v0" + (judgement === "0" ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge("0"); }}>
-          <kbd>0</kbd><span className="jb-l">Unacceptable</span><span className="jb-s">the sentence is out</span>
-        </button>
-        <button className={"jb v5" + (judgement === "5" ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge("5"); }}>
-          <kbd>5</kbd><span className="jb-l">Marginal</span><span className="jb-s">?  degraded</span>
-        </button>
+        {Object.entries(RESP).map(([r, o]) => (
+          <button key={r} className={"jb " + o.cls + (shown === r ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge(r); }}>
+            <kbd>{o.key}</kbd><span className="jb-l">{o.label}</span><span className="jb-s">{o.sub}</span>
+          </button>
+        ))}
         <button className={"jb vflag" + (flagged ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onFlag(); }}>
           <kbd>7</kbd><span className="jb-l">{flagged ? "Flagged" : "Flag"}</span><span className="jb-s">review later</span>
         </button>
       </div>
-      {judgement !== undefined && (
-        <div className="card-current">Recorded: <b className={"v" + judgement}>{VALUES[judgement]}</b>{inverted && stored !== "5" ? ` (CSV value ${stored})` : ""}{flagged ? " · ⚑ flagged" : ""} — press a key or button to change</div>
+      {shown !== undefined && (
+        <div className="card-current">Recorded: <b className={RESP[shown].cls}>{RESP[shown].label.toLowerCase()}</b>{inverted && fv !== null && fv !== "5" ? ` (feature value ${fv})` : ""}{flagged ? " · ⚑ flagged" : ""} — press a key or button to change</div>
+      )}
+      {flagged && (
+        <label className="anno-field card-note">
+          <span className="anno-label">Note on this cell <span className="anno-hint">(why you flagged it; optional)</span></span>
+          <input className="anno-input" type="text" value={noteVal} maxLength={1000}
+            onChange={(e) => setNoteVal(e.target.value)}
+            onBlur={() => { if ((noteVal || "").trim() !== (note || "")) onNote(item, noteVal); }} />
+        </label>
       )}
 
       <div className="card-anno">
@@ -263,7 +301,7 @@ function Overview({ judgements, flags, onJump, onClose }) {
         </div>
         <div className="ov-legend">
           <span><i className="sw v1" /> acceptable</span><span><i className="sw v0" /> unacceptable</span>
-          <span><i className="sw v5" /> marginal</span><span><i className="sw vu" /> unjudged</span><span><i className="sw vna" /> n/a</span>
+          <span><i className="sw v5" /> marginal</span><span><i className="sw vcj" /> can't judge</span><span><i className="sw vu" /> unjudged</span><span><i className="sw vna" /> n/a</span>
           <span><i className="sw flag" /> flagged ⚑</span>
         </div>
         <div className="ov-grid-wrap">
@@ -278,7 +316,7 @@ function Overview({ judgements, flags, onJump, onClose }) {
                     const fl = flags[jkey(p.verb, fk)];
                     if (window.DACE_UNJUDGED.includes(fk)) return null;
                     if (window.daceInapplicable(p.verb, fk)) return <td key={fk} className="ov-c vna" title="not applicable" />;
-                    const cls = j === "1" ? "v1" : j === "0" ? "v0" : j === "5" ? "v5" : "vu";
+                    const cls = j && RESP[j] ? RESP[j].cls : "vu";
                     return <td key={fk} className={"ov-c " + cls + (fl ? " flagged" : "")} onClick={() => onJump(QUEUE_INDEX[jkey(p.verb, fk)])} />;
                   })}
                 </tr>
@@ -367,9 +405,14 @@ function Loading({ text }) {
 // admin: every judge's progress and files (needs dace_admin on the account)
 function JudgesPanel({ onClose }) {
   const [list, setList] = useState(null);
+  const [agree, setAgree] = useState(null);
   const [err, setErr] = useState(null);
-  useEffect(() => { SYNC.adminJudges().then(setList).catch((e) => setErr(SYNC.errorMessage(e))); }, []);
-  const fname = (email) => email.replace(/[^a-z0-9]+/gi, "_");
+  useEffect(() => {
+    SYNC.adminJudges().then(setList).catch((e) => setErr(SYNC.errorMessage(e)));
+    SYNC.adminAgreement().then(setAgree).catch(() => {});
+  }, []);
+  const dl = (path, name) => SYNC.adminDownload(path, name).catch((e) => alert(SYNC.errorMessage(e)));
+  const fname = (j) => j.judge_code || j.email.replace(/[^a-z0-9]+/gi, "_");
   return (
     <div className="ov-scrim" onClick={onClose}>
       <div className="ov ov-narrow" onClick={(e) => e.stopPropagation()}>
@@ -380,45 +423,115 @@ function JudgesPanel({ onClose }) {
           {list && list.length === 0 && <div className="jp-empty">No judge accounts yet.</div>}
           {list && list.length > 0 && (
             <table className="jp-table">
-              <thead><tr><th>Judge</th><th>Judged</th><th>Flagged</th><th>Last activity</th><th>Files</th></tr></thead>
+              <thead><tr><th>Code</th><th>Judge</th><th>Variety</th><th>Judged</th><th>Flagged</th><th>Events</th><th>Last activity</th><th>Files</th></tr></thead>
               <tbody>
                 {list.map((j) => (
                   <tr key={j.id}>
-                    <td className="jp-email">{j.email}</td>
+                    <td className="mono">{j.judge_code || "—"}</td>
+                    <td className="jp-email">{j.email}{j.linguist ? <span className="jp-tag" title="linguist">ling</span> : null}</td>
+                    <td>{j.variety || (j.profile_done ? "—" : <i>no profile yet</i>)}</td>
                     <td className="num">{j.cells.toLocaleString()} <span className="jp-pct">({Math.round((j.cells / TOTAL) * 100)}%)</span></td>
                     <td className="num">{j.flagged}</td>
+                    <td className="num">{(j.events || 0).toLocaleString()}</td>
                     <td>{j.last_activity ? j.last_activity.slice(0, 16).replace("T", " ").replace(" ", " · ") : "—"}</td>
                     <td className="jp-files">
-                      <button className="ta" onClick={() => SYNC.adminDownload(j.id, "judgements.csv", "dace_judgements_" + fname(j.email) + ".csv").catch((e) => alert(SYNC.errorMessage(e)))}>judgements.csv</button>
-                      <button className="ta" onClick={() => SYNC.adminDownload(j.id, "annotations.json", "dace_annotations_" + fname(j.email) + ".json").catch((e) => alert(SYNC.errorMessage(e)))}>annotations.json</button>
+                      <button className="ta" onClick={() => dl("/api/dace/judges/" + j.id + "/judgements.csv", "dace_events_" + fname(j) + ".csv")}>events.csv</button>
+                      <button className="ta" onClick={() => dl("/api/dace/judges/" + j.id + "/annotations.json", "dace_annotations_" + fname(j) + ".json")}>annotations.json</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
-          <div className="jp-foot">Files are rendered from the database when you download them, so a judge's file is always current. Format: verb, feature, judgement (0/1/5), flagged, judged_at.</div>
+          {agree && agree.cells_multi > 0 && (
+            <div className="jp-agree">
+              {agree.cells_multi.toLocaleString()} cells judged by two or more judges: {Math.round((agree.agree / agree.cells_multi) * 100)}% agree
+              ({agree.disagree.toLocaleString()} disagreements; Can't judge left out).
+              {agree.pairs.map((p) => <div key={p.a + p.b} className="jp-pair">{p.a} × {p.b}: {p.agree}/{p.overlap}</div>)}
+            </div>
+          )}
+          <div className="jp-all">
+            <button className="ta" onClick={() => dl("/api/dace/events.csv", "dace_events.csv")}>All events (events.csv)</button>
+            <button className="ta" onClick={() => dl("/api/dace/judges.csv", "dace_judges.csv")}>Judge register (judges.csv)</button>
+            <button className="ta" onClick={() => dl("/api/dace/agreement.csv", "dace_agreement.csv")}>Agreement (.csv)</button>
+          </div>
+          <div className="jp-foot">Files are rendered from the database when you download them, so they are always current. events.csv and judges.csv name judges by code only, never by email; save them in <code>judgements/</code> (gitignored) for consolidation.</div>
         </div>
       </div>
     </div>
   );
 }
 
+// the judge's profile: asked once after sign-in, editable later from the menu
+const VARIETIES = ["Irish English", "British English", "American English"];
+function ProfileCard({ user, onSaved, onCancel }) {
+  const known = VARIETIES.includes(user.variety);
+  const [variety, setVariety] = useState(user.variety ? (known ? user.variety : "other") : "");
+  const [other, setOther] = useState(known ? "" : user.variety);
+  const [linguist, setLinguist] = useState(user.profileDone ? (user.linguist ? "yes" : "no") : "");
+  const [consent, setConsent] = useState(user.consent);
+  const [err, setErr] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const v = variety === "other" ? other.trim() : variety;
+  async function submit(ev) {
+    ev.preventDefault();
+    setErr(null); setBusy(true);
+    try { onSaved(await SYNC.saveProfile({ variety: v, linguist: linguist === "yes", consent })); }
+    catch (e) { setErr(SYNC.errorMessage(e)); setBusy(false); }
+  }
+  return (
+    <div className="auth-wrap">
+      <div className="auth-brand"><span className="brand-mark">DACE</span><span className="brand-sub">Judgement Tool</span></div>
+      <div className="auth-card">
+        <div className="auth-title">About you as a judge</div>
+        <div className="auth-note">Three questions, asked once. They are stored with your judge code ({user.code || "assigned with your first judgement"}), never with your email, and help make sense of differences between judges.</div>
+        <form onSubmit={submit}>
+          <label className="auth-label">Your variety of English
+            <select className="auth-input" value={variety} onChange={(e) => setVariety(e.target.value)} required>
+              <option value="" disabled>Choose…</option>
+              {VARIETIES.map((x) => <option key={x} value={x}>{x}</option>)}
+              <option value="other">Other…</option>
+            </select>
+          </label>
+          {variety === "other" && (
+            <label className="auth-label">Which?
+              <input className="auth-input" value={other} onChange={(e) => setOther(e.target.value)} required maxLength={80} />
+            </label>
+          )}
+          <fieldset className="auth-label prof-radio">
+            <legend>Are you a linguist (studying or working in linguistics)?</legend>
+            <label><input type="radio" name="ling" checked={linguist === "yes"} onChange={() => setLinguist("yes")} required /> Yes</label>
+            <label><input type="radio" name="ling" checked={linguist === "no"} onChange={() => setLinguist("no")} /> No</label>
+          </fieldset>
+          <label className="prof-check">
+            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+            <span>My judgements may be published in a pseudonymised dataset (judge code only). Optional; DACE itself only publishes the consolidated values.</span>
+          </label>
+          {err && <div className="auth-err" role="alert">{err}</div>}
+          <button className="ta primary auth-submit" disabled={busy || !v || !linguist}>{busy ? "…" : "Save"}</button>
+          {onCancel && <button type="button" className="ta auth-submit" onClick={onCancel}>Cancel</button>}
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function SaveStatus({ st }) {
+  if (st.rejected) return <span className="save-st err" title="The server refused some judgements as invalid — see the browser console"><span className="save-dot" />⚠ {st.rejected} refused</span>;
   if (st.failed) return <span className="save-st err" title="Will keep retrying"><span className="save-dot" />⚠ {st.pending} unsaved — retrying</span>;
   if (st.pending) return <span className="save-st busy"><span className="save-dot" />saving…</span>;
   return <span className="save-st ok"><span className="save-dot" />saved</span>;
 }
 
 // ---------------------------------------------------------------------------
-function Judge({ user, onSignOut }) {
+function Judge({ user, onSignOut, onProfile }) {
   const narrow = useNarrow();
   const [orderMode, setOrderMode] = useState(() => loadOrderPref(user.id));
-  const ORDER = useMemo(() => orderMode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id), [user.id, orderMode]);
+  const ORDER = useMemo(() => makeOrder(orderMode, user.id), [user.id, orderMode]);
   const POS_OF = useMemo(() => { const m = new Array(ORDER.length); ORDER.forEach((qi, pos) => { m[qi] = pos; }); return m; }, [ORDER]);
 
   const [state, setState] = useState(() => flatten(SYNC.all()));
-  const { judgements, flags, sentences, nominals } = state;
+  const { judgements, times, flags, notes, sentences, nominals } = state;
   const refreshState = useCallback(() => setState(flatten(SYNC.all())), []);
 
   const [pos, setPos] = useState(() => {
@@ -428,20 +541,22 @@ function Judge({ user, onSignOut }) {
   });
   const [showOverview, setShowOverview] = useState(false);
   const [showJudges, setShowJudges] = useState(false);
+  const [repeatItem, setRepeatItem] = useState(null); // a test–retest item shown in place of the queue
   const [saveSt, setSaveSt] = useState(SYNC.status());
 
   // switch order without losing the current item
   function switchOrder(mode) {
     if (mode === orderMode) return;
     const qi = ORDER[pos];
-    const nextOrder = mode === "csv" ? QUEUE.map((_, i) => i) : judgeOrder(user.id);
+    const nextOrder = makeOrder(mode, user.id);
     saveOrderPref(user.id, mode);
     setOrderMode(mode);
     setPos(nextOrder.indexOf(qi));
   }
   useEffect(() => SYNC.onStatus(setSaveSt), []);
 
-  const item = QUEUE[ORDER[pos]];
+  const queued = QUEUE[ORDER[pos]];
+  const item = repeatItem || queued;
   const judgedCount = Object.keys(judgements).length;
   const remaining = TOTAL - judgedCount;
   const pct = Math.round((judgedCount / TOTAL) * 100);
@@ -452,47 +567,66 @@ function Judge({ user, onSignOut }) {
     return n < ORDER.length ? n : -1;
   }, [ORDER]);
 
-  const judge = useCallback((verdict) => {
+  // a random cell this judge answered at least a day ago (not the current one)
+  const pickRepeat = useCallback((exceptKey) => {
+    const now = Date.now();
+    const keys = Object.keys(judgements).filter((k) => k !== exceptKey && times[k] && now - Date.parse(times[k]) >= RETEST_MIN_AGE);
+    if (!keys.length) return null;
+    const qi = QUEUE_INDEX[keys[Math.floor(Math.random() * keys.length)]];
+    return qi === undefined ? null : QUEUE[qi];
+  }, [judgements, times]);
+
+  const judge = useCallback((resp) => {
     if (!item) return;
-    const val = toStored(item.feature, verdict);
-    const now = new Date().toISOString();
-    SYNC.update(item.verb, (d) => { d.f[item.feature] = val; d.t[item.feature] = now; });
-    const next = { ...judgements, [jkey(item.verb, item.feature)]: val };
+    const key = jkey(item.verb, item.feature);
+    const ti = window.daceTestItem(item.feature, item.levin, item.display);
+    SYNC.record({ verb: item.verb, feature: item.feature, kind: "judge", response: resp,
+      item: ti ? ti.item : item.feature + ":none", frame_v: ti ? ti.frame_v : 0, sentence: ti ? (ti.text || "") : "",
+      gold: GOLD[key] !== undefined, repeat: !!repeatItem });
+    if (repeatItem) { setRepeatItem(null); return; } // the queue position already moved on
+    const next = { ...judgements, [key]: resp };
     refreshState();
     const n = nextUnjudgedFrom(pos, next);
     setPos(n !== -1 ? n : Math.min(pos + 1, ORDER.length - 1));
-  }, [item, judgements, pos, nextUnjudgedFrom, refreshState, ORDER.length]);
+    if (Math.random() < 1 / RETEST_EVERY) setRepeatItem(pickRepeat(key));
+  }, [item, repeatItem, judgements, pos, nextUnjudgedFrom, refreshState, ORDER.length, pickRepeat]);
 
   const flag = useCallback(() => {
     if (!item) return;
-    SYNC.update(item.verb, (d) => { if (d.flags[item.feature]) delete d.flags[item.feature]; else d.flags[item.feature] = true; });
+    const on = !!flags[jkey(item.verb, item.feature)];
+    SYNC.record({ verb: item.verb, feature: item.feature, kind: on ? "unflag" : "flag" });
     refreshState();
-    const n = nextUnjudgedFrom(pos, judgements);
-    setPos(n !== -1 ? n : Math.min(pos + 1, ORDER.length - 1));
-  }, [item, judgements, pos, nextUnjudgedFrom, refreshState, ORDER.length]);
+  }, [item, flags, refreshState]);
+  const setNote = useCallback((it, val) => {
+    SYNC.record({ verb: it.verb, feature: it.feature, kind: "note", response: (val || "").trim() });
+    refreshState();
+  }, [refreshState]);
 
-  const go = useCallback((d) => setPos((p) => Math.max(0, Math.min(ORDER.length - 1, p + d))), [ORDER.length]);
+  const go = useCallback((d) => { setRepeatItem(null); setPos((p) => Math.max(0, Math.min(ORDER.length - 1, p + d))); }, [ORDER.length]);
   const nextUnjudged = useCallback(() => {
+    setRepeatItem(null);
     const n = nextUnjudgedFrom(pos, judgements);
     if (n !== -1) setPos(n);
   }, [pos, judgements, nextUnjudgedFrom]);
 
   const setSentence = useCallback((verb, val) => {
-    SYNC.update(verb, (d) => { if (val && val.trim()) d.sentence = val.trim(); else delete d.sentence; });
+    const v = (val || "").trim();
+    if (v === (sentences[verb] || "")) return;
+    SYNC.record({ verb, kind: "sentence", response: v });
     refreshState();
-  }, [refreshState]);
+  }, [sentences, refreshState]);
   const setNominal = useCallback((verb, val) => {
-    SYNC.update(verb, (d) => { if (val && val.trim()) d.nominal = val.trim(); else delete d.nominal; });
+    const v = (val || "").trim();
+    if (v === (nominals[verb] || "")) return;
+    SYNC.record({ verb, kind: "nominal", response: v });
     refreshState();
-  }, [refreshState]);
+  }, [nominals, refreshState]);
 
   useEffect(() => {
     function onKey(e) {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (showOverview || showJudges) return;
-      if (e.key === "1") judge("1");
-      else if (e.key === "0") judge("0");
-      else if (e.key === "5") judge("5");
+      if (KEY_TO_RESP[e.key]) judge(KEY_TO_RESP[e.key]);
       else if (e.key === "7") flag();
       else if (e.key === "ArrowRight" || e.key === "ArrowDown") go(1);
       else if (e.key === "ArrowLeft" || e.key === "ArrowUp") go(-1);
@@ -508,8 +642,7 @@ function Judge({ user, onSignOut }) {
   }
 
   const exportItems = [
-    { label: "My judgements (.csv)", fn: exportOwnCSV },
-    { label: "Merged predicates.csv", fn: () => exportMergedCSV(judgements) },
+    { label: "My judgements (.csv)", fn: () => exportOwnCSV(user.code) },
     { label: "My example sentences (.json)", fn: () => exportOwnAnnotations("sentences", sentences) },
     { label: "My derived nominals (.json)", fn: () => exportOwnAnnotations("nominals", nominals) },
   ];
@@ -525,7 +658,8 @@ function Judge({ user, onSignOut }) {
     ...(user.admin ? [{ label: "Judges", fn: () => setShowJudges(true) }] : []),
     { heading: "Export" },
     ...exportItems,
-    { heading: user.email },
+    { heading: user.email + (user.code ? " · " + user.code : "") },
+    { label: "Your profile", fn: onProfile },
     { label: "Sign out", fn: signOut },
   ];
 
@@ -548,7 +682,7 @@ function Judge({ user, onSignOut }) {
               <Menu label={orderMode === "random" ? "Random order" : "CSV order"} items={orderItems} />
               <Menu label="Export" items={exportItems} />
               {user.admin && <button className="ta" onClick={() => setShowJudges(true)}>Judges</button>}
-              <Menu label={user.email} items={[{ label: "Sign out", fn: signOut }]} />
+              <Menu label={user.email} items={[...(user.code ? [{ heading: "Judge " + user.code }] : []), { label: "Your profile", fn: onProfile }, { label: "Sign out", fn: signOut }]} />
             </>}
         </div>
       </header>
@@ -556,12 +690,13 @@ function Judge({ user, onSignOut }) {
       <div className="stage">
         <button className="nav" onClick={() => go(-1)} disabled={pos === 0} title="Previous in your queue (←)">‹</button>
         <div className="stage-mid">
-          <div className="pos">Item {pos + 1} of {ORDER.length.toLocaleString()} · {orderMode === "random" ? "your random order" : "CSV order"}</div>
-          {item && <Card item={item}
-            judgement={judgements[jkey(item.verb, item.feature)]}
+          <div className={"pos" + (repeatItem ? " pos-repeat" : "")}>{repeatItem ? <>Check item · then back to item {pos + 1}</> : <>Item {pos + 1} of {ORDER.length.toLocaleString()} · {orderMode === "random" ? "your random order" : "CSV order"}</>}</div>
+          {item && <Card item={item} repeat={!!repeatItem}
+            response={judgements[jkey(item.verb, item.feature)]}
             flagged={!!flags[jkey(item.verb, item.feature)]}
+            note={notes[jkey(item.verb, item.feature)]}
             sentence={sentences[item.verb]} nominal={nominals[item.verb]}
-            onJudge={judge} onFlag={flag} onSentence={setSentence} onNominal={setNominal} />}
+            onJudge={judge} onFlag={flag} onNote={setNote} onSentence={setSentence} onNominal={setNominal} />}
           <button className="next-unjudged" onClick={nextUnjudged}>Skip to next unjudged →  <kbd>U</kbd></button>
         </div>
         <button className="nav" onClick={() => go(1)} disabled={pos >= ORDER.length - 1} title="Next in your queue (→)">›</button>
@@ -580,13 +715,14 @@ function Judge({ user, onSignOut }) {
         <span className="kb"><kbd>1</kbd> Acceptable</span>
         <span className="kb"><kbd>0</kbd> Unacceptable</span>
         <span className="kb"><kbd>5</kbd> Marginal</span>
+        <span className="kb"><kbd>9</kbd> Can't judge</span>
         <span className="kb"><kbd>7</kbd> Flag</span>
         <span className="kb"><kbd>←</kbd><kbd>→</kbd> Back / forward</span>
         <span className="kb"><kbd>U</kbd> Next unjudged</span>
         <span className="foot-note">Saved to your account as you go.</span>
       </footer>
 
-      {showOverview && <Overview judgements={judgements} flags={flags} onClose={() => setShowOverview(false)} onJump={(qi) => { setPos(POS_OF[qi]); setShowOverview(false); }} />}
+      {showOverview && <Overview judgements={judgements} flags={flags} onClose={() => setShowOverview(false)} onJump={(qi) => { setRepeatItem(null); setPos(POS_OF[qi]); setShowOverview(false); }} />}
       {showJudges && <JudgesPanel onClose={() => setShowJudges(false)} />}
     </div>
   );
@@ -601,14 +737,18 @@ function App() {
   useEffect(() => {
     SYNC.refresh().then((u) => { if (u) setUser(u); else setPhase("out"); }).catch(() => setPhase("out"));
   }, []);
+  // (re)load when the signed-in account changes or on "Try again" — not on profile edits
+  const [attempt, setAttempt] = useState(0);
+  const uid = user && user.judge ? user.id : null;
   useEffect(() => {
     if (!user) return;
     if (!user.judge) { setPhase("ready"); return; }
     setPhase("loading"); setErr(null);
     SYNC.loadAll().then(() => setPhase("ready")).catch((e) => { setErr(SYNC.errorMessage(e)); setPhase("error"); });
-  }, [user]);
+  }, [uid, attempt]);
 
   function signOut() { SYNC.logout(); setUser(null); setPhase("out"); }
+  const [editProfile, setEditProfile] = useState(false);
 
   if (phase === "checking") return <Loading text="Checking your sign-in…" />;
   if (phase === "out" || !user) return <AuthCard onAuthed={(u) => { setUser(u); }} />;
@@ -616,10 +756,14 @@ function App() {
   if (phase === "loading") return <Loading text="Loading your judgements…" />;
   if (phase === "error") return (
     <div className="auth-wrap"><div className="auth-card"><div className="auth-title">Couldn't load your judgements</div><div className="auth-err">{err}</div>
-      <button type="button" className="ta auth-submit" onClick={() => setUser({ ...user })}>Try again</button>
+      <button type="button" className="ta auth-submit" onClick={() => setAttempt((a) => a + 1)}>Try again</button>
       <button type="button" className="ta auth-submit" onClick={signOut}>Sign out</button></div></div>
   );
-  return <Judge user={user} onSignOut={signOut} />;
+  if (!user.profileDone || editProfile) return (
+    <ProfileCard user={user} onCancel={user.profileDone ? () => setEditProfile(false) : null}
+      onSaved={(u) => { setEditProfile(false); setUser((old) => ({ ...old, ...u })); }} />
+  );
+  return <Judge user={user} onSignOut={signOut} onProfile={() => setEditProfile(true)} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);

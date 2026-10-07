@@ -1,6 +1,7 @@
-// csv-export.js — writes predicates.csv from the in-browser dataset. Used by the
-// Judge's "Merged predicates.csv" export, and by `npm test`, which checks that an
-// export with no new judgements reproduces data/predicates.csv byte for byte.
+// csv-export.js — writes predicates.csv from a dataset plus new cell values. `npm
+// test` checks that writing with no new values reproduces data/predicates.csv byte
+// for byte; consolidation (PLAN.md "Judgement data", phase 4) will write with it.
+// (The Judge's "Merged predicates.csv" export used it until Oct 2026.)
 //
 // Conventions match the file exactly: columns in the order of the CSV header the
 // site was built from (window.DACE_CSV_HEADER), minimal quoting, LF line endings,

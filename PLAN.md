@@ -97,7 +97,7 @@ Why: today each judge has one overwritten record per predicate (history is lost)
 **Event (server collection `dace_events`, export `events.csv`):**
 
 ```
-event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, repeat, created
+event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, repeat, at
 ```
 
 - `judge`: pseudonymous code (`J01`, `J02`, …) — never the email in any export.
@@ -105,6 +105,7 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 - `response` (kind `judge`): `acceptable` · `marginal` · `unacceptable` · `cant_judge` · `clear` (undo). For `sentence`/`nominal`/`note` it holds the text.
 - `item`: frame id, `<feature>:<table>` (e.g. `weak_island:base`, `that_omission:psych`, `extraposition:copular`; a later second lexicalisation gets `…:b`). `frame_v`: that item's version from `data/frames.lock.json` (0 = before versioning). `sentence`: the plain text shown.
 - `gold` / `repeat`: the event was a gold cell or a test–retest repeat (phase 3).
+- `at`: the server's time when the event arrived (backfilled events keep their original judgement time).
 - A judge's current answer for a cell is their latest `judge` event for it; `clear` withdraws it.
 
 **Judge register (`judges.csv`):** `judge, variety, linguist, author, consent_publish, joined, anchor_accuracy, retest_agreement`.
@@ -114,17 +115,12 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 **Cell provenance (`data/cells.csv`, generated, committed):** `verb, feature, value, status, n, agreement, frame_v`.
 `status` ∈ `coded` (Thomas's pre-Judge coding) · `estimated` (imported, best guess) · `provisional` (judged, fewer than the minimum judges, unanimous) · `consensus` · `contested` (split; keeps its old value until adjudicated) · `adjudicated` · `lexical` (`phrasal`, `be_copula`) · `na` (copular n/a cells).
 
-### Phase 1 — Backend (in `Vrier/compose`, `server/`)
+### Phase 1 — Backend (in `Vrier/compose`, `server/`) — done 7 Oct 2026 (COMPOSE S79)
 
-- [ ] Migration `1751700009_dace_events.js`:
-  - New collection `dace_events` with the fields above (`user` relation → users instead of the judge code; `created` autodate). Rules: list/view own events (`user = @request.auth.id && @request.auth.judge = true`); create own only; **no update or delete rules** (append-only; superusers only). Index `(user, verb, feature, created)`.
-  - `users` += `judge_code` (text, unique; assigned by the hook, pinned in `users_guard.pb.js`), `variety` (text), `linguist` (bool), `consent_publish` (bool), `profile_done` (bool) — the last four editable by the user.
-  - Backfill: one `judge` event per existing `dace_judgements.f` entry (`frame_v` 0, `item` = `<feature>:legacy`, empty `sentence`; un-flip `weak_island`/`stative` back to the response), plus `flag` / `sentence` / `nominal` events. Assign `judge_code`s to existing judges in sign-up order.
-- [ ] `dace.pb.js`:
-  - `onRecordAfterCreateSuccess` on `dace_events`: upsert the judge's `dace_judgements` record (the Judge's fast-loading cache of current state). The client no longer writes `dace_judgements` directly; make its create/update rules superuser-only once the new Judge is live.
-  - Register hook: assign the next `judge_code`.
-  - `GET /api/dace/events.csv` and `GET /api/dace/judges.csv` (`dace_admin`): all judges, pseudonymised, rendered on request. Keep the per-judge routes; switch their CSV to the event format.
-- [ ] Tests in COMPOSE's suite: append-only rules, a judge can't read another's events, the cache matches the latest events, backfill round-trip.
+- [x] Migration `1751700009_dace_events.js`: `dace_events` (append-only: own list/view/create for judges, no update/delete rules; `at` stamped by the server), `users` += `judge_code` (unique when set, pinned by `users_guard.pb.js`), `variety`, `linguist`, `consent_publish`, `profile_done`; `dace_judgements` closed to API writes and moved to cache format v2 (`r` = current responses, `notes`).
+- [x] Backfill: existing judgements → `judge` events (`<feature>:legacy`, `frame_v` 0, original times); flags, sentences, nominals → events; 0/1/5 → acceptable / unacceptable / marginal, with `weak_island`/`stative` un-flipped only after the polarity fix (bd0f658, 2026-10-06T15:16:32Z). Judges coded in sign-up order. Checked on a seeded pre-migration database.
+- [x] `dace.pb.js` (+ `dace_lib.js`): event validation, server time, lazy code for accounts made judges in the dashboard; cache upkeep after each event (repeats skipped); `/api/dace/events.csv`, `/api/dace/judges.csv` (codes only, no emails); per-judge `judgements.csv` in the event format; `/api/dace/judges` with code, profile and event counts; agreement on responses, Can't judge left out.
+- [x] COMPOSE suite 251 → 283 checks.
 
 ### Phase 2 — Items and frame versions (this repo) — done 7 Oct 2026
 
@@ -135,22 +131,18 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 - Not covered by the lock: conjugation (`DACE_IRREGULAR`, doubling) and nominal forms can still change a sentence's text. The logged `sentence` field records the actual text, so consolidation can detect those changes if needed.
 - Judgements made before phase 3 ships have no item or version; the backfill gives them `frame_v` 0.
 
-### Phase 3 — The Judge
+### Phase 3 — The Judge — done 7 Oct 2026
 
-- [ ] `src/judge-sync.js`: replace `update(verb, mutate)` with `record(event)` — optimistic local state, an ordered queue of event creates with the existing retry/back-off and *unsaved* indicator. Loading stays one read of the `dace_judgements` cache.
-- [ ] `src/judge-app.jsx`:
-  - Store the raw response; derive the displayed feature value with `DACE_INVERTED` only for the *Recorded* line. Remove `FLIP` from storage.
-  - **Can't judge** button (key `9`), in the 2×2 phone grid as a fifth, smaller button.
-  - Optional one-line note with a flag (`note` event).
-  - **Gold cells:** `data/gold.csv` (`verb, feature, expected`), baked into the build. In random order, gold cells are moved forward so one appears every ~25 items until exhausted. A gold cell is an ordinary cell (it counts towards coverage), its event is marked `gold`.
-  - **Test–retest:** about 1 in 100 items re-shows a cell the judge answered more than a day earlier, without showing the earlier answer; logged as `repeat`, doesn't replace the original.
-  - **Profile card** on first sign-in (and in the Menu): variety of English, linguist yes/no, consent to publish pseudonymised judgements.
-  - Exports: *My judgements* in the event format; drop *Merged predicates.csv* (superseded by consolidation — a single judge's file must not become the master by hand).
-- [ ] Judges panel: judge code, cells, gold accuracy, retest agreement, and pairwise agreement once judges overlap; buttons for `events.csv` and `judges.csv`.
+- [x] `src/judge-sync.js`: `record(event)` applies the change locally and queues the event (sent in order, retried with back-off; a 400 is counted as *refused* rather than retried for ever); loads the v2 cache; `saveProfile`, `myEvents`, admin downloads.
+- [x] `src/judge-app.jsx`: raw responses; **Can't judge** (key 9; the flag button spans the phone grid); flag note; the card no longer shows the cell's current CSV value (anchoring); gold cells from `data/gold.csv` moved forward one every 25 items in random order (`gold` on their events); test–retest *check items* after ~1 % of judgements, cells judged ≥ 1 day earlier, earlier answer hidden (`repeat`); profile card on first sign-in and in the menu; *My judgements* exports the judge's own event log; *Merged predicates.csv* removed.
+- [x] Judges panel: code, email, variety, linguist tag, cells, flags, events, last activity, per-judge `events.csv` / `annotations.json`, all-judge `events.csv` / `judges.csv` / agreement CSV, and an agreement summary with pairwise figures.
+- [x] Tested end to end in headless Chromium against a local PocketBase with the new migration: register → profile → judge with every key → flag + note → reload (state restored from the cache) → events and CSVs checked → admin panel; retest checked with the thresholds lowered; phone layout checked.
+- Gold accuracy and retest agreement are computed in phase 4 (they need `data/gold.csv` and the whole log), not in the panel.
+- **Thomas:** pick the gold cells (`data/gold.csv`: `verb,feature,expected`). Avoid predicates used in the minimal pairs.
 
 ### Phase 4 — Consolidation (this repo)
 
-- [ ] `judgements/` (gitignored): `events.csv` and `judges.csv` downloaded from the Judges panel.
+- [x] `judgements/` gitignored (7 Oct 2026). `events.csv` and `judges.csv` are downloaded there from the Judges panel.
 - [ ] `data/consolidation.json`: `min_judges` 3, `majority` 0.75, `current_frames_only` true, `min_gold_accuracy` 0.8, `exclude_author` false.
 - [ ] `scripts/consolidate.mjs` (`npm run consolidate`):
   1. Latest `judge` response per (judge, cell); drop `clear`, `repeat` and excluded judges (below gold accuracy, or the author if excluded); drop superseded frame versions if configured.
@@ -175,7 +167,13 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 
 ### Order of work
 
-Phase 2 is done. Next, 1 and 3 together (deploy the backend, then the Judge), then 4, then 5 and 6. Thomas can keep judging throughout: the backfill carries existing judgements across at `frame_v` 0.
+Phases 1–3 are done (7 Oct 2026). Next is 4, then 5 and 6. Judgements made before phase 1 were carried across by the backfill at `frame_v` 0.
+
+### Frames to look at (found while building phase 3)
+
+Some judged templates aren't plain sentences, so Acceptable / Unacceptable doesn't fit them, and two give the answer away. Changing them bumps their versions (`npm run frames:lock`), which is exactly what versioning is for:
+- `stative:psych` ("She was [VN] that p (state) vs. eventive active use.") and `stative:impl` ("… (achievement — progressive OK)") — descriptions, the second with the expected answer in it.
+- `neg_raising:base`, `:psych`, `:raise`, `:copular` — paraphrase-equivalence questions (≈ / ≠), not acceptability. Either a different question on the card ("Do these mean the same?" with Yes / No / Unsure) or a plain-sentence frame.
 
 ### Later
 
