@@ -187,13 +187,20 @@ Every judged frame was rendered for one predicate of each class and checked for 
 - Prepositions are deliberately left out of the frames (*inform him the news*, not *of the news*): the test is the bare construction.
 - [x] *disappoint*, *dissatisfy*, *relieve* moved from Confess (4.3) to Amuse (3.1): they are psych-causatives (*It relieved her that…*) and now get the psych frames.
 
+### Psych verbs in the passive (8 Oct 2026)
+
+- [x] Amuse-class (3.1) verbs have an experiencer object, but nine features fell back to the base frames and put the experiencer in subject position (*She depressed that anyone left*, *She awed that…*); the LLM judge flagged several. The psych table now covers every judged feature: a clause, question or quote goes with the adjectival passive, like the copular *be_* predicates (*She was depressed that anyone left*, *What was she depressed that he bought?*, *She wasn't depressed he'd come ≈ …*); the active stays only where the stimulus is the subject (*The news / The fact that he left / His leaving / Leaving early depressed her*), for subject extraposition (*It depressed her that…*) and for the ditransitive. The "It V-ed her whether / so / him leave …" frames moved to the passive too. Changed items have new versions, so judgements on the old sentences drop out of consolidation. The Explorer's test sentences follow automatically.
+- Headwords stay as the verb (*depress*), not *be depressed*.
+
 ### LLM judge (8 Oct 2026)
 
 - [x] In-chat pilot (26 cells, one context): useful for finding frame problems, not as data (answers drift once a pattern is spotted). Led to the object-taking-verb frame fixes above.
 - [x] ~~API batch workflow~~ dropped (8 Oct 2026): Thomas won't pay for API usage. Replaced by a claude.ai artifact that asks Claude on his plan (`sample`, most capable tier): all cells, slowly; 10 unrelated cards per request; 3 passes per cell with different groupings; answers in the artifact's database, exported as events for judge `LLM01`. Card text moved to `src/judge-card.js` so the Judge and the prompt share it.
 - [x] Consolidation leaves LLM judges out (register variety "LLM: …"; `include_llm`, `exclude` in `data/consolidation.json`) and reports their agreement with the human majority.
 - [x] Page tested in headless Chromium against a stubbed runtime: run, unreadable answer, rate limit, resume, export; consolidation on the export (LLM excluded, retest reported, nothing changed). The Judge's cards render as before.
-- [ ] Thomas: run a few blocks, then read the flagged notes before going further.
+- [x] First 3 blocks (90 cells) run 7 Oct: all three passes agreed on 73; flags found the psych-frame problem above.
+- [x] Page storage made independent of the build (8 Oct): answers keyed by verb|feature with the item and version they were given on, a per-feature index of finished cells, so a frame change re-asks only the changed cells. The first 90 answers were migrated (82 still current, 8 to be asked again).
+- [ ] Thomas: carry on in blocks; read the flagged notes now and then.
 - Pace: a request on the most capable tier takes up to a minute or two and judges ten cells once, so the whole grid (747 blocks × 9 requests) is a long, intermittent job bounded by plan limits.
 - [ ] The `claude@dace.com` judge account made for the API plan is unused: delete it in the PocketBase dashboard.
 

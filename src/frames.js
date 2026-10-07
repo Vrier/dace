@@ -149,25 +149,37 @@ window.DACE_FRAMES = {
     derived_nominal:  "her [NOM] that he had left",
   },
 
-  // psych-causative — stimulus subject, experiencer object; active + passive
+  // psych-causative — stimulus subject, experiencer object (*She depressed that…).
+  // A clause, question or quote goes with the experiencer as subject, i.e. the
+  // adjectival passive (as for the copular be_* predicates: She was depressed that…);
+  // the active keeps only the frames whose stimulus IS the subject (the news, the
+  // fact that…, his leaving), the subject-extraposition test and the ditransitive.
   psych: {
     that_omission:    "She was [VN] (that) he had left.",
     comp_inf:         "She was [VN] [to find the room empty].",
-    comp_gerund:      "It [VD] her [his leaving].",
+    ecm:              "She was [VN] [him to be honest].",
+    comp_interrog:    "She was [VN] [whether he had left].",
+    comp_gerund:      "[Leaving early] [VD] her.",
+    comp_small_clause:"She was [VN] [him a fool].",
     np_comp_alt:      "[The news] [VD] her.",
+    direct_speech:    "She was [VN]: \u201cHe was late.\u201d",
+    subjunctive_comp: "She was [VN] [that he leave].",
+    comp_for_to:      "She was [VN] [for him to leave].",
+    comp_bare_inf:    "She was [VN] [him leave].",
+    comp_exclamative: "She was [VN] [what a linguist he is]!",
+    comp_poss_ing:    "[His leaving] [VD] her.",
     extraposition:    "It [VD] her [that he had left].",
+    raising:          "There was [VN] to be a problem.",
     factive_passive:  "She was [VN] [that he had left].",
-    factivity:        "She was [VN] / wasn\u2019t [VN] [that he left] \u2014 does \u2018he left\u2019 survive negation?",
-    veridicality:     "It [VD] her that p \u2014 does the matrix entail p?",
+    neg_raising:      "She wasn\u2019t [VN] he\u2019d come \u2248 She was [VN] he wouldn\u2019t come.",
+    weak_island:      "What was she [VN] [that he bought ___]?",
+    pro_complement:   "She was [VN] so.",
+    npi_licenser:     "She was [VN] [that anyone left].",
     stative:          "She is being [VN] that he is there.",
+    factivity:        "She was [VN] / wasn\u2019t [VN] [that he left] \u2014 does \u2018he left\u2019 survive negation?",
+    veridicality:     "She was [VN] that p \u2014 does the matrix entail p?",
     content_noun_fact:"[The fact that he left] [VD] her.",
     derived_nominal:  "her [NOM] that he had left",
-    comp_interrog:    "It [VD] her [whether he left].",
-    direct_speech:    "It [VD] her: \u201cHe left.\u201d",
-    pro_complement:   "It [VD] her so.",
-    neg_raising:      "It didn\u2019t [V] her that he\u2019d come \u2248 It [VD] her that he wouldn\u2019t come.",
-    comp_bare_inf:    "It [VD] her [him leave].",
-    subjunctive_comp: "It [VD] her [that he leave].",
     be_copula:        "She is [VN] [that he was wrong].",
   },
 

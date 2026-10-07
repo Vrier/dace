@@ -102,7 +102,7 @@ details p{font-size:13.5px;color:var(--ink-soft);max-width:68ch}
 
   <details class="panel">
     <summary>How this works</summary>
-    <p>The cells are the Judge's 22,400, in a fixed random order, taken in blocks of 30. Each block gets three passes; in every pass the 30 cells are split into three requests of ten, grouped differently each time, so a cell's three answers come from three different contexts. The first answer counts as the LLM judge's judgement, the other two as repeats, which consolidation reports as its stability. The prompt shows each card as a person sees it: the question, the minimal pair, the sentence and the buttons.</p>
+    <p>The cells are the Judge's 22,400, in a fixed random order, taken in blocks of 30. When a test sentence changes, its cell is asked again; answers on the old sentence stay on record. Each block gets three passes; in every pass the 30 cells are split into three requests of ten, grouped differently each time, so a cell's three answers come from three different contexts. The first answer counts as the LLM judge's judgement, the other two as repeats, which consolidation reports as its stability. The prompt shows each card as a person sees it: the question, the minimal pair, the sentence and the buttons.</p>
     <p>Requests use the most capable model tier and take up to a minute or two each. A stopped or failed run picks up where it left off next time.</p>
   </details>
 </main>
@@ -118,22 +118,27 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const total = DATA.c.length;
 const gold = new Set(DATA.gold);
 
-// fixed random order (mulberry32), blocks of 30
+// Cells are identified by "verb|feature" and stored with their frame item and
+// version, so the page can be rebuilt after a frame change: a cell counts as done
+// only while its stored item and version are still the current ones.
+const KEY = (ci) => DATA.v[DATA.c[ci][0]][0] + "|" + DATA.f[DATA.c[ci][1]].k;
+const ITEMV = (ci) => DATA.i[DATA.c[ci][2]].join("@");
+const BYKEY = new Map(DATA.c.map((_, ci) => [KEY(ci), ci]));
+
+// fixed random order (mulberry32); the next block is the next 30 cells not yet done
 function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 function shuffle(a, seed) { const r = rng(seed), x = a.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x; }
 const ORDER = shuffle([...Array(total).keys()], 20261008);
-const NBLOCKS = Math.ceil(total / BLOCK);
-const blockCells = (b) => ORDER.slice(b * BLOCK, (b + 1) * BLOCK);
 // the requests of a block: pass s splits its cells into groups of ten, differently each pass
-function blockCalls(b) {
-  const cells = blockCells(b), G = Math.ceil(cells.length / PER_CALL), calls = [];
+function blockCalls(cells, n) {
+  const G = Math.ceil(cells.length / PER_CALL), calls = [];
   for (let s = 1; s <= SAMPLES; s++) {
     const groups = Array.from({ length: G }, () => []);
     cells.forEach((c, i) => {
       const g = s === 1 ? Math.floor(i / PER_CALL) : s === 2 ? i % G : (i + Math.floor(i / G)) % G;
       groups[Math.min(g, G - 1)].push(c);
     });
-    groups.forEach((cs, g) => calls.push({ key: s + "_" + g, s, cells: shuffle(cs, b * 100 + s * 10 + g) }));
+    groups.forEach((cs, g) => calls.push({ key: s + "_" + g, s, cells: shuffle(cs, n * 100 + s * 10 + g) }));
   }
   return calls;
 }
@@ -163,14 +168,16 @@ function prompt(cells) {
   return INSTRUCTIONS.replace("{N}", cells.length) + "\n\n" + cells.map((ci, k) => `=== Card c${k + 1} ===\n` + card(ci)).join("\n\n");
 }
 
-let db = null, sample = null, downloads = null, progress = { done: [] }, running = false, stopAsked = false;
+let db = null, sample = null, downloads = null, running = false, stopAsked = false;
+let done = new Set();   // keys of cells whose three answers are on the current item and version
+let state = { next: 0, current: null };
 const session = { flags: 0, pairs: 0, same: 0 };
-const runRef = () => db.doc("runs/" + SNAP);
-const blockRef = (b) => db.collection("runs/" + SNAP + "/blocks").doc(String(b).padStart(4, "0"));
+const stateRef = () => db.doc("state/run");
+const blockRef = (n) => db.collection("blocks").doc(String(n).padStart(5, "0"));
+const indexRef = (fk) => db.collection("index").doc(fk);   // index/<feature>: { e: { verb: "item@version" } }
 
-function cellsDone() { let n = 0; for (const b of progress.done) n += blockCells(b).length; return n; }
 function render() {
-  const n = cellsDone();
+  const n = done.size;
   $("m-cells").textContent = n.toLocaleString();
   $("m-left").textContent = (total - n).toLocaleString();
   $("m-stable").textContent = session.pairs ? Math.round((100 * session.same) / session.pairs) + "%" : "–";
@@ -179,11 +186,20 @@ function render() {
 }
 function say(text, err) { $("status").textContent = text; $("status").className = "status" + (err ? " err" : ""); }
 
-function showCall(b, call, answers, tier) {
-  $("call").textContent = `Block ${b + 1} of ${NBLOCKS}, pass ${call.s} of ${SAMPLES}` + (tier ? `, ${tier} tier` : "") + ".";
+async function loadDone() {
+  const q = await db.collection("index").get();
+  done = new Set();
+  for (const d of q.docs) {
+    const fk = d.id, e = (d.data() || {}).e || {};
+    for (const [verb, iv] of Object.entries(e)) { const ci = BYKEY.get(verb + "|" + fk); if (ci !== undefined && ITEMV(ci) === iv) done.add(verb + "|" + fk); }
+  }
+}
+
+function showCall(n, call, answers, tier) {
+  $("call").textContent = `Block ${n + 1}, pass ${call.s} of ${SAMPLES}` + (tier ? `, ${tier} tier` : "") + ".";
   $("cards").innerHTML = call.cells.map((ci) => {
     const [v, f, , sentence] = DATA.c[ci];
-    const a = answers && answers[ci];
+    const a = answers && answers[KEY(ci)];
     const label = a ? ({ acceptable: "Acceptable", unacceptable: "Unacceptable", marginal: "Marginal", cant_judge: "Can't judge" }[a.r]) : "waiting";
     const yn = DATA.f[f].k === "neg_raising" || DATA.f[f].k === "derived_nominal";
     const shown = a && yn ? ({ acceptable: "Yes", unacceptable: "No", cant_judge: "Can't tell" }[a.r] || label) : label;
@@ -193,17 +209,39 @@ function showCall(b, call, answers, tier) {
   }).join("");
 }
 
-async function runOne(b) {
-  const ref = blockRef(b);
-  let snap = await ref.get();
-  if (!snap.exists) { await ref.set({ n: b, snap: SNAP, prompt: PROMPT_VERSION, calls: {} }); snap = await ref.get(); }
-  const done = (snap.data() || {}).calls || {};
-  const firsts = {}; // cell -> first-pass response, for the stability figure
-  for (const [k, c] of Object.entries(done)) if (k.startsWith("1_")) for (const [ci, a] of Object.entries(c.a || {})) firsts[ci] = a.r;
-  for (const call of blockCalls(b)) {
-    if (done[call.key]) continue;
+// the block in progress, or a new one from the next 30 cells not done
+async function currentBlock() {
+  if (state.current !== null) {
+    const s = await blockRef(state.current).get();
+    if (s.exists) {
+      const d = s.data();
+      const cells = (d.order || []).map((k) => BYKEY.get(k)).filter((ci) => ci !== undefined && (d.cells[KEY(ci)] || {}).iv === ITEMV(ci));
+      if (cells.length === (d.order || []).length) return { n: state.current, cells, calls: d.calls || {} };
+      // a frame changed under an unfinished block: keep its answers on record, start afresh
+    }
+  }
+  const cells = [];
+  for (const ci of ORDER) { if (!done.has(KEY(ci))) cells.push(ci); if (cells.length === BLOCK) break; }
+  if (!cells.length) return null;
+  const n = state.next;
+  const meta = {};
+  for (const ci of cells) { const [it, fv] = DATA.i[DATA.c[ci][2]]; meta[KEY(ci)] = { iv: it + "@" + fv, sentence: DATA.c[ci][3] }; }
+  await blockRef(n).set({ n, prompt: PROMPT_VERSION, page: SNAP, order: cells.map(KEY), cells: meta, calls: {} });
+  state = { next: n + 1, current: n };
+  await stateRef().set(state);
+  return { n, cells, calls: {} };
+}
+
+async function runOne() {
+  const blk = await currentBlock();
+  if (!blk) return "all";
+  const { n, cells, calls: stored } = blk;
+  const firsts = {};
+  for (const [k, c] of Object.entries(stored)) if (k.startsWith("1_")) for (const [key, a] of Object.entries(c.a || {})) firsts[key] = a.r;
+  for (const call of blockCalls(cells, n)) {
+    if (stored[call.key]) continue;
     if (stopAsked) return "stopped";
-    showCall(b, call, null);
+    showCall(n, call, null);
     say(`Asking Claude about ${call.cells.length} cards… (the most capable tier thinks first; this can take a minute or two)`);
     let reply, tier;
     try {
@@ -225,21 +263,36 @@ async function runOne(b) {
       const o = arr.find((x) => x && x.id === "c" + (k + 1));
       const F = DATA.f[DATA.c[ci][1]];
       if (!o || !F.allowed.includes(o.response)) return;
-      answers[ci] = { r: o.response, f: o.flag === true, note: o.flag === true ? String(o.note || o.reason || "").slice(0, 1000) : "",
+      answers[KEY(ci)] = { r: o.response, f: o.flag === true, note: o.flag === true ? String(o.note || o.reason || "").slice(0, 1000) : "",
         why: String(o.reason || "").slice(0, 300), nom: F.k === "derived_nominal" && Array.isArray(o.nominals) ? o.nominals.map(String).filter(Boolean).slice(0, 6) : [] };
     });
-    await ref.update({ calls: { [call.key]: { at: new Date().toISOString(), tier: tier || TIER, a: answers } } });
-    done[call.key] = { a: answers };
-    for (const [ci, a] of Object.entries(answers)) {
+    await blockRef(n).update({ calls: { [call.key]: { at: new Date().toISOString(), tier: tier || TIER, a: answers } } });
+    stored[call.key] = { a: answers };
+    for (const [key, a] of Object.entries(answers)) {
       if (a.f && call.s === 1) session.flags++;
-      if (call.s === 1) firsts[ci] = a.r;
-      else if (firsts[ci]) { session.pairs++; if (firsts[ci] === a.r) session.same++; }
+      if (call.s === 1) firsts[key] = a.r;
+      else if (firsts[key]) { session.pairs++; if (firsts[key] === a.r) session.same++; }
     }
-    showCall(b, call, answers, tier);
+    showCall(n, call, answers, tier);
     render();
   }
-  progress.done = [...new Set([...progress.done, b])].sort((x, y) => x - y);
-  await runRef().set({ done: progress.done, prompt: PROMPT_VERSION, updated: new Date().toISOString() });
+  // a cell is done once all three passes answered it; record it in the per-feature index
+  const count = {};
+  for (const c of Object.values(stored)) for (const key of Object.keys(c.a || {})) count[key] = (count[key] || 0) + 1;
+  const byFeature = {};
+  for (const ci of cells) {
+    const key = KEY(ci);
+    if ((count[key] || 0) < SAMPLES) continue;
+    const [verb, fk] = key.split("|");
+    (byFeature[fk] = byFeature[fk] || {})[verb] = ITEMV(ci);
+    done.add(key);
+  }
+  for (const [fk, e] of Object.entries(byFeature)) {
+    const ref = indexRef(fk), s = await ref.get();
+    if (s.exists) await ref.update({ e }); else await ref.set({ e });
+  }
+  state = { next: state.next, current: null };
+  await stateRef().set(state);
   render();
   return null;
 }
@@ -251,9 +304,8 @@ async function run() {
   const want = parseInt($("n").value, 10);
   let did = 0, msg = null;
   try {
-    for (let b = 0; b < NBLOCKS && did < want; b++) {
-      if (progress.done.includes(b)) continue;
-      msg = await runOne(b);
+    while (did < want) {
+      msg = await runOne();
       if (msg) break;
       did++;
     }
@@ -263,11 +315,14 @@ async function run() {
   running = false;
   $("run").disabled = false; $("stop").disabled = true; $("export").disabled = !downloads;
   if (msg === "stopped") say(`Stopped. ${did} block(s) finished this run.`);
+  else if (msg === "all") say("Every cell has its three answers.");
   else if (msg) say(msg, true);
-  else say(cellsDone() >= total ? "Every cell has its three answers." : `Done: ${did} block(s) this run. Start again for more.`);
+  else say(`Done: ${did} block(s) this run. Start again for more.`);
 }
 
-// events.csv in the Judge's format (judge LLM01), for npm run consolidate
+// events.csv in the Judge's format (judge LLM01), for npm run consolidate. Every
+// stored answer is exported with the item and version it was given on, so answers
+// on frames that have changed since are kept but left out by consolidation.
 async function exportCsv() {
   $("export").disabled = true;
   say("Collecting answers…");
@@ -275,29 +330,31 @@ async function exportCsv() {
     const rows = [["event_id", "judge", "verb", "feature", "kind", "response", "item", "frame_v", "sentence", "gold", "repeat", "at"]];
     const q = (s) => /[",\n]/.test(String(s)) ? '"' + String(s).replace(/"/g, '""') + '"' : String(s);
     let id = 0;
-    const ev = (ci, kind, response, at, repeat, noFeature) => {
-      const [v, f, it, sentence] = DATA.c[ci];
-      const [item, fv] = DATA.i[it];
-      const verb = DATA.v[v][0], fk = DATA.f[f].k;
-      rows.push(["llm-" + (++id), "LLM01", verb, noFeature ? "" : fk, kind, response, kind === "judge" ? item : "", kind === "judge" ? fv : "",
-        kind === "judge" ? sentence : "", gold.has(verb + "|" + fk) ? 1 : 0, repeat ? 1 : 0, at]);
+    const ev = (key, meta, kind, response, at, repeat) => {
+      const [verb, fk] = key.split("|");
+      const at2 = meta.iv.lastIndexOf("@"), item = meta.iv.slice(0, at2), fv = meta.iv.slice(at2 + 1);
+      const j = kind === "judge";
+      rows.push(["llm-" + (++id), "LLM01", verb, kind === "nominal" ? "" : fk, kind, response, j ? item : "", j ? fv : "", j ? meta.sentence : "",
+        gold.has(key) ? 1 : 0, repeat ? 1 : 0, at]);
     };
-    for (let lo = 0; lo < NBLOCKS; lo += 250) {
-      const snapq = await db.collection("runs/" + SNAP + "/blocks").where("n", ">=", lo).where("n", "<", lo + 250).limit(250).get();
+    for (let lo = 0; lo <= state.next; lo += 250) {
+      const snapq = await db.collection("blocks").where("n", ">=", lo).where("n", "<", lo + 250).limit(250).get();
       const docs = snapq.docs.map((d) => d.data()).sort((a, b) => a.n - b.n);
       for (const d of docs) {
         const per = {}; // cell -> [{s, at, a}]
         for (const [k, c] of Object.entries(d.calls || {})) {
           const s = +k.split("_")[0];
-          for (const [ci, a] of Object.entries(c.a || {})) (per[ci] = per[ci] || []).push({ s, at: c.at, a });
+          for (const [key, a] of Object.entries(c.a || {})) (per[key] = per[key] || []).push({ s, at: c.at, a });
         }
-        for (const [ci, list] of Object.entries(per)) {
+        for (const [key, list] of Object.entries(per)) {
+          const meta = (d.cells || {})[key];
+          if (!meta) continue;
           list.sort((x, y) => x.s - y.s);
           const [first, ...rest] = list;
-          ev(+ci, "judge", first.a.r, first.at, false);
-          if (first.a.f) { ev(+ci, "flag", "", first.at, false); if (first.a.note) ev(+ci, "note", first.a.note, first.at, false); }
-          if (DATA.f[DATA.c[ci][1]].k === "derived_nominal" && first.a.r === "acceptable" && first.a.nom.length) ev(+ci, "nominal", first.a.nom.join(", "), first.at, false, true);
-          for (const r of rest) ev(+ci, "judge", r.a.r, r.at, true);
+          ev(key, meta, "judge", first.a.r, first.at, false);
+          if (first.a.f) { ev(key, meta, "flag", "", first.at, false); if (first.a.note) ev(key, meta, "note", first.a.note, first.at, false); }
+          if (key.endsWith("|derived_nominal") && first.a.r === "acceptable" && (first.a.nom || []).length) ev(key, meta, "nominal", first.a.nom.join(", "), first.at, false);
+          for (const r of rest) ev(key, meta, "judge", r.a.r, r.at, true);
         }
       }
     }
@@ -320,14 +377,15 @@ $("export").onclick = exportCsv;
   [db, sample, downloads] = await Promise.all([claude.use("db"), claude.use("sample"), claude.use("downloads")]);
   if (!db) { say("Saved answers can't be reached in this view. Open the page in Claude, signed in as its owner.", true); return; }
   try {
-    const s = await runRef().get();
-    if (s.exists) progress = { done: (s.data().done || []) };
+    const s = await stateRef().get();
+    if (s.exists) state = { next: s.data().next || 0, current: s.data().current ?? null };
+    await loadDone();
   } catch (e) { say("Couldn't read the saved progress (" + ((e && e.code) || "error") + "). Reload to try again.", true); return; }
   render();
   $("export").disabled = !downloads;
   if (!sample) { say("Asking Claude isn't available in this view, so judging can't run here.", true); return; }
   $("run").disabled = false;
-  say(cellsDone() ? `Ready. ${cellsDone().toLocaleString()} cells answered so far.` : "Ready. The first run asks you to allow this page to use Claude.");
+  say(done.size ? `Ready. ${done.size.toLocaleString()} cells answered on their current sentences.` : "Ready. The first run asks you to allow this page to use Claude.");
 })();
 </script>
 </body>
