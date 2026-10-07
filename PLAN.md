@@ -190,11 +190,12 @@ Every judged frame was rendered for one predicate of each class and checked for 
 ### LLM judge (8 Oct 2026)
 
 - [x] In-chat pilot (26 cells, one context): useful for finding frame problems, not as data (answers drift once a pattern is spotted). Led to the object-taking-verb frame fixes above.
-- [x] `scripts/llm-judge.mjs` + `.github/workflows/llm-judge.yml`: Message Batches, one request per cell and sample (3 by default), unanswered cells only; answers posted to the event log as an LLM judge account (first sample = judgement, the rest = repeats, so retest agreement = stability). Card text moved to `src/judge-card.js` so the Judge and the prompt share it.
+- [x] ~~API batch workflow~~ dropped (8 Oct 2026): Thomas won't pay for API usage. Replaced by a claude.ai artifact that asks Claude on his plan (`sample`, most capable tier): all cells, slowly; 10 unrelated cards per request; 3 passes per cell with different groupings; answers in the artifact's database, exported as events for judge `LLM01`. Card text moved to `src/judge-card.js` so the Judge and the prompt share it.
 - [x] Consolidation leaves LLM judges out (register variety "LLM: …"; `include_llm`, `exclude` in `data/consolidation.json`) and reports their agreement with the human majority.
-- [x] Tested against a local PocketBase and a mock batch API: submit → collect → re-collect (no duplicates) → in-progress guard → wrong password; consolidation on the resulting log (LLM excluded, retest reported, no values changed); the Judge's cards render as before.
-- [ ] Thomas: register the LLM account, add the three secrets, run 200 cells, read the job summary and some flagged notes before a full run.
-- Cost check (Oct 2026 batch prices for Claude Opus 5.5: $2 / MTok input, $10 / MTok output, cache reads at 5 %): roughly 250 input tokens per card plus a ~700-token cached system prompt and ~70 output tokens, so a full 22,400 × 3 run is on the order of $90–170 depending on cache hits; a 200-cell trial well under $2.
+- [x] Page tested in headless Chromium against a stubbed runtime: run, unreadable answer, rate limit, resume, export; consolidation on the export (LLM excluded, retest reported, nothing changed). The Judge's cards render as before.
+- [ ] Thomas: run a few blocks, then read the flagged notes before going further.
+- Pace: a request on the most capable tier takes up to a minute or two and judges ten cells once, so the whole grid (747 blocks × 9 requests) is a long, intermittent job bounded by plan limits.
+- [ ] The `claude@dace.com` judge account made for the API plan is unused: delete it in the PocketBase dashboard.
 
 ### Later
 

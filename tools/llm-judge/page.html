@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DACE · LLM judge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe3; --panel:#fffdf7; --panel2:#efe8d8; --ink:#2b2620; --ink-soft:#6d6453; --ink-faint:#9d9482;
+  --line:#e3dac6; --line-strong:#d4c8ad; --accent:#1f7a63; --accent-tint:rgba(31,122,99,.12);
+  --pos:#1f7a52; --neg:#b04a36; --mid:#9a7320;
+  --serif:'Newsreader',Georgia,'Times New Roman',serif; --ui:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#1c1a16; --panel:#25221d; --panel2:#2e2a23; --ink:#ece5d6; --ink-soft:#b3a992; --ink-faint:#857c69;
+  --line:#3a352c; --line-strong:#4a4438; --accent:#4fb393; --accent-tint:rgba(79,179,147,.16);
+  --pos:#5cb98d; --neg:#e07a63; --mid:#d1a64a; } }
+:root[data-theme="dark"]{
+  --bg:#1c1a16; --panel:#25221d; --panel2:#2e2a23; --ink:#ece5d6; --ink-soft:#b3a992; --ink-faint:#857c69;
+  --line:#3a352c; --line-strong:#4a4438; --accent:#4fb393; --accent-tint:rgba(79,179,147,.16);
+  --pos:#5cb98d; --neg:#e07a63; --mid:#d1a64a; }
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+main{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+h1{font-family:var(--serif);font-weight:600;font-size:32px;line-height:1.1;margin:0 0 6px}
+.lede{color:var(--ink-soft);margin:0 0 24px;max-width:64ch}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px}
+.meter{display:flex;gap:28px;flex-wrap:wrap;align-items:baseline}
+.meter b{font-family:var(--serif);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+.meter div{color:var(--ink-soft);font-size:13px}
+.bar{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:14px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button,select{font-family:inherit;font-size:14px;border-radius:9px;border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);padding:9px 15px}
+button{cursor:pointer;font-weight:500}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status{margin-top:12px;font-size:13.5px;color:var(--ink-soft);min-height:1.5em}
+.status.err{color:var(--neg)}
+.call{font-size:13px;color:var(--ink-faint);margin:0 0 10px}
+.cards{list-style:none;margin:0;padding:0}
+.cards li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:10px 0;border-top:1px solid var(--line)}
+.cards li:first-child{border-top:none}
+.sent{font-family:var(--serif);font-size:17px;line-height:1.35}
+.sent em{font-style:normal;font-weight:600}
+.feat{font-size:12.5px;color:var(--ink-faint)}
+.verdict{font-size:13px;font-weight:600;align-self:start;white-space:nowrap;padding:3px 10px;border-radius:20px;background:var(--panel2);color:var(--ink-faint)}
+.verdict.acceptable{color:var(--pos);background:color-mix(in srgb,var(--pos) 13%,transparent)}
+.verdict.unacceptable{color:var(--neg);background:color-mix(in srgb,var(--neg) 13%,transparent)}
+.verdict.marginal{color:var(--mid);background:color-mix(in srgb,var(--mid) 15%,transparent)}
+.why{grid-column:1/-1;font-size:13px;color:var(--ink-soft)}
+.why.flag{color:var(--neg)}
+.empty{color:var(--ink-faint);font-size:14px;margin:0}
+details summary{cursor:pointer;color:var(--ink-soft);font-size:14px}
+details p{font-size:13.5px;color:var(--ink-soft);max-width:68ch}
+.wide{overflow-x:auto}
+@media (max-width:560px){ h1{font-size:26px} .meter{gap:18px} .meter b{font-size:24px} }
+@media (prefers-reduced-motion:reduce){ .bar i{transition:none} }
+</style>
+</head>
+<body>
+<main>
+  <h1>DACE LLM judge</h1>
+  <p class="lede">Claude answers the Judge's cards, ten unrelated cards per request, three independent answers per cell. Each run uses your Claude plan's usage and stops at the first limit or error. Answers are stored with this page and read back into consolidation as their own judge, never counted with the human judges.</p>
+
+  <section class="panel" aria-label="Progress">
+    <div class="meter">
+      <div><b id="m-cells">–</b><br>cells answered</div>
+      <div><b id="m-left">–</b><br>still to do</div>
+      <div><b id="m-stable">–</b><br>answers matching the first</div>
+      <div><b id="m-flags">–</b><br>flagged this session</div>
+    </div>
+    <div class="bar"><i id="bar"></i></div>
+  </section>
+
+  <section class="panel" aria-label="Run">
+    <div class="controls">
+      <label for="n" class="feat">Run</label>
+      <select id="n">
+        <option value="1">1 block (30 cells, 9 requests)</option>
+        <option value="3" selected>3 blocks (90 cells)</option>
+        <option value="10">10 blocks (300 cells)</option>
+      </select>
+      <button id="run" class="primary" disabled>Start judging</button>
+      <button id="stop" disabled>Stop after this request</button>
+      <button id="export" disabled>Download events.csv</button>
+    </div>
+    <div id="status" class="status" role="status">Loading…</div>
+  </section>
+
+  <section class="panel" aria-label="Latest request">
+    <p class="call" id="call">No request yet.</p>
+    <ul class="cards" id="cards"><li><p class="empty">The ten cards of each request appear here with Claude's answers.</p></li></ul>
+  </section>
+
+  <details class="panel">
+    <summary>How this works</summary>
+    <p>The cells are the Judge's 22,400, in a fixed random order, taken in blocks of 30. Each block gets three passes; in every pass the 30 cells are split into three requests of ten, grouped differently each time, so a cell's three answers come from three different contexts. The first answer counts as the LLM judge's judgement, the other two as repeats, which consolidation reports as its stability. The prompt shows each card as a person sees it: the question, the minimal pair, the sentence and the buttons.</p>
+    <p>Requests use the most capable model tier and take up to a minute or two each. A stopped or failed run picks up where it left off next time.</p>
+  </details>
+</main>
+
+<script>
+const DATA = /*DATA*/null;
+const SNAP = "/*SNAP*/";
+const PROMPT_VERSION = "chat-1";
+const BLOCK = 30, PER_CALL = 10, SAMPLES = 3, TIER = "complex";
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const total = DATA.c.length;
+const gold = new Set(DATA.gold);
+
+// fixed random order (mulberry32), blocks of 30
+function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function shuffle(a, seed) { const r = rng(seed), x = a.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x; }
+const ORDER = shuffle([...Array(total).keys()], 20261008);
+const NBLOCKS = Math.ceil(total / BLOCK);
+const blockCells = (b) => ORDER.slice(b * BLOCK, (b + 1) * BLOCK);
+// the requests of a block: pass s splits its cells into groups of ten, differently each pass
+function blockCalls(b) {
+  const cells = blockCells(b), G = Math.ceil(cells.length / PER_CALL), calls = [];
+  for (let s = 1; s <= SAMPLES; s++) {
+    const groups = Array.from({ length: G }, () => []);
+    cells.forEach((c, i) => {
+      const g = s === 1 ? Math.floor(i / PER_CALL) : s === 2 ? i % G : (i + Math.floor(i / G)) % G;
+      groups[Math.min(g, G - 1)].push(c);
+    });
+    groups.forEach((cs, g) => calls.push({ key: s + "_" + g, s, cells: shuffle(cs, b * 100 + s * 10 + g) }));
+  }
+  return calls;
+}
+
+// one card, exactly as scripts/llm-judge.mjs cardPrompt() writes it
+function card(ci) {
+  const [v, f, , sentence] = DATA.c[ci];
+  const F = DATA.f[f], display = DATA.v[v][1];
+  let t = F.t.split("\u0001").join(display);
+  if (t.includes("\u0003")) { const [a, b] = sentence.split(" \u2248 "); return t.replace("\u0002", () => a).replace("\u0003", () => b); }
+  return t.replace("\u0002", () => sentence);
+}
+const INSTRUCTIONS = `You are one of several judges building DACE, a dictionary of the alternations of English clause-embedding predicates. Below are ${"{N}"} cards from the judging tool, each exactly as a human judge sees it. The cards are unrelated: judge each one on its own, as if it were the only card, and don't let one card's answer influence another's.
+
+How to judge:
+- Judge the test sentence as written, as a careful native speaker of English would, in ordinary usage with a natural intonation. Do not reason from what the predicate "should" allow in theory, and do not let the reference pair decide for you: it only illustrates the construction.
+- Acceptable: the sentence is fine. Marginal: degraded but not out (some speakers would accept it, or it needs a strained reading). Unacceptable: the sentence is out. Can't judge: you cannot get a reading to judge at all.
+- The meaning question (neg-raising) asks whether the first sentence can mean the second; the derived-nominal question asks whether a noun exists. Answer those as asked.
+- If the sentence fails for a reason that has nothing to do with the construction being tested (for example, the verb needs an argument the frame doesn't give it, or the frame forces the wrong sense of the verb), still give your judgement of the sentence, but set "flag" to true and say why in "note". If that problem stops you judging the construction at all, answer cant_judge and flag it.
+- The frames deliberately leave out prepositions ("She informed him the news", not "of the news"): judge the bare construction as shown, and don't flag a missing preposition.
+- Each card lists its allowed responses; use only those.
+
+Reply with only a JSON array, one object per card, in card order:
+[{"id": "c1", "reason": "<at most 25 words>", "response": "<an allowed value>", "flag": false, "note": "", "nominals": []}, ...]
+"nominals" lists the noun or nouns when you answer acceptable (Yes) on a derived-nominal card; otherwise leave it empty. "note" stays empty unless "flag" is true.`;
+function prompt(cells) {
+  return INSTRUCTIONS.replace("{N}", cells.length) + "\n\n" + cells.map((ci, k) => `=== Card c${k + 1} ===\n` + card(ci)).join("\n\n");
+}
+
+let db = null, sample = null, downloads = null, progress = { done: [] }, running = false, stopAsked = false;
+const session = { flags: 0, pairs: 0, same: 0 };
+const runRef = () => db.doc("runs/" + SNAP);
+const blockRef = (b) => db.collection("runs/" + SNAP + "/blocks").doc(String(b).padStart(4, "0"));
+
+function cellsDone() { let n = 0; for (const b of progress.done) n += blockCells(b).length; return n; }
+function render() {
+  const n = cellsDone();
+  $("m-cells").textContent = n.toLocaleString();
+  $("m-left").textContent = (total - n).toLocaleString();
+  $("m-stable").textContent = session.pairs ? Math.round((100 * session.same) / session.pairs) + "%" : "–";
+  $("m-flags").textContent = session.flags.toLocaleString();
+  $("bar").style.width = ((100 * n) / total).toFixed(2) + "%";
+}
+function say(text, err) { $("status").textContent = text; $("status").className = "status" + (err ? " err" : ""); }
+
+function showCall(b, call, answers, tier) {
+  $("call").textContent = `Block ${b + 1} of ${NBLOCKS}, pass ${call.s} of ${SAMPLES}` + (tier ? `, ${tier} tier` : "") + ".";
+  $("cards").innerHTML = call.cells.map((ci) => {
+    const [v, f, , sentence] = DATA.c[ci];
+    const a = answers && answers[ci];
+    const label = a ? ({ acceptable: "Acceptable", unacceptable: "Unacceptable", marginal: "Marginal", cant_judge: "Can't judge" }[a.r]) : "waiting";
+    const yn = DATA.f[f].k === "neg_raising" || DATA.f[f].k === "derived_nominal";
+    const shown = a && yn ? ({ acceptable: "Yes", unacceptable: "No", cant_judge: "Can't tell" }[a.r] || label) : label;
+    return `<li><div><div class="sent">${esc(sentence)}</div><div class="feat"><em>${esc(DATA.v[v][1])}</em> · ${esc(DATA.f[f].label)}</div></div>` +
+      `<span class="verdict ${a ? a.r : ""}">${esc(shown)}</span>` +
+      (a && (a.note || a.why) ? `<div class="why${a.f ? " flag" : ""}">${a.f ? "Flagged: " : ""}${esc(a.note || a.why)}${a.nom && a.nom.length ? " (" + esc(a.nom.join(", ")) + ")" : ""}</div>` : "") + "</li>";
+  }).join("");
+}
+
+async function runOne(b) {
+  const ref = blockRef(b);
+  let snap = await ref.get();
+  if (!snap.exists) { await ref.set({ n: b, snap: SNAP, prompt: PROMPT_VERSION, calls: {} }); snap = await ref.get(); }
+  const done = (snap.data() || {}).calls || {};
+  const firsts = {}; // cell -> first-pass response, for the stability figure
+  for (const [k, c] of Object.entries(done)) if (k.startsWith("1_")) for (const [ci, a] of Object.entries(c.a || {})) firsts[ci] = a.r;
+  for (const call of blockCalls(b)) {
+    if (done[call.key]) continue;
+    if (stopAsked) return "stopped";
+    showCall(b, call, null);
+    say(`Asking Claude about ${call.cells.length} cards… (the most capable tier thinks first; this can take a minute or two)`);
+    let reply, tier;
+    try {
+      const res = await sample(prompt(call.cells), { modelTier: TIER, cache: false });
+      tier = res.modelTierApplied; reply = res.text;
+    } catch (e) {
+      const code = e && e.code;
+      if (code === "rate_limited") return "You've reached a usage or rate limit. Try again later; the run picks up where it stopped.";
+      if (code === "not_granted" || code === "sampling_disabled" || code === "capability_disabled") return "This page isn't allowed to ask Claude in this view. Allow it in the page's permissions and run again.";
+      if (code === "session_expired") return "Your session has expired. Sign in again and run again.";
+      return `Claude didn't answer this request (${code || "error"}). Run again to retry it.`;
+    }
+    let arr = null;
+    const m = /\[[\s\S]*\]/.exec(reply || "");
+    try { arr = m ? JSON.parse(m[0]) : null; } catch { arr = null; }
+    if (!Array.isArray(arr)) return "Claude's answer wasn't readable JSON, so nothing was saved for that request. Run again to retry it.";
+    const answers = {};
+    call.cells.forEach((ci, k) => {
+      const o = arr.find((x) => x && x.id === "c" + (k + 1));
+      const F = DATA.f[DATA.c[ci][1]];
+      if (!o || !F.allowed.includes(o.response)) return;
+      answers[ci] = { r: o.response, f: o.flag === true, note: o.flag === true ? String(o.note || o.reason || "").slice(0, 1000) : "",
+        why: String(o.reason || "").slice(0, 300), nom: F.k === "derived_nominal" && Array.isArray(o.nominals) ? o.nominals.map(String).filter(Boolean).slice(0, 6) : [] };
+    });
+    await ref.update({ calls: { [call.key]: { at: new Date().toISOString(), tier: tier || TIER, a: answers } } });
+    done[call.key] = { a: answers };
+    for (const [ci, a] of Object.entries(answers)) {
+      if (a.f && call.s === 1) session.flags++;
+      if (call.s === 1) firsts[ci] = a.r;
+      else if (firsts[ci]) { session.pairs++; if (firsts[ci] === a.r) session.same++; }
+    }
+    showCall(b, call, answers, tier);
+    render();
+  }
+  progress.done = [...new Set([...progress.done, b])].sort((x, y) => x - y);
+  await runRef().set({ done: progress.done, prompt: PROMPT_VERSION, updated: new Date().toISOString() });
+  render();
+  return null;
+}
+
+async function run() {
+  if (running) return;
+  running = true; stopAsked = false;
+  $("run").disabled = true; $("stop").disabled = false; $("export").disabled = true;
+  const want = parseInt($("n").value, 10);
+  let did = 0, msg = null;
+  try {
+    for (let b = 0; b < NBLOCKS && did < want; b++) {
+      if (progress.done.includes(b)) continue;
+      msg = await runOne(b);
+      if (msg) break;
+      did++;
+    }
+  } catch (e) {
+    msg = "Saving failed (" + ((e && e.code) || "error") + "). Run again to carry on.";
+  }
+  running = false;
+  $("run").disabled = false; $("stop").disabled = true; $("export").disabled = !downloads;
+  if (msg === "stopped") say(`Stopped. ${did} block(s) finished this run.`);
+  else if (msg) say(msg, true);
+  else say(cellsDone() >= total ? "Every cell has its three answers." : `Done: ${did} block(s) this run. Start again for more.`);
+}
+
+// events.csv in the Judge's format (judge LLM01), for npm run consolidate
+async function exportCsv() {
+  $("export").disabled = true;
+  say("Collecting answers…");
+  try {
+    const rows = [["event_id", "judge", "verb", "feature", "kind", "response", "item", "frame_v", "sentence", "gold", "repeat", "at"]];
+    const q = (s) => /[",\n]/.test(String(s)) ? '"' + String(s).replace(/"/g, '""') + '"' : String(s);
+    let id = 0;
+    const ev = (ci, kind, response, at, repeat, noFeature) => {
+      const [v, f, it, sentence] = DATA.c[ci];
+      const [item, fv] = DATA.i[it];
+      const verb = DATA.v[v][0], fk = DATA.f[f].k;
+      rows.push(["llm-" + (++id), "LLM01", verb, noFeature ? "" : fk, kind, response, kind === "judge" ? item : "", kind === "judge" ? fv : "",
+        kind === "judge" ? sentence : "", gold.has(verb + "|" + fk) ? 1 : 0, repeat ? 1 : 0, at]);
+    };
+    for (let lo = 0; lo < NBLOCKS; lo += 250) {
+      const snapq = await db.collection("runs/" + SNAP + "/blocks").where("n", ">=", lo).where("n", "<", lo + 250).limit(250).get();
+      const docs = snapq.docs.map((d) => d.data()).sort((a, b) => a.n - b.n);
+      for (const d of docs) {
+        const per = {}; // cell -> [{s, at, a}]
+        for (const [k, c] of Object.entries(d.calls || {})) {
+          const s = +k.split("_")[0];
+          for (const [ci, a] of Object.entries(c.a || {})) (per[ci] = per[ci] || []).push({ s, at: c.at, a });
+        }
+        for (const [ci, list] of Object.entries(per)) {
+          list.sort((x, y) => x.s - y.s);
+          const [first, ...rest] = list;
+          ev(+ci, "judge", first.a.r, first.at, false);
+          if (first.a.f) { ev(+ci, "flag", "", first.at, false); if (first.a.note) ev(+ci, "note", first.a.note, first.at, false); }
+          if (DATA.f[DATA.c[ci][1]].k === "derived_nominal" && first.a.r === "acceptable" && first.a.nom.length) ev(+ci, "nominal", first.a.nom.join(", "), first.at, false, true);
+          for (const r of rest) ev(+ci, "judge", r.a.r, r.at, true);
+        }
+      }
+    }
+    const csv = rows.map((r) => r.map(q).join(",")).join("\n") + "\n";
+    await downloads.save({ filename: "llm-events.csv", data: csv });
+    say(`Saved llm-events.csv (${(rows.length - 1).toLocaleString()} events). Use it with judges.csv listing LLM01 as "LLM: claude.ai ${TIER} tier, prompt ${PROMPT_VERSION}".`);
+  } catch (e) {
+    if (!(e && e.code === "cancelled")) say("The download didn't complete (" + ((e && e.code) || "error") + ").", true);
+  }
+  $("export").disabled = false;
+}
+
+$("run").onclick = run;
+$("stop").onclick = () => { stopAsked = true; $("stop").disabled = true; say("Stopping after the current request…"); };
+$("export").onclick = exportCsv;
+
+(async () => {
+  render();
+  if (!window.claude) { say("Open this page in Claude to run it.", true); return; }
+  [db, sample, downloads] = await Promise.all([claude.use("db"), claude.use("sample"), claude.use("downloads")]);
+  if (!db) { say("Saved answers can't be reached in this view. Open the page in Claude, signed in as its owner.", true); return; }
+  try {
+    const s = await runRef().get();
+    if (s.exists) progress = { done: (s.data().done || []) };
+  } catch (e) { say("Couldn't read the saved progress (" + ((e && e.code) || "error") + "). Reload to try again.", true); return; }
+  render();
+  $("export").disabled = !downloads;
+  if (!sample) { say("Asking Claude isn't available in this view, so judging can't run here.", true); return; }
+  $("run").disabled = false;
+  say(cellsDone() ? `Ready. ${cellsDone().toLocaleString()} cells answered so far.` : "Ready. The first run asks you to allow this page to use Claude.");
+})();
+</script>
+</body>
+</html>

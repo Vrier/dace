@@ -14,7 +14,7 @@
     "serve": "node scripts/serve.mjs",
     "frames:lock": "node scripts/frames-lock.mjs",
     "consolidate": "node scripts/consolidate.mjs",
-    "llm-judge": "node scripts/llm-judge.mjs"
+    "llm-page": "node scripts/llm-page.mjs"
   },
   "devDependencies": {
     "esbuild": "0.23.0",

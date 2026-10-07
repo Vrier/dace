@@ -10,7 +10,8 @@ import { buildSite, listFiles } from './lib/site.mjs';
 import { frameTemplates, readLock, nextLock, frameRules, csvWriter } from './lib/frames.mjs';
 import { krippendorffAlpha } from './lib/agreement.mjs';
 import { consolidate, STATUSES } from './lib/consolidate.mjs';
-import { loadSite, judgeQueue, cardPrompt, parseAnswer } from './llm-judge.mjs';
+import { loadSite, judgeQueue, cardPrompt } from './lib/llm-prompt.mjs';
+import { buildPage } from './llm-page.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8').replace(/\r\n?/g, '\n');
@@ -188,7 +189,7 @@ check('every judgeable cell has a frame item, a version and a plain sentence (da
   return P;
 });
 
-check('LLM judge (scripts/llm-judge.mjs) — a prompt for every judgeable cell, same sentence and buttons as the Judge', () => {
+check('LLM judge (scripts/lib/llm-prompt.mjs, scripts/llm-page.mjs) — a prompt for every judgeable cell, same sentence and buttons as the Judge', () => {
   const P = [];
   const W = loadSite(files);
   const q = judgeQueue(W);
@@ -200,11 +201,10 @@ check('LLM judge (scripts/llm-judge.mjs) — a prompt for every judgeable cell, 
     if (shown.join() !== allowed.join()) { P.push(`${c.verb}.${c.feature}: prompt offers ${shown}, the Judge ${allowed}`); continue; }
     for (const part of c.sentence.split(' \u2248 ')) if (!pr.includes(part)) P.push(`${c.verb}.${c.feature}: prompt lacks the sentence "${part}"`);
     if (/<[a-z\/][^>]*>/.test(pr)) P.push(`${c.verb}.${c.feature}: HTML left in the prompt`);
-    if (`dace-${c.verb}-${c.feature}-${c.frame_v}-1`.length > 64) P.push(`${c.verb}.${c.feature}: custom_id too long`);
   }
-  const a = parseAnswer('{"reason":"x","response":"marginal","flag":true,"note":"needs an object","nominals":[]}', ['acceptable', 'marginal']);
-  if (!a || a.response !== 'marginal' || !a.flag || a.note !== 'needs an object') P.push('parseAnswer misread a valid answer');
-  if (parseAnswer('{"response":"yes"}', ['acceptable'])) P.push('parseAnswer accepted a response the card does not offer');
+  // the claude.ai page rebuilds each prompt from per-feature templates: they must agree
+  const page = buildPage(files);
+  if (page.mismatches) P.push(`${page.mismatches} card(s) where the LLM judge page's prompt differs from cardPrompt()`);
   return P;
 });
 

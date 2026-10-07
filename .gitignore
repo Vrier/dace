@@ -21,3 +21,4 @@ Thumbs.db
 *.log
 *.tmp
 HANDOFF.md
+tools/llm-judge/out/
