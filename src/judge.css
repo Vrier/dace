@@ -257,3 +257,10 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline:2px 
   .jp-files{flex-direction:column;gap:4px}
   .jp-files .ta{padding:6px 9px;font-size:11.5px}
 }
+
+/* derived nominal: Yes / No, then the noun(s) */
+.nom-anno{display:flex;flex-direction:column;gap:8px}
+.nom-actions{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+
+/* meaning questions (neg_raising): two sentences, one above the other */
+.test-mean{font-family:var(--ui);font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;text-transform:uppercase;margin:6px 0}

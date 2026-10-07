@@ -4,7 +4,10 @@
 // logged raw, with the frame item and version and the exact sentence shown
 // (daceTestItem, frames.js); turning them into feature values — inverting
 // weak_island and stative — happens at consolidation (PLAN.md, "Judgement data").
-// Plus per-predicate editable example sentence + derived nominal.
+// The derived-nominal question is a plain Yes / No (logged as acceptable /
+// unacceptable, so consolidation needs no special case); after Yes the judge types
+// the nominal form(s), saved as one comma-separated `nominal` event per predicate.
+// Plus a per-predicate example sentence of the judge's own (not on nominal cards).
 // Every change is appended to the judge's event log on the server through
 // judge-sync.js (window.DACE_SYNC); nothing is kept in this browser. Each judge
 // works through the cells in their own fixed random order (seeded by account),
@@ -179,7 +182,9 @@ function TestSentence({ item }) {
   const nominal = nomInfo ? nomInfo.nom : null;
   // judge mode: never starred (the judge decides) and the that-omission test without
   // "(that)" — the same rendering daceTestItem logs as the sentence judged (frames.js)
-  const html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal, { judge: true }) : null;
+  let html = window.daceTestSentence ? window.daceTestSentence(item.feature, 1, item.levin, item.display, nominal, { judge: true }) : null;
+  // a meaning question shows its two sentences one above the other
+  if (html && QTYPE[item.feature] === "meaning") html = html.replace(" \u2248 ", '.</div><div class="test-mean">can it mean</div><div class="test-line">');
   return (
     <div className="ts">
       <div className="ts-def" dangerouslySetInnerHTML={{ __html: f ? f.def : "" }} />
@@ -201,8 +206,25 @@ function MinimalPair({ fk }) {
 }
 
 // repeat: a test–retest item — the judge's earlier response is not shown
-function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudge, onFlag, onNote, onSentence, onNominal }) {
+// the nominal forms a judge typed, stored as one comma-separated string
+const splitNoms = (s) => (s || "").split(/\s*[,;]\s*/).filter(Boolean);
+// Question types. Most cards ask whether a sentence is acceptable (RESP). Two ask
+// something else, with their own buttons, logged with the same response values so
+// the server and consolidation need nothing new (Yes = acceptable = feature 1):
+//   nominal  derived_nominal — Yes / No, then the noun(s);
+//   meaning  neg_raising — can the first sentence mean the second? (≈ in the frame)
+const QTYPE = { derived_nominal: "nominal", neg_raising: "meaning" };
+const QBTNS = {
+  nominal: { acceptable: { label: "Yes", key: "1", cls: "v1", sub: "it has one" }, unacceptable: { label: "No", key: "0", cls: "v0", sub: "no such noun" } },
+  meaning: { acceptable: { label: "Yes", key: "1", cls: "v1", sub: "it can mean that" }, unacceptable: { label: "No", key: "0", cls: "v0", sub: "it can't" },
+             cant_judge: { label: "Can't tell", key: "9", cls: "vcj", sub: "no clear intuition" } },
+};
+const buttonsFor = (fk) => QBTNS[QTYPE[fk]] || RESP;
+
+function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudge, onFlag, onNote, onSentence, onNominal, onNext }) {
   const f = DACE_FEATURES[item.feature];
+  const isNom = QTYPE[item.feature] === "nominal";
+  const buttons = buttonsFor(item.feature);
   const shown = repeat ? undefined : response;
   const fv = shown ? featureValue(item.feature, shown) : null;
   const inverted = window.DACE_INVERTED.includes(item.feature);
@@ -211,9 +233,22 @@ function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudg
     return baked || (window.daceDefaultExample ? window.daceDefaultExample(item.verb, item.display, item.levin) : "");
   }, [item.verb]);
   const [sentVal, setSentVal] = useState(sentence || "");
-  const [nomVal, setNomVal] = useState(nominal || "");
+  const [noms, setNoms] = useState(() => splitNoms(nominal).concat(splitNoms(nominal).length ? [] : [""]));
   const [noteVal, setNoteVal] = useState(note || "");
-  useEffect(() => { setSentVal(sentence || ""); setNomVal(nominal || ""); }, [item.verb]);
+  const nomRefs = useRef([]);
+  useEffect(() => { setSentVal(sentence || ""); const n = splitNoms(nominal); setNoms(n.length ? n : [""]); }, [item.verb]);
+  // right after a Yes (not when coming back to a card already answered Yes, where
+  // the keys should still work) put the cursor in the first empty nominal box
+  const prevShown = useRef({ verb: item.verb, shown });
+  useEffect(() => {
+    const prev = prevShown.current;
+    prevShown.current = { verb: item.verb, shown };
+    if (!isNom || repeat || shown !== "acceptable" || prev.verb !== item.verb || prev.shown === "acceptable") return;
+    const i = noms.findIndex((x) => !x.trim());
+    const el = nomRefs.current[i === -1 ? noms.length - 1 : i];
+    if (el) el.focus();
+  }, [isNom, repeat, shown, item.verb]);
+  const saveNoms = (list) => { const v = list.map((x) => x.trim()).filter(Boolean).join(", "); if (v !== (nominal || "")) onNominal(item.verb, v); };
   useEffect(() => { setNoteVal(note || ""); }, [item.verb, item.feature]);
 
   return (
@@ -236,6 +271,8 @@ function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudg
         <div className="card-q">Does <b>{item.display}</b> have a nominalisation that takes the same complement — either a noun it is derived from (<i>hope</i> → <i>her hope that…</i>) or one formed with a suffix?
           <ul className="card-suffixes">{window.DACE_NOMINAL_SUFFIXES.map(([suf, eg]) => <li key={suf}><b>{suf}</b> <span>{eg}</span></li>)}</ul>
         </div>
+      ) : item.feature === "neg_raising" ? (
+        <div className="card-q">Read the first sentence with ordinary, unstressed negation. Can it mean what the second sentence says, with the negation understood inside the clause? (<b>Yes</b> = neg-raising.)</div>
       ) : item.feature === "weak_island" ? (
         <div className="card-q">Can a <i>wh</i>-phrase be extracted out of <b>{item.display}</b>'s complement? Judge the sentence: <b>Acceptable</b> = bridge verb (feature value 0), <b>Unacceptable</b> = weak island (feature value 1).</div>
       ) : item.feature === "stative" ? (
@@ -248,7 +285,7 @@ function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudg
       <TestSentence item={item} />
 
       <div className="judge-btns">
-        {Object.entries(RESP).map(([r, o]) => (
+        {Object.entries(buttons).map(([r, o]) => (
           <button key={r} className={"jb " + o.cls + (shown === r ? " on" : "")} onClick={(e) => { e.currentTarget.blur(); onJudge(r); }}>
             <kbd>{o.key}</kbd><span className="jb-l">{o.label}</span><span className="jb-s">{o.sub}</span>
           </button>
@@ -258,7 +295,7 @@ function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudg
         </button>
       </div>
       {shown !== undefined && (
-        <div className="card-current">Recorded: <b className={RESP[shown].cls}>{RESP[shown].label.toLowerCase()}</b>{inverted && fv !== null && fv !== "5" ? ` (feature value ${fv})` : ""}{flagged ? " · ⚑ flagged" : ""} — press a key or button to change</div>
+        <div className="card-current">Recorded: <b className={RESP[shown].cls}>{(buttons[shown] || RESP[shown]).label.toLowerCase()}</b>{inverted && fv !== null && fv !== "5" ? ` (feature value ${fv})` : ""}{flagged ? " · ⚑ flagged" : ""} — press a key or button to change</div>
       )}
       {flagged && (
         <label className="anno-field card-note">
@@ -269,23 +306,36 @@ function Card({ item, response, flagged, note, repeat, sentence, nominal, onJudg
         </label>
       )}
 
-      <div className="card-anno">
-        <label className="anno-field">
-          <span className="anno-label">Example sentence for <i>{item.display}</i> <span className="anno-hint">(your own; optional)</span></span>
-          <textarea className="anno-input" rows={2} value={sentVal} placeholder={defaultEx}
-            onChange={(e) => setSentVal(e.target.value)}
-            onBlur={() => onSentence(item.verb, sentVal)} />
-        </label>
-        {item.feature === "derived_nominal" && (
+      {isNom ? (
+        !repeat && shown === "acceptable" && (
+          <div className="card-anno nom-anno">
+            <span className="anno-label">Which noun(s)? <span className="anno-hint">one per box; Enter moves on, Esc leaves the box</span></span>
+            {noms.map((v, i) => (
+              <input key={i} ref={(el) => { nomRefs.current[i] = el; }} className="anno-input" type="text" value={v} maxLength={60}
+                placeholder={i === 0 ? "the noun, e.g. for hope: hope" : "another form"}
+                onChange={(e) => setNoms(noms.map((x, k) => k === i ? e.target.value : x))}
+                onBlur={() => saveNoms(noms)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") { e.preventDefault(); saveNoms(noms); onNext(); }
+                  else if (e.key === "Escape") { e.preventDefault(); e.currentTarget.blur(); } // back to the keys
+                }} />
+            ))}
+            <div className="nom-actions">
+              <button type="button" className="ta" onClick={() => setNoms([...noms, ""])}>+ another form</button>
+              <button type="button" className="ta primary" onClick={() => { saveNoms(noms); onNext(); }}>Next ›</button>
+            </div>
+          </div>
+        )
+      ) : (
+        <div className="card-anno">
           <label className="anno-field">
-            <span className="anno-label">Nominal form for <i>{item.display}</i> <span className="anno-hint">(only if you marked Acceptable above)</span></span>
-            <input className="anno-input" type="text" value={nomVal}
-              placeholder={"e.g. " + ((window.daceNominal ? window.daceNominal(item.verb, item.display).nom : "") || item.display)}
-              onChange={(e) => setNomVal(e.target.value)}
-              onBlur={() => onNominal(item.verb, nomVal)} />
+            <span className="anno-label">Example sentence for <i>{item.display}</i> <span className="anno-hint">(your own; optional)</span></span>
+            <textarea className="anno-input" rows={2} value={sentVal} placeholder={defaultEx}
+              onChange={(e) => setSentVal(e.target.value)}
+              onBlur={() => onSentence(item.verb, sentVal)} />
           </label>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -576,6 +626,14 @@ function Judge({ user, onSignOut, onProfile }) {
     return qi === undefined ? null : QUEUE[qi];
   }, [judgements, times]);
 
+  // on to the next unjudged item (and now and then a test–retest check item)
+  const advance = useCallback((justJudged) => {
+    const j = flatten(SYNC.all()).judgements;
+    const n = nextUnjudgedFrom(pos, j);
+    setPos(n !== -1 ? n : Math.min(pos + 1, ORDER.length - 1));
+    if (Math.random() < 1 / RETEST_EVERY) setRepeatItem(pickRepeat(justJudged));
+  }, [pos, nextUnjudgedFrom, ORDER.length, pickRepeat]);
+
   const judge = useCallback((resp) => {
     if (!item) return;
     const key = jkey(item.verb, item.feature);
@@ -584,12 +642,16 @@ function Judge({ user, onSignOut, onProfile }) {
       item: ti ? ti.item : item.feature + ":none", frame_v: ti ? ti.frame_v : 0, sentence: ti ? (ti.text || "") : "",
       gold: GOLD[key] !== undefined, repeat: !!repeatItem });
     if (repeatItem) { setRepeatItem(null); return; } // the queue position already moved on
-    const next = { ...judgements, [key]: resp };
+    // changing a nominal Yes to No withdraws the forms typed for it
+    if (item.feature === "derived_nominal" && resp === "unacceptable" && (SYNC.get(item.verb) || {}).nominal) {
+      SYNC.record({ verb: item.verb, kind: "nominal", response: "" });
+    }
     refreshState();
-    const n = nextUnjudgedFrom(pos, next);
-    setPos(n !== -1 ? n : Math.min(pos + 1, ORDER.length - 1));
-    if (Math.random() < 1 / RETEST_EVERY) setRepeatItem(pickRepeat(key));
-  }, [item, repeatItem, judgements, pos, nextUnjudgedFrom, refreshState, ORDER.length, pickRepeat]);
+    // a Yes on the derived-nominal question stays put so the judge can type the noun(s)
+    if (item.feature === "derived_nominal" && resp === "acceptable") return;
+    advance(key);
+  }, [item, repeatItem, refreshState, advance]);
+
 
   const flag = useCallback(() => {
     if (!item) return;
@@ -626,7 +688,9 @@ function Judge({ user, onSignOut, onProfile }) {
     function onKey(e) {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (showOverview || showJudges) return;
-      if (KEY_TO_RESP[e.key]) judge(KEY_TO_RESP[e.key]);
+      const resp = KEY_TO_RESP[e.key];
+      // preventDefault: a Yes moves the cursor into the nominal box, which must not get the "1"
+      if (resp && (!item || buttonsFor(item.feature)[resp])) { e.preventDefault(); judge(resp); }
       else if (e.key === "7") flag();
       else if (e.key === "ArrowRight" || e.key === "ArrowDown") go(1);
       else if (e.key === "ArrowLeft" || e.key === "ArrowUp") go(-1);
@@ -634,7 +698,7 @@ function Judge({ user, onSignOut, onProfile }) {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [judge, flag, go, nextUnjudged, showOverview, showJudges]);
+  }, [judge, flag, go, nextUnjudged, showOverview, showJudges, item]);
 
   function signOut() {
     if (saveSt.pending && !confirm(saveSt.pending + " change(s) haven't reached the server yet. Sign out anyway and lose them?")) return;
@@ -696,7 +760,8 @@ function Judge({ user, onSignOut, onProfile }) {
             flagged={!!flags[jkey(item.verb, item.feature)]}
             note={notes[jkey(item.verb, item.feature)]}
             sentence={sentences[item.verb]} nominal={nominals[item.verb]}
-            onJudge={judge} onFlag={flag} onNote={setNote} onSentence={setSentence} onNominal={setNominal} />}
+            onJudge={judge} onFlag={flag} onNote={setNote} onSentence={setSentence} onNominal={setNominal}
+            onNext={() => advance(jkey(item.verb, item.feature))} />}
           <button className="next-unjudged" onClick={nextUnjudged}>Skip to next unjudged →  <kbd>U</kbd></button>
         </div>
         <button className="nav" onClick={() => go(1)} disabled={pos >= ORDER.length - 1} title="Next in your queue (→)">›</button>

@@ -161,7 +161,7 @@ window.DACE_LINKS = { alt: ALT, vc: VC, csv: "data/predicates.csv" };
 window.DACE_FEATURE_PAIRS = {
   that_omission:    { good: "She thought he had left.",                 bad: "*She resented he had left." },
   comp_inf:         { good: "She expected to win.",                     bad: "*She doubted to win." },
-  ecm:              { good: "She believed him to be honest.",           bad: "*She hoped him to be honest." },
+  ecm:              { good: "She believed there to be a problem.",     bad: "*She hoped there to be a problem." },
   comp_interrog:    { good: "She knew whether he had left.",            bad: "*She believed whether he had left." },
   comp_gerund:      { good: "She regretted leaving early.",             bad: "*She thought leaving early." },
   comp_small_clause:{ good: "She considered him a fool.",               bad: "*She knew him a fool." },
@@ -177,10 +177,10 @@ window.DACE_FEATURE_PAIRS = {
   ditransitive:     { good: "She told him that it was over.",           bad: "*She said him that it was over." },
   factive_passive:  { good: "She was surprised that he had left.",      bad: "*She was regretted that he had left." },
   neg_raising:      { good: "I didn\u2019t think he left \u2248 I thought he didn\u2019t.", bad: "I didn\u2019t know he left \u2260 I knew he didn\u2019t." },
-  weak_island:      { good: "Who did she say that he saw __?  (bridge: recorded as 0)", bad: "*Who did she regret that he saw __?  (island: recorded as 1)" },
+  weak_island:      { good: "Who did she say that he saw __?  (bridge: feature value 0)", bad: "*Who did she regret that he saw __?  (island: feature value 1)" },
   pro_complement:   { good: "I think so. / I hope not.",                bad: "*I regret so. / *I regret not." },
   npi_licenser:     { good: "I doubt he has any money.",                bad: "*I think he has any money." },
-  stative:          { good: "discover: She is discovering the answer.  (eventive: recorded as 0)", bad: "know: *She is knowing the answer.  (stative: recorded as 1)" },
+  stative:          { good: "discover: She is discovering the answer.  (eventive: feature value 0)", bad: "know: *She is knowing the answer.  (stative: feature value 1)" },
   content_noun_fact:{ good: "She regretted the fact that he had left.", bad: "*She thought the fact that he had left." },
   derived_nominal:  { good: "believe \u2192 her belief that he had left", bad: "find out \u2192 *her find-out that he had left" },
 };

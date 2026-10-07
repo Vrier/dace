@@ -163,7 +163,7 @@ window.DACE_LINKS = { alt: ALT, vc: VC, csv: "data/predicates.csv" };
 window.DACE_FEATURE_PAIRS = {
   that_omission:    { good: "She thought he had left.",                 bad: "*She resented he had left." },
   comp_inf:         { good: "She expected to win.",                     bad: "*She doubted to win." },
-  ecm:              { good: "She believed him to be honest.",           bad: "*She hoped him to be honest." },
+  ecm:              { good: "She believed there to be a problem.",     bad: "*She hoped there to be a problem." },
   comp_interrog:    { good: "She knew whether he had left.",            bad: "*She believed whether he had left." },
   comp_gerund:      { good: "She regretted leaving early.",             bad: "*She thought leaving early." },
   comp_small_clause:{ good: "She considered him a fool.",               bad: "*She knew him a fool." },
@@ -179,10 +179,10 @@ window.DACE_FEATURE_PAIRS = {
   ditransitive:     { good: "She told him that it was over.",           bad: "*She said him that it was over." },
   factive_passive:  { good: "She was surprised that he had left.",      bad: "*She was regretted that he had left." },
   neg_raising:      { good: "I didn\u2019t think he left \u2248 I thought he didn\u2019t.", bad: "I didn\u2019t know he left \u2260 I knew he didn\u2019t." },
-  weak_island:      { good: "Who did she say that he saw __?  (bridge: recorded as 0)", bad: "*Who did she regret that he saw __?  (island: recorded as 1)" },
+  weak_island:      { good: "Who did she say that he saw __?  (bridge: feature value 0)", bad: "*Who did she regret that he saw __?  (island: feature value 1)" },
   pro_complement:   { good: "I think so. / I hope not.",                bad: "*I regret so. / *I regret not." },
   npi_licenser:     { good: "I doubt he has any money.",                bad: "*I think he has any money." },
-  stative:          { good: "discover: She is discovering the answer.  (eventive: recorded as 0)", bad: "know: *She is knowing the answer.  (stative: recorded as 1)" },
+  stative:          { good: "discover: She is discovering the answer.  (eventive: feature value 0)", bad: "know: *She is knowing the answer.  (stative: feature value 1)" },
   content_noun_fact:{ good: "She regretted the fact that he had left.", bad: "*She thought the fact that he had left." },
   derived_nominal:  { good: "believe \u2192 her belief that he had left", bad: "find out \u2192 *her find-out that he had left" },
 };
@@ -649,9 +649,9 @@ window.daceForms = daceForms;
 window.DACE_FRAMES = {
   base: {
     that_omission:    "She [VD] (that) he had left.",
-    comp_inf:         "She [VD] [him to be honest].",
-    ecm:              "She [VD] [him to be honest].",
-    comp_interrog:    "She [VD] [whether / who / where he went].",
+    comp_inf:         "She [VD] [to lock the door].",  // subject-control to-VP; ECM has its own frame
+    ecm:              "She [VD] [there to be a problem].",  // expletive object: ECM (believe) vs object control (*order)
+    comp_interrog:    "She [VD] [whether he had left].",
     comp_gerund:      "She [VD] [having left].",
     comp_small_clause:"She [VD] [him a fool].",
     np_comp_alt:      "She [VD] [the news].",
@@ -662,12 +662,12 @@ window.DACE_FRAMES = {
     comp_exclamative: "She [VD] [what a linguist he is]!",
     comp_poss_ing:    "She [VD] [his leaving].",
     extraposition:    "It [VD] her [that he had left].",
-    raising:          "He [VD] [to be ill].",
+    raising:          "There [VD] to be a problem.",  // expletive subject: raising vs control
     ditransitive:     "She [VD] him [that he had left].",
     factive_passive:  "It is [VN] [that he had left].",
     neg_raising:      "She didn\u2019t [V] he\u2019d come \u2248 She [VD] he wouldn\u2019t come.",
     weak_island:      "What did she [V] [that he bought ___]?",
-    pro_complement:   "She [VD] so. / She [VD] not.",
+    pro_complement:   "She [VD] so.",
     npi_licenser:     "She [VD] [that anyone left].",
     stative:          "She is [VG] that he is there.",
     factivity:        "She [VD] / didn\u2019t [V] [that he left] \u2014 does \u2018he left\u2019 survive negation?",
@@ -681,30 +681,28 @@ window.DACE_FRAMES = {
   // assertive report — like base, quotative emphasised
   say: {
     direct_speech:    "She [VD]: \u201cHe was late.\u201d",
-    comp_inf:         "She [VD] [him to be the culprit].",
-    np_comp_alt:      "She [VD] [the news / the decision].",
+    comp_inf:         "She [VD] [to have seen him].",
+    np_comp_alt:      "She [VD] [the decision].",
     derived_nominal:  "her [NOM] that he had left",
   },
 
   // psych-causative — stimulus subject, experiencer object; active + passive
   psych: {
-    that_omission:    { active: "It [VD] her (that) he had left.", passive: "She was [VN] (that) he had left." },
-    comp_inf:         { active: "It [VD] her [to find the room empty].", passive: "She was [VN] [to find the room empty]." },
-    comp_gerund:      { active: "It [VD] her [his leaving].", passive: "She was [VN] at [his leaving]." },
+    that_omission:    "She was [VN] (that) he had left.",
+    comp_inf:         "She was [VN] [to find the room empty].",
+    comp_gerund:      "It [VD] her [his leaving].",
     np_comp_alt:      "[The news] [VD] her.",
     extraposition:    "It [VD] her [that he had left].",
     factive_passive:  "She was [VN] [that he had left].",
     factivity:        "She was [VN] / wasn\u2019t [VN] [that he left] \u2014 does \u2018he left\u2019 survive negation?",
     veridicality:     "It [VD] her that p \u2014 does the matrix entail p?",
-    stative:          "She was [VN] that p (state) vs. eventive active use.",
+    stative:          "She is being [VN] that he is there.",
     content_noun_fact:"[The fact that he left] [VD] her.",
     derived_nominal:  "her [NOM] that he had left",
     comp_interrog:    "It [VD] her [whether he left].",
     direct_speech:    "It [VD] her: \u201cHe left.\u201d",
-    ditransitive:     "It [VD] her him [that he left].",
-    raising:          "She [VD] [to be there].",
     pro_complement:   "It [VD] her so.",
-    neg_raising:      "It didn\u2019t [V] her he\u2019d come (\u2260 it [VD] her he wouldn\u2019t).",
+    neg_raising:      "It didn\u2019t [V] her that he\u2019d come \u2248 It [VD] her that he wouldn\u2019t come.",
     comp_bare_inf:    "It [VD] her [him leave].",
     subjunctive_comp: "It [VD] her [that he leave].",
     be_copula:        "She is [VN] [that he was wrong].",
@@ -722,10 +720,10 @@ window.DACE_FRAMES = {
     subjunctive_comp: "She [VD] him [that he leave].",
     derived_nominal:  "her [NOM] to him that the meeting was cancelled",
     extraposition:    "It [VD] him [that the meeting was cancelled].",
-    raising:          "She [VD] him [to be ill].",
     pro_complement:   "She [VD] him so.",
     comp_gerund:      "She [VD] him [leaving].",
     factivity:        "She [VD] him / didn\u2019t [V] him [that p] \u2014 does p survive negation?",
+    neg_raising:      "She didn\u2019t [V] him he\u2019d come \u2248 She [VD] him he wouldn\u2019t come.",
   },
 
   // desiderative — subject-control infinitive primary
@@ -733,13 +731,12 @@ window.DACE_FRAMES = {
     that_omission:    "She [VD] (that) he would come.",
     comp_inf:         "She [VD] [to leave].",
     comp_for_to:      "She [VD] [for him to leave].",
-    ecm:              "She [VD] [him to leave].",
     extraposition:    "It [VD] her [to leave].",
-    ditransitive:     "She [VD] him [to leave].",
+    ditransitive:     "She [VD] him [that he would come].",
     factive_passive:  "She was [VN] [to leave].",
-    derived_nominal:  "her [NOM] to leave / that he would come",
-    raising:          "She [VD] [to be there].",
+    derived_nominal:  "her [NOM] to leave",
     comp_interrog:    "She [VD] [whether to leave].",
+    ecm:              "He was [VN] [to leave].",  // want-type verbs take expletive objects too; the passive tells them apart
   },
 
   // directive — agent + addressee, mandative / object-control
@@ -747,20 +744,18 @@ window.DACE_FRAMES = {
     that_omission:    "She [VD] (that) he leave at once.",
     comp_inf:         "She [VD] him [to leave].",
     subjunctive_comp: "She [VD] [that he leave].",
-    ditransitive:     "She [VD] him [to leave].",
+    ditransitive:     "She [VD] him [that he should leave].",
     factive_passive:  "He was [VN] [to leave].",
     np_comp_alt:      "She [VD] [his departure].",
-    derived_nominal:  "her [NOM] that he leave / for him to leave",
+    derived_nominal:  "her [NOM] that he leave",
     comp_interrog:    "She [VD] him [whether to leave].",
     extraposition:    "It [VD] him [to leave].",
-    raising:          "She [VD] [to leave].",
     direct_speech:    "She [VD] him: \u201cLeave at once.\u201d",
   },
 
   // raising-evidential — expletive subject, raising
   raise: {
     that_omission:    "It [VD] (that) he is ill.",
-    raising:          "He [VD] [to be ill]. / There [VD] to be a problem.",
     extraposition:    "It [VD] [that he is ill].",
     comp_inf:         "He [VD] [to be ill].",
     comp_interrog:    "It [VD] [whether he is ill].",
@@ -779,13 +774,11 @@ window.DACE_FRAMES = {
   // perception — perceiver + perceived event
   percep: {
     that_omission:    "She [VD] (that) he was nervous.",
-    comp_bare_inf:    "She [VD] [him leave] / [him leaving].",
-    comp_small_clause:"She [VD] [him cross the road].",
+    comp_bare_inf:    "She [VD] [him cross the road].",
+    comp_small_clause: "She [VD] [him angry].",  // verbless AP small clause
     comp_interrog:    "She [VD] [whether he was nervous].",
-    comp_inf:         "She [VD] [him leave].",
     np_comp_alt:      "She [VD] [the news].",
     derived_nominal:  "her [NOM] that he was nervous",
-    raising:          "She [VD] [to be nervous].",
     ditransitive:     "She [VD] her [that he was nervous].",
     factive_passive:  "He was [VN] [that he was nervous].",
     pro_complement:   "She [VD] so.",
@@ -798,14 +791,12 @@ window.DACE_FRAMES = {
     comp_inf:         "She [VD] [to escape].",
     that_omission:    "She [VD] (that) she would escape.",
     comp_interrog:    "She [VD] [whether to escape].",
-    ditransitive:     "She [VD] him [to escape].",
+    ditransitive:     "She [VD] him [that she had escaped].",
     factive_passive:  "She was [VN] [to escape].",
-    raising:          "She [VD] [to escape].",
     extraposition:    "It [VD] her [to escape].",
-    stative:          "She is [VG] to escape (achievement \u2014 progressive OK).",
+    stative:          "She is [VG] to escape.",
     veridicality:     "She [VD] to escape \u2014 entails she escaped (implicative).",
     derived_nominal:  "her [NOM] to escape",
-    ecm:              "She [VD] [him to escape].",
   },
 };
 
@@ -821,6 +812,8 @@ window.DACE_FRAMES.copular = {
   stative:          "She was being [ADJ] that he was there.",
   factive_passive:  null, // n/a — see DACE_COPULAR_NA
   ditransitive:     null,
+  raising:          "There was [ADJ] to be a problem.",
+  ecm:              "She was [ADJ] [him to be honest].",
 };
 
 // --- frame items and versions ---
@@ -854,8 +847,8 @@ window.daceFrameTemplates = function () {
 
 // --- build a test sentence for a feature on a given predicate ---
 // Default: HTML for the Explorer, starred when the predicate lacks the feature.
-// opts.judge: as the Judge shows it — never starred (the judge decides), and the
-// that-omission test without "(that)". opts.plain: plain text, voice lines joined
+// opts.judge: as the Judge shows it — never starred (the judge decides), the
+// that-omission test without "(that)", and the derived nominal left blank ("___"). opts.plain: plain text, voice lines joined
 // with " | " (what the judgement log stores as the sentence judged).
 window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored, opts) {
   const o = opts || {};
@@ -874,7 +867,8 @@ window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored
   const forms = daceForms(display);
   const verbKey = display.replace(/ /g, "_");
   const passiveLeaning = frameType === "psych" && DACE_PASSIVE_LEANING.has(verbKey);
-  const nomInfo = window.daceNominal ? window.daceNominal(verbKey, display) : null;
+  // judge mode leaves the nominal blank: showing a candidate would give the answer away
+  const nomInfo = !o.judge && window.daceNominal ? window.daceNominal(verbKey, display) : null;
   const nominal = nomInfo ? nomInfo.nom : null;
   const nomCandidate = nomInfo ? nomInfo.candidate : false;
 
@@ -886,7 +880,7 @@ window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored
       .replace(/\[VN\]/g, b(forms.vn))
       .replace(/\[VG\]/g, b(forms.ving))
       .replace(/\[ADJ\]/g, b(forms.adj || forms.v))
-      .replace(/\[NOM\]/g, nominal ? b(nominal, nomCandidate ? ' class="nom-candidate" title="candidate form"' : "") : "[nominal]")
+      .replace(/\[NOM\]/g, nominal ? b(nominal, nomCandidate ? ' class="nom-candidate" title="candidate form"' : "") : o.judge ? "___" : "[nominal]")
       .replace(/\[V\]/g, b(forms.v));
   }
   const bad = !o.judge && (DACE_INVERTED.includes(fk) ? !!on : !on);

@@ -164,11 +164,20 @@ event_id, judge, verb, feature, kind, response, item, frame_v, sentence, gold, r
 
 All six phases are done (7 Oct 2026). What's left is Thomas's: pick the gold cells, set `author` in `data/consolidation.json` to his judge code, fix the frames below, and start judging.
 
-### Frames to look at (found while building phase 3)
+### Derived nominal card (8 Oct 2026)
 
-Some judged templates aren't plain sentences, so Acceptable / Unacceptable doesn't fit them, and two give the answer away. Changing them bumps their versions (`npm run frames:lock`), which is exactly what versioning is for:
-- `stative:psych` ("She was [VN] that p (state) vs. eventive active use.") and `stative:impl` ("… (achievement — progressive OK)") — descriptions, the second with the expected answer in it.
-- `neg_raising:base`, `:psych`, `:raise`, `:copular` — paraphrase-equivalence questions (≈ / ≠), not acceptability. Either a different question on the card ("Do these mean the same?" with Yes / No / Unsure) or a plain-sentence frame.
+- [x] The `derived_nominal` question is a plain **Yes / No** (keys 1 / 0; Marginal, Can't judge and the example-sentence box are gone from that card). Yes and No are logged as `acceptable` / `unacceptable`, so the server and consolidation are unchanged (not inverted: Yes = 1). After Yes the card stays put and the judge types one or more nouns (one box each, *+ another form*; Enter or *Next ›* moves on), saved as one comma-separated `nominal` event; changing Yes to No withdraws them. The frame and the box no longer show DACE's own candidate nominal (`her ___ that he left`), which would give the answer away; the template is unchanged, so its version stays 1.
+
+### Frame review (8 Oct 2026)
+
+Every judged frame was rendered for one predicate of each class and checked for five problems. All fixed; changed templates got new versions (`npm run frames:lock`), so judgements on the old ones are kept but left out of consolidation.
+
+- **Not an acceptability question.** `neg_raising` is now a *meaning* question: the two sentences one above the other, "can it mean", Yes / No / Can't tell (logged as acceptable / unacceptable / cant_judge, Yes = 1). The psych frame uses ≈ like the others; tell verbs get a recipient. `stative` for psych verbs is "She is being [VN] that he is there." (like the copular frame).
+- **Answer given away.** `stative` for implicatives: "She is [VG] to escape." (no "progressive OK").
+- **Several sentences in one item.** `comp_interrog`: whether only (matches the 0s on emotive factives); `pro_complement`: "She [VD] so."; `np_comp_alt` (say): "the decision"; `comp_bare_inf` (perception): "She [VD] [him cross the road]."; `raising` (raise class): the expletive sentence only; psych `that_omission` and `comp_inf` use the adjectival passive, `comp_gerund` the active (which matches the 0s); `derived_nominal` desiderative "her ___ to leave", directive "her ___ that he leave".
+- **Two features, one sentence.** `comp_inf` is now a subject-control frame ("She [VD] [to lock the door]"; say verbs "to have seen him"); `ecm` uses an expletive object ("She [VD] [there to be a problem]": ECM vs object control), except desideratives, which take expletive objects too and get the passive ("He was [VN] [to leave]"); `ditransitive` for desiderative, directive and implicative verbs takes a recipient and a finite clause; perception `comp_small_clause` is a verbless AP ("She [VD] [him angry]"), so it no longer repeats the bare infinitive. The perception `comp_inf` override is retired (the base frame applies).
+- **Acceptability can't show the feature.** `raising` is "There [VD] to be a problem." for every class ("There was [ADJ] to be a problem." for copular), so control verbs no longer pass. The psych `ditransitive` override is retired. `extraposition` was left as it is: "It V-ed her that S" is the subject-extraposition diagnostic of §13, and its badness for non-psych verbs is intended.
+- Things the new frames will probably change once judged, worth knowing in advance: copular `comp_inf` (*be glad to…* reads fine, most are coded 0); perception `comp_inf` (overhear, perceive, witness are coded 1, the control frame will say 0) and `comp_small_clause` (hear, feel are coded 1; the doc's §5 counts perception bare infinitives as small clauses, the glossary definition says verbless); `stative` for *think* ("She is thinking that…" is fine).
 
 ### Later
 
