@@ -5,6 +5,7 @@
   "comp_bare_inf:percep": {"v":2,"hash":"bc9073661fc5"},
   "comp_bare_inf:psych": {"v":1,"hash":"06073af4c5e2"},
   "comp_exclamative:base": {"v":1,"hash":"923dab09bd70"},
+  "comp_exclamative:tell": {"v":1,"hash":"f1f9db291478"},
   "comp_for_to:base": {"v":1,"hash":"5c9e81eb6ef0"},
   "comp_for_to:desid": {"v":1,"hash":"5c9e81eb6ef0"},
   "comp_gerund:base": {"v":1,"hash":"c73f9f8bad95"},
@@ -33,6 +34,7 @@
   "content_noun_fact:base": {"v":1,"hash":"c67f60b7fabc"},
   "content_noun_fact:psych": {"v":1,"hash":"1ba892901d22"},
   "content_noun_fact:raise": {"v":1,"hash":"af74102096f8"},
+  "content_noun_fact:tell": {"v":1,"hash":"a162f361abda"},
   "derived_nominal:base": {"v":1,"hash":"9cb0d5b3c496"},
   "derived_nominal:desid": {"v":2,"hash":"bb9cb883c66a"},
   "derived_nominal:dir": {"v":2,"hash":"516e3947091d"},
@@ -95,6 +97,7 @@
   "np_comp_alt:say": {"v":2,"hash":"336cf5944c4e"},
   "np_comp_alt:tell": {"v":1,"hash":"3566131d2d6a"},
   "npi_licenser:base": {"v":1,"hash":"55a23a8b51a3"},
+  "npi_licenser:tell": {"v":1,"hash":"238fa2cc663d"},
   "phrasal:base": {"v":1,"hash":"120c458cfe69"},
   "pro_complement:base": {"v":2,"hash":"123f331dca4e"},
   "pro_complement:percep": {"v":1,"hash":"123f331dca4e"},
@@ -115,6 +118,7 @@
   "stative:impl": {"v":2,"hash":"95d798af8be3"},
   "stative:psych": {"v":2,"hash":"182220b650b7"},
   "stative:raise": {"v":1,"hash":"64ee70f7b76d"},
+  "stative:tell": {"v":1,"hash":"d9d0378d5100"},
   "subjunctive_comp:base": {"v":1,"hash":"4409e80345d8"},
   "subjunctive_comp:dir": {"v":1,"hash":"4409e80345d8"},
   "subjunctive_comp:psych": {"v":1,"hash":"7ca01d47517d"},
@@ -133,5 +137,6 @@
   "veridicality:psych": {"v":1,"hash":"305ca1b5c01e"},
   "veridicality:raise": {"v":1,"hash":"c2144c495cff"},
   "weak_island:base": {"v":1,"hash":"f5e3e6845799"},
-  "weak_island:copular": {"v":1,"hash":"99aee2585adf"}
+  "weak_island:copular": {"v":1,"hash":"99aee2585adf"},
+  "weak_island:tell": {"v":1,"hash":"6177d9e949d6"}
 }

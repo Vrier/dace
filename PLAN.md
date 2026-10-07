@@ -179,6 +179,14 @@ Every judged frame was rendered for one predicate of each class and checked for 
 - **Acceptability can't show the feature.** `raising` is "There [VD] to be a problem." for every class ("There was [ADJ] to be a problem." for copular), so control verbs no longer pass. The psych `ditransitive` override is retired. `extraposition` was left as it is: "It V-ed her that S" is the subject-extraposition diagnostic of §13, and its badness for non-psych verbs is intended.
 - Things the new frames will probably change once judged, worth knowing in advance: copular `comp_inf` (*be glad to…* reads fine, most are coded 0); perception `comp_inf` (overhear, perceive, witness are coded 1, the control frame will say 0) and `comp_small_clause` (hear, feel are coded 1; the doc's §5 counts perception bare infinitives as small clauses, the glossary definition says verbless); `stative` for *think* ("She is thinking that…" is fine).
 
+### Object-taking verbs (8 Oct 2026)
+
+- [x] Verbs that need a direct object before the clause got object-less frames wherever their class table had no recipient version, so the sentence failed for the wrong reason (*What did she fool that he bought?*, *She reminded that anyone left*). Found in the LLM pilot. Fixed in two parts: the tell table now covers `weak_island`, `npi_licenser`, `comp_exclamative`, `stative` and `content_noun_fact` with the object in place; and `DACE_OBJECT_REQUIRED` (18 verbs from Say, Confess and Lie) moves those verbs onto the tell table for every feature. New items at v1; 444 Judge cells changed sentence, and judgements on their old items drop out of consolidation as usual.
+- Left alone on purpose: `ecm`, `comp_small_clause`, `comp_bare_inf` (the object slot is the construction), `raising` (expletive subject), `comp_for_to`, `comp_poss_ing`; Order-class *force* / *exhort* (the dir table's infinitival frames already have the object).
+- [ ] The converse: tell-class verbs that take no bare object (*swear*, *vow*, *pledge*, *confide*, *demonstrate*, *get across*; *signal* and *promise* optional) get one in every tell frame (*She swore him the meeting was cancelled*). Thomas to decide.
+- [ ] Preposition-selecting verbs (*inform/remind/convince/assure/warn … of*) still get a bare NP in `np_comp_alt` and `content_noun_fact` (*She informed him the news*).
+- [ ] *disappoint*, *dissatisfy*, *relieve* are in Confess (4.3) but behave like psych verbs (*It relieved her that…*): probably belong in 3.1.
+
 ### Later
 
 - Second lexicalisations (`…:b` items) for contested cells only.

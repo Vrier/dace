@@ -595,6 +595,25 @@ window.daceInapplicable = function (verb, fk) {
   return verb.startsWith("be_") && window.DACE_COPULAR_NA.includes(fk);
 };
 
+// Predicates that need a direct object before their clause (*She fooled that he had
+// left; She fooled him that he had left). Their sentences come from the tell table,
+// which puts a recipient in every frame where the object isn't what is being tested,
+// so the test isn't spoiled by the missing object. Tell-class (4.2) verbs get that
+// table anyway; this set is for object-taking verbs in other classes.
+window.DACE_OBJECT_REQUIRED = new Set([
+  "admonish", "chide", "deceive", "educate", "lecture", "pester", "tease",      // 4.1 Say
+  "chastise", "congratulate", "inform", "insult", "notify", "rouse",            // 4.3 Confess
+  "delude", "fool", "misinform", "mislead", "trick",                             // 4.4 Lie
+]);
+// Not here: Order-class verbs that need an object (force, exhort) keep the dir table,
+// whose clausal frames are infinitival with the object already in place.
+// The frame type a predicate's sentences come from: its class's, or tell for the
+// object-taking verbs above.
+window.daceFrameType = function (levinClass, display) {
+  if (DACE_OBJECT_REQUIRED.has(display.replace(/ /g, "_"))) return "tell";
+  return DACE_FRAME_TYPE[levinClass] || "base";
+};
+
 // Psych verbs that strongly prefer the passive — active marked (?) marginal
 window.DACE_PASSIVE_LEANING = new Set(["abash", "nonplus", "discomfit"]);
 
@@ -724,6 +743,12 @@ window.DACE_FRAMES = {
     comp_gerund:      "She [VD] him [leaving].",
     factivity:        "She [VD] him / didn\u2019t [V] him [that p] \u2014 does p survive negation?",
     neg_raising:      "She didn\u2019t [V] him he\u2019d come \u2248 She [VD] him he wouldn\u2019t come.",
+    // the object stays wherever it isn't the thing tested (*What did she tell that he bought?)
+    weak_island:      "What did she [V] him [that he bought ___]?",
+    npi_licenser:     "She [VD] him [that anyone had left].",
+    comp_exclamative: "She [VD] him [what a linguist he is]!",
+    stative:          "She is [VG] him that he is there.",
+    content_noun_fact:"She [VD] him [the fact that he left].",
   },
 
   // desiderative — subject-control infinitive primary
@@ -829,7 +854,7 @@ window.daceFrameSource = function (fk, levinClass, display) {
   if (display.startsWith("be ") && fk in DACE_FRAMES.copular) {
     return { item: fk + ":copular", tmpl: DACE_FRAMES.copular[fk] };
   }
-  const frameType = DACE_FRAME_TYPE[levinClass] || "base";
+  const frameType = window.daceFrameType(levinClass, display);
   const frames = DACE_FRAMES[frameType] || {};
   if (frames[fk] !== undefined) return { item: fk + ":" + frameType, tmpl: frames[fk] };
   if (DACE_FRAMES.base[fk] !== undefined) return { item: fk + ":base", tmpl: DACE_FRAMES.base[fk] };
@@ -863,7 +888,7 @@ window.daceTestSentence = function (fk, on, levinClass, display, _nominalIgnored
     tmpl = typeof tmpl === "object" ? { active: drop(tmpl.active), passive: drop(tmpl.passive) } : drop(tmpl);
   }
 
-  const frameType = DACE_FRAME_TYPE[levinClass] || "base";
+  const frameType = window.daceFrameType(levinClass, display);
   const forms = daceForms(display);
   const verbKey = display.replace(/ /g, "_");
   const passiveLeaning = frameType === "psych" && DACE_PASSIVE_LEANING.has(verbKey);
