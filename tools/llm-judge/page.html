@@ -148,6 +148,22 @@ function blockCalls(cells, n) {
   return calls;
 }
 
+// The answer objects in Claude's reply: the JSON array if it parses (with or
+// without a code fence or a sentence before it), else every complete
+// {"id": …, "response": …} object that can be read, so a reply that is cut short
+// or slightly malformed still saves the cards it did answer.
+function readReply(text) {
+  const t = String(text || "").replace(/```(?:json)?/gi, "");
+  const ok = (x) => x && typeof x === "object" && typeof x.id === "string" && typeof x.response === "string";
+  const end = t.lastIndexOf("]");
+  for (let i = t.indexOf("["); i !== -1 && i < end; i = t.indexOf("[", i + 1)) {
+    try { const a = JSON.parse(t.slice(i, end + 1)); if (Array.isArray(a) && a.some(ok)) return a.filter(ok); } catch {}
+  }
+  const out = [];
+  for (const m of t.matchAll(/\{[^{}]*\}/g)) { try { const o = JSON.parse(m[0]); if (ok(o)) out.push(o); } catch {} }
+  return out;
+}
+
 // one card, exactly as scripts/llm-judge.mjs cardPrompt() writes it
 function card(ci) {
   const [v, f, , sentence] = DATA.c[ci];
@@ -261,10 +277,12 @@ async function runOne() {
       if (code === "session_expired") return "Your session has expired. Sign in again and run again.";
       return `Claude didn't answer this request (${code || "error"}). Run again to retry it.`;
     }
-    let arr = null;
-    const m = /\[[\s\S]*\]/.exec(reply || "");
-    try { arr = m ? JSON.parse(m[0]) : null; } catch { arr = null; }
-    if (!Array.isArray(arr)) return "Claude's answer wasn't readable JSON, so nothing was saved for that request. Run again to retry it.";
+    const arr = readReply(reply);
+    if (!arr.length) {
+      // keep the raw reply for diagnosis; the request is asked again next run
+      try { await db.collection("failures").doc(n + "_" + call.key + "_" + Date.now()).set({ at: new Date().toISOString(), tier: tier || TIER, reply: String(reply || "").slice(0, 20000) }); } catch {}
+      return "Claude's answer couldn't be read, so nothing was saved for that request. Start again to retry it; earlier answers are kept.";
+    }
     const answers = {};
     call.cells.forEach((ci, k) => {
       const o = arr.find((x) => x && x.id === "c" + (k + 1));
