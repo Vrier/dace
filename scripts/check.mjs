@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseCSV } from './lib/csv.mjs';
 import { headingIds } from './lib/docs.mjs';
@@ -25,6 +26,31 @@ function check(name, fn) {
   problems.slice(0, 15).forEach((p) => console.log('    ' + p));
   if (problems.length > 15) console.log(`    … and ${problems.length - 15} more`);
 }
+
+// Runs before the build, so a half-resolved merge is named here and not as a build error.
+check('no leftover merge-conflict markers (lines opening with seven <, | or >)', () => {
+  // The laptop and chat sessions both push to main, so a half-resolved merge has to stop at
+  // this gate. Seven "=" are not tested: they open ordinary lines too (Markdown underlines).
+  let rels;
+  try { rels = execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26, stdio: ['ignore', 'pipe', 'ignore'] }).split('\0').filter(Boolean); }
+  catch {
+    // not a git checkout (a source zip, say): scan the folder itself
+    const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (!e.isDirectory() ? [path.join(dir, e.name)]
+      : ['.git', 'node_modules'].includes(e.name) ? [] : walk(path.join(dir, e.name))));
+    rels = walk(ROOT).map((f) => path.relative(ROOT, f).split(path.sep).join('/'));
+  }
+  const P = [];
+  for (const rel of rels) {
+    const file = path.join(ROOT, rel);
+    if (!fs.statSync(file, { throwIfNoEntry: false })?.isFile()) continue; // deleted in the working tree
+    const buf = fs.readFileSync(file);
+    if (buf.includes(0)) continue; // binary
+    buf.toString('utf8').split('\n').forEach((line, i) => {
+      if (/^(?:<{7}|\|{7}|>{7})/.test(line)) P.push(`${rel}:${i + 1}: ${line.slice(0, 60).trimEnd()}`);
+    });
+  }
+  return P;
+});
 
 let built;
 try { built = await buildSite(ROOT); }
